@@ -173,7 +173,7 @@
 |---|---|---|
 | `apexbot` | ✅ v0.3 live | Session 3 picks up here |
 | `alan-os` | ✅ Live | Repo live as of commit `bf88777` |
-| `loretta-os` | ⬜ Not created | Create + commit Wave + content engine workflows |
+| `loretta-os` | ✅ Created (empty) | Commit Wave + content engine workflows when n8n JSON exports available |
 | `caveman` | ⚠️ SKILL.md written | Commit to GitHub |
 | `codeburn` | ⚠️ Stub only | Populate SKILL.md next session |
 | `design-extract` | ⚠️ Stub only | Populate SKILL.md next session |
