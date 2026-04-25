@@ -14,11 +14,11 @@ Load: https://raw.githubusercontent.com/alansercy/alan-os/main/handoff/current.m
 
 For strategy sessions add the relevant domain file:
 ```
-Load: https://raw.githubusercontent.com/alansercy/alan-os/main/alan-os/strategy/veritas_strategy.md
-Load: https://raw.githubusercontent.com/alansercy/alan-os/main/alan-os/strategy/lollie_brand.md
-Load: https://raw.githubusercontent.com/alansercy/alan-os/main/alan-os/strategy/mmm_trucking.md
-Load: https://raw.githubusercontent.com/alansercy/alan-os/main/alan-os/strategy/job_search.md
-Load: https://raw.githubusercontent.com/alansercy/alan-os/main/alan-os/strategy/family_governance.md
+Load: https://raw.githubusercontent.com/alansercy/alan-os/main/strategy/veritas_strategy.md
+Load: https://raw.githubusercontent.com/alansercy/alan-os/main/strategy/lollie_brand.md
+Load: https://raw.githubusercontent.com/alansercy/alan-os/main/strategy/mmm_trucking.md
+Load: https://raw.githubusercontent.com/alansercy/alan-os/main/strategy/job_search.md
+Load: https://raw.githubusercontent.com/alansercy/alan-os/main/strategy/family_governance.md
 ```
 
 ---
@@ -45,16 +45,16 @@ Load: https://raw.githubusercontent.com/alansercy/alan-os/main/alan-os/strategy/
 
 | File | Status |
 |------|--------|
-| alan-os/README.md | ✅ Live |
-| alan-os/handoff/current.md | ✅ Live — this file |
-| alan-os/strategy/veritas_strategy.md | ✅ Live |
-| alan-os/strategy/lollie_brand.md | ✅ Live |
-| alan-os/sops/lux_stack.md | ✅ Live |
-| alan-os/strategy/mmm_trucking.md | ⬜ Not built yet |
-| alan-os/strategy/job_search.md | ⬜ Not built yet |
-| alan-os/strategy/family_governance.md | ⬜ Not built yet |
-| alan-os/sops/norman_inbox_guard.md | ⬜ Not built yet |
-| alan-os/vault/ | ⬜ Not built yet |
+| README.md | ✅ Live |
+| handoff/current.md | ✅ Live — this file |
+| strategy/veritas_strategy.md | ✅ Live |
+| strategy/lollie_brand.md | ✅ Live |
+| sops/lux_stack.md | ✅ Live |
+| strategy/mmm_trucking.md | ⬜ Not built yet |
+| strategy/job_search.md | ⬜ Not built yet |
+| strategy/family_governance.md | ⬜ Not built yet |
+| sops/norman_inbox_guard.md | ⬜ Not built yet |
+| vault/ | ⬜ Not built yet |
 
 **End of session update protocol:**
 1. Claude delivers updated current.md

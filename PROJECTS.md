@@ -120,6 +120,25 @@
 
 ---
 
+### Lollie & Lovie Lou — Children's Book Brand
+**Owner:** Loretta Sercy (Alan supports operations)
+**Environment:** Host | **URL:** lollieandlovielou.com (live)
+
+| Item | Status | Next Action |
+|---|---|---|
+| Website (index.html + resource-guide.html) | ✅ Live | Mobile review — flag layout issues |
+| 4-book series — A Day Full of Wonders / Lovie Lou Can / Breathing with Lovie Lou / Goodnight Lovie Lou | 🔨 Active | Build audience first, self-publish Book 1 via Amazon KDP + IngramSpark |
+| Google Workspace email | ⏳ Pending | $7/mo Starter — loretta@ + hello@ alias; TXT verification in Netlify DNS panel |
+| Printful merch setup | ⏳ Pending | Create Printful account, build 6 Canva designs, order samples, activate Shop tab |
+| Etsy / Shopify storefront | ⬜ Not started | Linked from Shop tab — Etsy free or Shopify Starter $5/mo |
+| Social handles (@lollieandlovielou) | ⬜ Not started | Secure on Instagram / TikTok / Facebook |
+| Resource guide signups (Netlify Forms) | ✅ Live | Monitor at app.netlify.com → lolliewebsitefinal → Forms |
+
+**Strategy doc:** `strategy/lollie_brand.md`
+**Subject / photo approval:** Brielle (granddaughter, autism Level 2) — Gabi (Brielle's mom) approves all photos
+
+---
+
 ### Alan OS — Dashboard + Automation Infrastructure
 **Environment:** Host | `localhost:8000/dashboard`
 **Start:** `C:\Users\aserc\.lux\start_alan_os.bat`
@@ -181,6 +200,22 @@
 | Item | Status | Next Action |
 |---|---|---|
 | 3275 CR 26100, Roxton TX (Tumminello) | ⏳ Active | Waiting signed buyer rep + People's Bank confirmation |
+
+### Norman Inbox Guard
+**Account:** sercypete@aol.com (Norman's AOL) | **Environment:** Host
+**Schedule:** Daily 6AM via Task Scheduler — "Norman Inbox Guard"
+
+| Item | Status | Next Action |
+|---|---|---|
+| Inbox triage script | ✅ Live | `C:\Users\aserc\.lux\norman_inbox_guard.py` |
+| Daily digest to Alan | ✅ Live | 6AM to alansercy@gmail.com |
+| Whitelist | ✅ Live | `C:\Users\aserc\.lux\norman_whitelist.txt` — 14 addresses + 2 domain rules (@penfed.org, @penfed.info) |
+| USAA auto-routing | ✅ Live | Routes to Inbox/USAA folder |
+| Forwarding to Marsha (sercymarsha@aol.com) | ⏳ Staged | Set `FORWARDING_ENABLED = True` in script when ready |
+| `review_new_senders.py` COM error | ⏳ Blocked | "Exhausted shared resources" — root cause: Loretta Gmail background-syncing in Outlook; fix: Outlook kill/restart + wait for sync before re-test |
+
+**SOP:** `sops/lux_stack.md`
+**Logs:** `C:\Users\aserc\.lux\logs\norman_guard_YYYY-MM-DD.log`
 
 ---
 
