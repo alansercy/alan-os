@@ -152,7 +152,7 @@
 | Repo | Status | Next Action |
 |---|---|---|
 | `apexbot` | ✅ v0.3 live | Session 3 picks up here |
-| `alan-os` | ⬜ Not created | Create + commit current scripts |
+| `alan-os` | ✅ Live | Repo live as of commit `bf88777` |
 | `loretta-os` | ⬜ Not created | Create + commit Wave + content engine workflows |
 | `caveman` | ⚠️ SKILL.md written | Commit to GitHub |
 | `codeburn` | ⚠️ Stub only | Populate SKILL.md next session |
@@ -217,7 +217,7 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 | Lux Command Center | alansercy@gmail.com | `1hFOBfaKxBs1ZsP9hBfOXb17JZylScxkVRPpA6c0YWDc` |
 | Job Search Brief | alansercy@gmail.com | `1PyDF_KKLmfE9uk5cDsHogKUzb55RNQWbwbJfxg7jwAQ` |
 | MMM Prospect Tracker | lsercy@mmmtrucks.com | `1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI` |
-| Loretta Content Calendar | lorettasercy@gmail.com | `1D7krpNO3CmuZCWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM` |
+| Loretta Content Calendar | lorettasercy@gmail.com | `1D7krpNO3CmuZCWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM` # VERIFY: B or C after muZ — check against Drive before using in automation |
 | Veritas AI Research Feed | alansercy@gmail.com | `1WD2Sr2HgSdMffSYv9bWIpPZOoef4_LDH27yQBiuuM6M` |
 | NLM Inbox Feed folder | alansercy@gmail.com | `1PIP2g8wVrtDON8FQ56PIsTTmxrrtJEMN` |
 

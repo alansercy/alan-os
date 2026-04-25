@@ -9,7 +9,7 @@
 
 Paste at the start of any Claude session:
 ```
-Load: https://raw.githubusercontent.com/alansercy/alan-os/main/alan-os/handoff/current.md
+Load: https://raw.githubusercontent.com/alansercy/alan-os/main/handoff/current.md
 ```
 
 For strategy sessions add the relevant domain file:
@@ -40,7 +40,7 @@ Load: https://raw.githubusercontent.com/alansercy/alan-os/main/alan-os/strategy/
 ## GitHub Memory Architecture — LIVE ✅
 
 **Repo:** github.com/alansercy/alan-os (public)
-**Session load URL:** https://raw.githubusercontent.com/alansercy/alan-os/main/alan-os/handoff/current.md
+**Session load URL:** https://raw.githubusercontent.com/alansercy/alan-os/main/handoff/current.md
 **Files live:**
 
 | File | Status |
@@ -58,7 +58,7 @@ Load: https://raw.githubusercontent.com/alansercy/alan-os/main/alan-os/strategy/
 
 **End of session update protocol:**
 1. Claude delivers updated current.md
-2. Go to github.com/alansercy/alan-os/alan-os/handoff/current.md
+2. Go to github.com/alansercy/alan-os/handoff/current.md
 3. Click pencil icon → select all → paste → commit
 4. Done in 60 seconds
 
@@ -176,7 +176,7 @@ Store connection: Static HTML → recommend Etsy (free) or Shopify Starter ($5/m
 | Job Search Brief | alansercy@gmail.com | 1PyDF_KKLmfE9uk5cDsHogKUzb55RNQWbwbJfxg7jwAQ |
 | Veritas AI Research Feed | alansercy@gmail.com | 1WD2Sr2HgSdMffSYv9bWiipPZOoef4_LDH27yQBiuuM6M |
 | MMM Prospect Tracker | lsercy@mmmtrucks.com | 1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI |
-| Loretta Content Calendar | lorettasercy@gmail.com | 1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM |
+| Loretta Content Calendar | lorettasercy@gmail.com | 1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM # VERIFY: B or C after muZ — check against Drive before using in automation |
 | NLM Inbox Feed folder | alansercy@gmail.com | 1PIP2g8wVrtDON8FQ56PIsTTmxrrtJEMN |
 | Duplicate NLM doc (retire) | alansercy@gmail.com | 1f3RGBRlmFr7b4Mb-94RoAydAn3ClnmjFN2eO7VLeVyg |
 | Estate Planning CC | alansercy@gmail.com | ID pending |
