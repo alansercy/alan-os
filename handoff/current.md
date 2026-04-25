@@ -58,7 +58,7 @@ Load: https://raw.githubusercontent.com/alansercy/alan-os/main/strategy/family_g
 
 **End of session update protocol:**
 1. Claude delivers updated current.md
-2. Go to github.com/alansercy/alan-os/handoff/current.md
+2. Go to github.com/alansercy/alan-os/blob/main/handoff/current.md
 3. Click pencil icon → select all → paste → commit
 4. Done in 60 seconds
 
