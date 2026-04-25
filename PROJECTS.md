@@ -45,6 +45,7 @@
 | Veritas Offer Sheet template | ⬜ Not started | Build after painter SOW — extract reusable pattern |
 | Veritas positioning paragraph | ⬜ Not started | 3 variants: fractional exec / AI-leveraged BD / TBD |
 | DBA filing — Rockwall County | ⬜ Not started | Assumed Name Certificate — CentPenny LLC |
+| **cto.new pipeline evaluation** | 🔍 Evaluating | Test workflow: cto.new generates polished scaffold → import to GitHub → Claude Code customizes and wires backend → Netlify or cto.new hosts → user owns everything. Use painter site as first trial. Compare against direct Claude Code build for speed/quality/cost. |
 
 ---
 
@@ -262,7 +263,7 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 
 | Session | Focus | Environment | Est. Time |
 |---|---|---|---|
-| **A** | Governance: PROJECTS.md committed, Claude usage wired, GitHub repos created | Host | 30 min |
+| **A** | Governance: PROJECTS.md committed, Claude usage wired, GitHub repos created, cto.new pipeline evaluated | Host | 30 min |
 | **ApexBot S3** | Events.yaml, template capture, scheduler wiring, SVS test | Host | 60 min |
 | **L1** | Loretta: reduce Sheet friction, wire Telegram → brief, Buffer auto-post | VM | 60 min |
 | **L2** | Loretta: /relist-guide page, Lofty tagging, PDF delivery | VM | 90 min |
