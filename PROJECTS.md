@@ -151,7 +151,7 @@
 | Daily digest email | ✅ Live | 8:05 AM, includes command center |
 | Email triage — 5 accounts | ✅ Live | MSN, Gmail, Loretta, Keys, MMM |
 | Drive integration — 6 assets | ✅ Live | Service account: `lux-automation@lux-host-493415.iam.gserviceaccount.com` |
-| Claude usage panel | ⏳ Blocked | Admin API key missing — see setup below |
+| Claude usage panel | ✅ Live | Admin key `alan-os-admin` wired into `.env`; loader patched to handle UTF-8 BOM (line 12) |
 | Push handoff to Drive | ✅ Live | `push_handoff.py` |
 | Task Scheduler (alan_os_server) | ⬜ Not started | Add auto-start at login |
 | Obsidian install + setup | ⬜ Queued | Scoped, not installed |
@@ -159,12 +159,7 @@
 | Sunday evening weekly preview | ⬜ Queued | — |
 | Attachment harvester | ⬜ Queued | PDFs from known senders → folders |
 
-**Claude Usage Setup (do this now):**
-1. Go to `console.anthropic.com` → Settings → API Keys
-2. Create Admin API key (starts with `sk-ant-admin...`)
-3. Open `C:\Users\aserc\.lux\.env`
-4. Add: `ANTHROPIC_ADMIN_API_KEY=sk-ant-admin-your-key-here`
-5. Restart: `python claude_usage_dashboard.py`
+**Claude Usage Setup:** ✅ Done Apr 25, 2026 — admin key `alan-os-admin` in `.env`, dashboard reads it via BOM-tolerant loader (`utf-8-sig`).
 
 ---
 
@@ -263,7 +258,7 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 
 | Session | Focus | Environment | Est. Time |
 |---|---|---|---|
-| **A** | Governance: PROJECTS.md committed, Claude usage wired, GitHub repos created, cto.new pipeline evaluated | Host | 30 min |
+| ~~**A**~~ | ~~Governance~~ — ✅ Done Apr 25 (PROJECTS.md, Claude usage panel, loretta-os repo, cto.new note). Skill stubs deferred. | Host | — |
 | **ApexBot S3** | Events.yaml, template capture, scheduler wiring, SVS test | Host | 60 min |
 | **L1** | Loretta: reduce Sheet friction, wire Telegram → brief, Buffer auto-post | VM | 60 min |
 | **L2** | Loretta: /relist-guide page, Lofty tagging, PDF delivery | VM | 90 min |
