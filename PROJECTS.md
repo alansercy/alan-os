@@ -1,0 +1,251 @@
+# Alan OS — Master Project Registry
+**Last Updated:** April 25, 2026
+**Owner:** Alan Sercy | CentPenny LLC / Veritas AI Partners
+**Canonical location:** GitHub → `alan-os` repo → `PROJECTS.md`
+**Session protocol:** Paste this file URL into Claude at session start + state environment (Host/VM) + objective
+
+---
+
+## HOW TO USE THIS FILE
+- This is the single source of truth for all active projects
+- Update it at the END of every session via `push_handoff.py` or manual commit
+- Claude reads this at session START — do not reconstruct from memory
+- Status legend: ✅ Done | 🔨 Active | ⏳ Blocked | 🔜 Queued | ⬜ Not started
+
+---
+
+## TIER 1 — REVENUE GENERATING (Act Now)
+
+### MMM Trucking Automation
+**Entity:** CentPenny LLC | **Retainer:** $3K/mo active
+**Environment:** VM (n8n localhost:5678)
+| Item | Status | Next Action |
+|---|---|---|
+| Workflow 3.1 Gmail Triage | ✅ Live | Monitor for misclassifications |
+| Workflow 3.2 Prospect Audit | ⏳ Blocked | Fix Google Sheets `__rl` node — Sheet ID: `1OePOK2GaGB2JrXO5QUSrXkzceGQ8V2l4` |
+| Nimrat approval gate (3.1) | ⬜ Not started | Replace auto-send with draft-to-Nimrat flow |
+| n8n auto-start Task Scheduler | ⬜ Not started | `schtasks /create /tn "n8n" /tr "npx n8n start" /sc onstart /ru SYSTEM` |
+| HP Hood follow-up | 🔜 Deadline May 1 | Contact Matthew Bauer before May 1 re: full volume commitment |
+| Stemilt/Gordy Schulze outreach | 🔜 Queued | Email Gordy for warm intro to Brendan — Food Shippers PS line |
+| Second unpaid MMM client ($3K/mo) | ⏳ Blocked | Collection or renegotiation — unresolved |
+| Workflow 2.3 Hot Lead SMS | ⬜ Not started | Lofty webhook → Twilio → Loretta |
+| Workflow 2.4 Video Repurposing | ⬜ Not started | Edited video → Opus Clip → Reels → Buffer |
+
+**Key contacts:** Nimrat Samra (CEO, lsercy@mmmtrucks.com) | Matthew Bauer (HP Hood) | Gordy Schulze (Stemilt)
+**Sheets:** MMM Prospect Tracker `1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI`
+
+---
+
+### Veritas AI Partners — Digital Presence Clients
+**Entity:** CentPenny LLC / Veritas AI Partners
+| Item | Status | Next Action |
+|---|---|---|
+| Painter client website | 🔨 Active | Demo tomorrow — confirm scope, build SOW |
+| Health enthusiast website | 🔜 Queued | Scope TBD after painter demo |
+| Veritas Offer Sheet template | ⬜ Not started | Build after painter SOW — extract reusable pattern |
+| Veritas positioning paragraph | ⬜ Not started | 3 variants: fractional exec / AI-leveraged BD / TBD |
+| DBA filing — Rockwall County | ⬜ Not started | Assumed Name Certificate — CentPenny LLC |
+
+---
+
+### Job Search
+**Target:** W2/1099 CRO or EVP BD roles (remote) | **Runway:** ~5 months
+| Item | Status | Next Action |
+|---|---|---|
+| Job Search Brief | ✅ Live | Drive: `1PyDF_KKLmfE9uk5cDsHogKUzb55RNQWbwbJfxg7jwAQ` |
+| NLM Stage 2 job review workflow | ⬜ Not started | Build review/score/act pipeline — 10 jobs pending |
+| Rocktop/TSI/Mercury outreach | ⬜ Not started | 3 messages drafted but not sent |
+| EPR dedup logic | ⬜ Not started | EPR queued 3x in pending_jobs.json |
+
+---
+
+## TIER 2 — FOUNDATION (Build Right)
+
+### ApexBot — Evony Automation
+**Repo:** github.com/alansercy/apexbot (private) | **Version:** v0.3
+**Environment:** Host machine (Windows PC)
+| Item | Status | Next Action |
+|---|---|---|
+| core/planner.py full build | ✅ Session 2 | — |
+| modules/gathering.py | ✅ Session 2 | Needs template capture before live run |
+| modules/march_coordinator.py | ✅ Session 2 | Needs wiring into scheduler |
+| tools/capture_template.py | ✅ Session 2 | — |
+| spec/events.yaml SVS/KE flags | ⬜ Session 3 | Add march_block + gather_caution flags |
+| vision/templates/ | ⬜ Session 3 | Template capture: gather_button, march_button, close_popup |
+| scheduler.py wiring | ⬜ Session 3 | Register march_coordinator for 4 alts |
+| modules/rallies.py | ⬜ Session 3+ | Stub then build |
+| SVS status | ⏳ ACTIVE | All marches blocked — flip flag after SVS ends (est. Apr 30) |
+| RageBot expiry | ⏳ Apr 30 | Market entry window open — BlueStacks Nougat32 broken |
+
+**ADB:** `C:\ProgramData\Rage Systems\Ragebot\Android\platform-tools\adb.exe`
+**Ports:** 5555 | 5595 | 5605 | 5625 | 5645
+
+---
+
+### Loretta — MoveWithClarity Content Engine
+**Environment:** VM (n8n) + Host (Python triage)
+**Brand:** Roots & Room — Charcoal/Sage Forest/Fresh Sage | DM Serif Display / DM Sans
+**Headshot:** `cdn.lofty.com/image/fs/user-info/2026121/15/w600_original_329b765f-5c29-4c1a-9ce8-d6498e92a6c0-jpeg.webp`
+
+#### Current System (honest audit)
+| Workflow | Status | Problem |
+|---|---|---|
+| 2.1 Weekly Content Brief | ✅ Live | Requires 17-column Sheet input from Loretta — too much friction |
+| 2.2 YouTube Description Generator | ✅ Live | Works but no auto-post |
+| 2.5 UTM Slug Generator | ✅ Live | Works |
+| Wave Report landing page `/the-wave1` | ✅ Live | Live but Loretta not using system |
+| Auto-post to Instagram/YouTube | ⬜ Not built | Buffer/Publer selection pending |
+| ManyChat comment triggers | ⬜ Not built | Phase 1: RELIST trigger only |
+| PDF delivery automation | ⬜ Not built | Manual for Phase 1 |
+| Lofty source tagging | ⬜ Not built | All leads land in one pile |
+| Nurture sequences | ⬜ Not built | Phase 2 |
+
+#### Rebuild Plan (per Infrastructure Brief Apr 25)
+| Phase | Deliverable | Status |
+|---|---|---|
+| L1 | Reduce Sheet input to 2 fields, wire Buffer auto-post | ⬜ Session L1 |
+| L1 | `/relist-guide` landing page (Phase 1 per brief) | ⬜ Session L2 |
+| L2 | Lofty source tagging — 8 tags configured | ⬜ Session L2 |
+| L2 | PDF delivery automation via Lofty | ⬜ Session L2 |
+| L2 | ManyChat RELIST trigger | ⬜ Session L3 |
+| L2 | First nurture sequence (4 emails, Relist-specific) | ⬜ Session L3 |
+| L3 | Remaining guide pages (New Build, Land Trap, Divorce) | ⬜ After L2 |
+
+**Guide content status:**
+- ✅ Content complete: Relist Guide, New Build Guide, Land Buyer Trap, Divorce Guide
+- ⬜ Pending: Parents Move, Before You Leave Suburbs, Seller Protection
+- 📋 Wave Report pillars: Built by Alan, do not change architecture
+
+**WordPress migration:** Queued for Session W1 — build on Netlify, Roots & Room brand
+
+---
+
+### Alan OS — Dashboard + Automation Infrastructure
+**Environment:** Host | `localhost:8000/dashboard`
+**Start:** `C:\Users\aserc\.lux\start_alan_os.bat`
+**Server:** `C:\Users\aserc\.lux\workflows\alan_os_server.py`
+
+| Item | Status | Next Action |
+|---|---|---|
+| Dashboard live | ✅ Live | Evolving — needs Claude usage panel |
+| Daily digest email | ✅ Live | 8:05 AM, includes command center |
+| Email triage — 5 accounts | ✅ Live | MSN, Gmail, Loretta, Keys, MMM |
+| Drive integration — 6 assets | ✅ Live | Service account: `lux-automation@lux-host-493415.iam.gserviceaccount.com` |
+| Claude usage panel | ⏳ Blocked | Admin API key missing — see setup below |
+| Push handoff to Drive | ✅ Live | `push_handoff.py` |
+| Task Scheduler (alan_os_server) | ⬜ Not started | Add auto-start at login |
+| Obsidian install + setup | ⬜ Queued | Scoped, not installed |
+| Dashboard Drive Panel UI | ⬜ Not started | New tab showing registered asset cards |
+| Sunday evening weekly preview | ⬜ Queued | — |
+| Attachment harvester | ⬜ Queued | PDFs from known senders → folders |
+
+**Claude Usage Setup (do this now):**
+1. Go to `console.anthropic.com` → Settings → API Keys
+2. Create Admin API key (starts with `sk-ant-admin...`)
+3. Open `C:\Users\aserc\.lux\.env`
+4. Add: `ANTHROPIC_ADMIN_API_KEY=sk-ant-admin-your-key-here`
+5. Restart: `python claude_usage_dashboard.py`
+
+---
+
+### GitHub — Skills + Repo Foundation
+| Repo | Status | Next Action |
+|---|---|---|
+| `apexbot` | ✅ v0.3 live | Session 3 picks up here |
+| `alan-os` | ⬜ Not created | Create + commit current scripts |
+| `loretta-os` | ⬜ Not created | Create + commit Wave + content engine workflows |
+| `caveman` | ⚠️ SKILL.md written | Commit to GitHub |
+| `codeburn` | ⚠️ Stub only | Populate SKILL.md next session |
+| `design-extract` | ⚠️ Stub only | Populate SKILL.md next session |
+| NLM Skills Library notebook | ⬜ Not created | Add Caveman/Codeburn/Design as source docs |
+
+**Session start protocol (GitHub not yet connected):**
+- Claude Code: `cd C:\[repo]` then `claude` — direct filesystem + git access, no copy-paste
+- claude.ai: paste PROJECTS.md URL for cross-project strategy sessions
+- GitHub MCP: not available in registry yet — check periodically
+
+---
+
+## TIER 3 — FAMILY + PERSONAL
+
+### Estate Planning — Norman & Marsha Sercy
+| Item | Status | Next Action |
+|---|---|---|
+| Charles property — structural resolution | ⏳ Active | Title vesting, loan obligations, probate exposure |
+| Charles communication strategy | ⏳ Active | Await parents' reaction before next move |
+| Estate Planning CC doc | ⬜ Pending | Drive ID pending — add to drive_registry.json |
+| USAA claim management | 🔨 Active | 7 open items (down from 11) |
+| Endurance warranty claim (Dominick) | 🔨 Active | 5 items complete, Indiana DOI closed |
+
+### Family Property Hit List
+| Item | Status | Next Action |
+|---|---|---|
+| 3275 CR 26100, Roxton TX (Tumminello) | ⏳ Active | Waiting signed buyer rep + People's Bank confirmation |
+
+---
+
+## COMMUNICATION LAYER
+
+### Telegram Bots (both live)
+| Bot | Owner | Use |
+|---|---|---|
+| Alan's bot | alansercy@gmail.com | Urgent alerts, n8n notifications |
+| Loretta's bot | lorettasercy@gmail.com | **Content trigger** — type topic → auto-generates brief + queues post |
+
+**Loretta Telegram workflow (to build Session L1):**
+Loretta texts topic → n8n webhook → Claude generates brief + caption + hashtags → Buffer schedules → Sheet auto-updated as record
+
+### ManyChat (to configure)
+| Trigger | Guide | Status |
+|---|---|---|
+| RELIST | /relist-guide | ⬜ Phase 1 |
+| NEW BUILD | /new-build-guide | ⬜ Phase 2 |
+| LAND | /land-buyer-trap | ⬜ Phase 2 |
+| SURVIVE | /divorce-guide | ⬜ Phase 2 |
+| PARENTS | /parents-move-guide | ⬜ Phase 3 |
+| SUBURBS | /before-you-leave-the-suburbs | ⬜ Phase 3 |
+| SELLER | /seller-protection-guide | ⬜ Phase 3 |
+| WAVE | /the-wave1 | ⬜ Phase 2 |
+
+---
+
+## DRIVE ASSET REGISTRY
+
+| Asset | Account | Doc ID |
+|---|---|---|
+| Handoff Doc | alansercy@gmail.com | `1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ` |
+| Lux Command Center | alansercy@gmail.com | `1hFOBfaKxBs1ZsP9hBfOXb17JZylScxkVRPpA6c0YWDc` |
+| Job Search Brief | alansercy@gmail.com | `1PyDF_KKLmfE9uk5cDsHogKUzb55RNQWbwbJfxg7jwAQ` |
+| MMM Prospect Tracker | lsercy@mmmtrucks.com | `1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI` |
+| Loretta Content Calendar | lorettasercy@gmail.com | `1D7krpNO3CmuZCWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM` |
+| Veritas AI Research Feed | alansercy@gmail.com | `1WD2Sr2HgSdMffSYv9bWIpPZOoef4_LDH27yQBiuuM6M` |
+| NLM Inbox Feed folder | alansercy@gmail.com | `1PIP2g8wVrtDON8FQ56PIsTTmxrrtJEMN` |
+
+---
+
+## SESSION QUEUE — NEXT SESSIONS IN ORDER
+
+| Session | Focus | Environment | Est. Time |
+|---|---|---|---|
+| **A** | Governance: PROJECTS.md committed, Claude usage wired, GitHub repos created | Host | 30 min |
+| **ApexBot S3** | Events.yaml, template capture, scheduler wiring, SVS test | Host | 60 min |
+| **L1** | Loretta: reduce Sheet friction, wire Telegram → brief, Buffer auto-post | VM | 60 min |
+| **L2** | Loretta: /relist-guide page, Lofty tagging, PDF delivery | VM | 90 min |
+| **L3** | Loretta: ManyChat RELIST trigger, first nurture sequence | VM | 60 min |
+| **W1** | Loretta: WordPress site build (Netlify, Roots & Room) | Host | 90 min |
+| **MMM** | Chief of Staff Proposal — needs context dump from Alan | Host | 45 min |
+| **Veritas** | Painter SOW (after demo), health enthusiast SOW | Host | 45 min |
+| **GitHub** | alan-os repo, loretta-os repo, skill stubs populated | Host | 60 min |
+
+---
+
+## STANDING REMINDERS
+- Trash: Every Thursday 8pm (Friday pickup)
+- Recycle: Every other Tuesday 8pm (Wednesday pickup 4pm CST) — next: Wed Apr 29
+- HP Hood deadline: May 1 — Matthew Bauer contact
+- ApexBot SVS ends: est. Apr 30 — flip `active_override: false` in events.yaml
+- RageBot expiry: Apr 30 — market entry window
+
+---
+*Generated: April 25, 2026 — End of cross-project governance session*
+*Next update: push via `push_handoff.py` or `git commit` at end of next session*
