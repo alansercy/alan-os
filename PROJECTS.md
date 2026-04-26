@@ -91,7 +91,7 @@
 #### Current System (honest audit)
 | Workflow | Status | Problem |
 |---|---|---|
-| 2.1 Weekly Content Brief | ✅ Live | Requires 17-column Sheet input from Loretta — too much friction |
+| 2.1 Weekly Content Brief | ✅ Live | Friction reduced Apr 26: Loretta sees 7 cols only (`Loretta Input View` filter on Content Calendar tab); `Default Status to Idea` Code node defaults blank Status so only Episode Title + Film Date are required to fire |
 | 2.2 YouTube Description Generator | ✅ Live | Works but no auto-post |
 | 2.5 UTM Slug Generator | ✅ Live | Works |
 | Wave Report landing page `/the-wave1` | ✅ Live | Live but Loretta not using system |
@@ -104,7 +104,8 @@
 #### Rebuild Plan (per Infrastructure Brief Apr 25)
 | Phase | Deliverable | Status |
 |---|---|---|
-| L1 | Reduce Sheet input to 2 fields, wire Buffer auto-post | ⬜ Session L1 |
+| L1 | Reduce Sheet input to 2 fields | ✅ Apr 26 — Default Status node added to 2.1 (commit `912a6b9` in `loretta-os`); 10 cols hidden globally + `Loretta Input View` filter created (id `1704693960`) |
+| L1 | Wire Buffer auto-post | ⬜ Queued — L1 remainder |
 | L1 | `/relist-guide` landing page (Phase 1 per brief) | ⬜ Session L2 |
 | L2 | Lofty source tagging — 8 tags configured | ⬜ Session L2 |
 | L2 | PDF delivery automation via Lofty | ⬜ Session L2 |
