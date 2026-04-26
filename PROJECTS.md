@@ -1,5 +1,5 @@
 # Alan OS — Master Project Registry
-**Last Updated:** April 25, 2026
+**Last Updated:** April 26, 2026
 **Owner:** Alan Sercy | CentPenny LLC / Veritas AI Partners
 **Canonical location:** GitHub → `alan-os` repo → `PROJECTS.md`
 **Session protocol:** Paste this file URL into Claude at session start + state environment (Host/VM) + objective
@@ -152,7 +152,7 @@
 | Daily digest email | ✅ Live | 8:05 AM, includes command center |
 | Email triage — 5 accounts | ✅ Live | MSN, Gmail, Loretta, Keys, MMM |
 | Drive integration — 6 assets | ✅ Live | Service account: `lux-automation@lux-host-493415.iam.gserviceaccount.com` |
-| Claude usage panel | ⏳ Blocked | `.env` currently holds a workspace key (`sk-ant-api03-...`), not an admin-scope key — admin endpoints will reject. Loader is BOM-tolerant (line 12). Needs true `sk-ant-admin-...` key in `ANTHROPIC_ADMIN_API_KEY`. |
+| Claude usage panel | ⏳ Blocked on admin key | `.env` currently holds a workspace key (`sk-ant-api03-...`), not an admin-scope key — admin endpoints will reject. Loader is BOM-tolerant (line 12). Needs true `sk-ant-admin01-...` key in `ANTHROPIC_ADMIN_API_KEY` — see "Admin API key" below for creation steps. |
 | Push handoff to Drive | ✅ Live | `push_handoff.py` |
 | Task Scheduler (alan_os_server) | ⬜ Not started | Add auto-start at login |
 | Obsidian install + setup | ⬜ Queued | Scoped, not installed |
@@ -165,6 +165,20 @@
 2. **Create real admin-scope key for dashboard** — current `.env` value is a workspace key, not admin. Console → API Keys → Create Key → select **Admin** scope (requires org-admin role). Add as `ANTHROPIC_ADMIN_API_KEY=sk-ant-admin-...` to `.env`.
 3. **Re-add `MMM_SHEETS_URL` to `.env`** — `outbound_campaign.py` had a hardcoded Apps Script deployment URL; it was scrubbed during the lux-os repo init. Uncomment line 4 of `.env` and paste the URL back, otherwise the script can't reach the prospect tracker.
 4. **Identify AlanSercy MSN Flow purpose** — n8n workflow ID `7GEpqCGS2cP0J8wY` surfaced during the rotation (no Anthropic key, so just bystander). Likely part of the 5-account email triage stack. Confirm whether it's redundant with the Python `triage.py` scripts in `lux-os/workflows/` or doing something different.
+
+#### Admin API key (manual creation required)
+Anthropic admin-scope keys (`sk-ant-admin01-...`) cannot be minted via API — they must be created interactively by an org-admin. This is the single blocker for the Claude usage panel.
+
+1. Open https://console.anthropic.com/settings/admin-keys (must be signed in as an Organization Admin — not just a workspace member).
+2. Click **Create Key** → name it e.g. `alan-os-dashboard-admin` → confirm.
+3. Copy the `sk-ant-admin01-...` value (it is shown once only).
+4. On host: append to `C:\Users\aserc\.lux\.env`:
+   ```
+   ANTHROPIC_ADMIN_API_KEY=sk-ant-admin01-...
+   ```
+5. Restart `start_alan_os.bat` and the Claude usage panel should populate.
+
+**Scope:** Admin keys can read org-wide usage/cost across all workspaces and projects, and manage workspaces/members/keys. Treat as a higher-trust secret than workspace keys — never commit, never paste into n8n nodes.
 
 ---
 
