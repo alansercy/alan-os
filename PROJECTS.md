@@ -91,15 +91,25 @@
 #### Current System (honest audit)
 | Workflow | Status | Problem |
 |---|---|---|
-| 2.1 Weekly Content Brief | ✅ Live | Friction reduced Apr 26: Loretta sees 7 cols only (`Loretta Input View` filter on Content Calendar tab); `Default Status to Idea` Code node defaults blank Status so only Episode Title + Film Date are required to fire |
-| 2.2 YouTube Description Generator | ✅ Live | Works but no auto-post |
-| 2.5 UTM Slug Generator | ✅ Live | Works |
+| 2.1 Weekly Content Brief | ⏳ OAuth blocked | Friction reduced Apr 26: Loretta sees 7 cols only (`Loretta Input View` filter on Content Calendar tab); `Default Status to Idea` Code node defaults blank Status so only Episode Title + Film Date are required to fire. **Now blocked on Google Sheets/Docs OAuth re-auth — see queue below.** |
+| 2.2 YouTube Description Generator | ⏳ OAuth blocked | Works when creds valid; blocked on Google Sheets/Docs re-auth |
+| 2.5 UTM Slug Generator | ⏳ OAuth blocked | Trigger cred + Sheets cred both revoked |
+| 2.6 Content Intake Form | ⏳ OAuth blocked | Trigger cred + Sheets cred both revoked |
+| C — Loretta Telegram Topic Intake | 🔨 Built, inactive | Workflow `q0aogZju1nET96kP` committed Apr 26. Activate after OAuth re-auth and first manual smoke test |
 | Wave Report landing page `/the-wave1` | ✅ Live | Live but Loretta not using system |
 | Auto-post to Instagram/YouTube | ⬜ Not built | Buffer/Publer selection pending |
 | ManyChat comment triggers | ⬜ Not built | Phase 1: RELIST trigger only |
 | PDF delivery automation | ⬜ Not built | Manual for Phase 1 |
 | Lofty source tagging | ⬜ Not built | All leads land in one pile |
 | Nurture sequences | ⬜ Not built | Phase 2 |
+
+**OAuth re-auth queue (Apr 2026):** Three Google creds revoked refresh tokens around Apr 12–14. Re-auth must happen in the n8n web UI (Credentials → click cred → Reconnect → complete Google consent). Public REST API cannot perform the OAuth handshake.
+
+| Cred ID | Name | Blocks |
+|---|---|---|
+| `sG8kOyb5bJb0hjgS` | Google Sheets account | 2.1, 2.2, 2.5, 2.6, C, 3.2 |
+| `xkF1H9p5Q52UPPoi` | Google Sheets Trigger account | 2.5, 2.6 (trigger nodes) |
+| `gbwzaRu0ONWfhuUr` | Google Docs account | 2.1, 2.2 |
 
 #### Rebuild Plan (per Infrastructure Brief Apr 25)
 | Phase | Deliverable | Status |
@@ -187,7 +197,7 @@ Anthropic admin-scope keys (`sk-ant-admin01-...`) cannot be minted via API — t
 |---|---|---|
 | `apexbot` | ✅ v0.3 live | Session 3 picks up here |
 | `alan-os` | ✅ Live | Repo live as of commit `bf88777` |
-| `loretta-os` | ✅ Live | 5 n8n workflow JSON exports committed (Apr 26): 2.1, 2.2, 3.1, 3.2, AlanSercy MSN Flow. Keys scrubbed to `{{ANTHROPIC_API_KEY}}` placeholder. |
+| `loretta-os` | ✅ Live | 8 n8n workflow JSON exports committed (latest `4a597f0` Apr 26): 2.1, 2.2, 2.5, 2.6, 3.1, 3.2, AlanSercy MSN Flow, C (Telegram intake). Keys scrubbed to `{{ANTHROPIC_API_KEY}}` placeholder. README documents OAuth re-auth queue. |
 | `lux-os` | ✅ Live | 75 files (workflows, dashboards, Norman guard); secrets gitignored; `outbound_campaign.py` needs `MMM_SHEETS_URL` re-added to `.env` |
 | `caveman` | ⚠️ SKILL.md written | Commit to GitHub |
 | `codeburn` | ⚠️ Stub only | Populate SKILL.md next session |
