@@ -159,10 +159,11 @@
 | Sunday evening weekly preview | ⬜ Queued | — |
 | Attachment harvester | ⬜ Queued | PDFs from known senders → folders |
 
-**Claude Usage Setup follow-ups (Apr 25, 2026 session):**
-1. **Rotate two leaked workspace keys** — both `sk-ant-api03-s1gFMM...` and `sk-ant-api03-XaB_iH...` were exposed in the Apr 25 Claude session transcript. Revoke both at console.anthropic.com → API Keys, generate one fresh workspace key, update `ANTHROPIC_API_KEY` in `C:\Users\aserc\.lux\.env`.
+**Claude Usage Setup follow-ups (Apr 25–26, 2026 session):**
+1. ✅ **Workspace key rotation** — Apr 26: leaked `sk-ant-api03-s1gFMM...` / `XaB_iH...` / `pzDMW...` revoked; fresh workspace key in `ANTHROPIC_API_KEY`; n8n state patched across 5 workflows (6 node-parameter occurrences) via `/api/v1/workflows/{id}` PUT and verified clean.
 2. **Create real admin-scope key for dashboard** — current `.env` value is a workspace key, not admin. Console → API Keys → Create Key → select **Admin** scope (requires org-admin role). Add as `ANTHROPIC_ADMIN_API_KEY=sk-ant-admin-...` to `.env`.
 3. **Re-add `MMM_SHEETS_URL` to `.env`** — `outbound_campaign.py` had a hardcoded Apps Script deployment URL; it was scrubbed during the lux-os repo init. Uncomment line 4 of `.env` and paste the URL back, otherwise the script can't reach the prospect tracker.
+4. **Identify AlanSercy MSN Flow purpose** — n8n workflow ID `7GEpqCGS2cP0J8wY` surfaced during the rotation (no Anthropic key, so just bystander). Likely part of the 5-account email triage stack. Confirm whether it's redundant with the Python `triage.py` scripts in `lux-os/workflows/` or doing something different.
 
 ---
 
@@ -171,7 +172,7 @@
 |---|---|---|
 | `apexbot` | ✅ v0.3 live | Session 3 picks up here |
 | `alan-os` | ✅ Live | Repo live as of commit `bf88777` |
-| `loretta-os` | ✅ Created (empty) | Commit Wave + content engine workflows when n8n JSON exports available |
+| `loretta-os` | ✅ Live | 5 n8n workflow JSON exports committed (Apr 26): 2.1, 2.2, 3.1, 3.2, AlanSercy MSN Flow. Keys scrubbed to `{{ANTHROPIC_API_KEY}}` placeholder. |
 | `lux-os` | ✅ Live | 75 files (workflows, dashboards, Norman guard); secrets gitignored; `outbound_campaign.py` needs `MMM_SHEETS_URL` re-added to `.env` |
 | `caveman` | ⚠️ SKILL.md written | Commit to GitHub |
 | `codeburn` | ⚠️ Stub only | Populate SKILL.md next session |
