@@ -151,7 +151,7 @@
 | Daily digest email | ✅ Live | 8:05 AM, includes command center |
 | Email triage — 5 accounts | ✅ Live | MSN, Gmail, Loretta, Keys, MMM |
 | Drive integration — 6 assets | ✅ Live | Service account: `lux-automation@lux-host-493415.iam.gserviceaccount.com` |
-| Claude usage panel | ✅ Live | Admin key `alan-os-admin` wired into `.env`; loader patched to handle UTF-8 BOM (line 12) |
+| Claude usage panel | ⏳ Blocked | `.env` currently holds a workspace key (`sk-ant-api03-...`), not an admin-scope key — admin endpoints will reject. Loader is BOM-tolerant (line 12). Needs true `sk-ant-admin-...` key in `ANTHROPIC_ADMIN_API_KEY`. |
 | Push handoff to Drive | ✅ Live | `push_handoff.py` |
 | Task Scheduler (alan_os_server) | ⬜ Not started | Add auto-start at login |
 | Obsidian install + setup | ⬜ Queued | Scoped, not installed |
@@ -159,7 +159,10 @@
 | Sunday evening weekly preview | ⬜ Queued | — |
 | Attachment harvester | ⬜ Queued | PDFs from known senders → folders |
 
-**Claude Usage Setup:** ✅ Done Apr 25, 2026 — admin key `alan-os-admin` in `.env`, dashboard reads it via BOM-tolerant loader (`utf-8-sig`).
+**Claude Usage Setup follow-ups (Apr 25, 2026 session):**
+1. **Rotate two leaked workspace keys** — both `sk-ant-api03-s1gFMM...` and `sk-ant-api03-XaB_iH...` were exposed in the Apr 25 Claude session transcript. Revoke both at console.anthropic.com → API Keys, generate one fresh workspace key, update `ANTHROPIC_API_KEY` in `C:\Users\aserc\.lux\.env`.
+2. **Create real admin-scope key for dashboard** — current `.env` value is a workspace key, not admin. Console → API Keys → Create Key → select **Admin** scope (requires org-admin role). Add as `ANTHROPIC_ADMIN_API_KEY=sk-ant-admin-...` to `.env`.
+3. **Re-add `MMM_SHEETS_URL` to `.env`** — `outbound_campaign.py` had a hardcoded Apps Script deployment URL; it was scrubbed during the lux-os repo init. Uncomment line 4 of `.env` and paste the URL back, otherwise the script can't reach the prospect tracker.
 
 ---
 
