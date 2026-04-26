@@ -1,5 +1,5 @@
 # Alan OS — Master Project Registry
-**Last Updated:** April 26, 2026
+**Last Updated:** April 26, 2026 (evening session — n8n autonomous fixes)
 **Owner:** Alan Sercy | CentPenny LLC / Veritas AI Partners
 **Canonical location:** GitHub → `alan-os` repo → `PROJECTS.md`
 **Session protocol:** Paste this file URL into Claude at session start + state environment (Host/VM) + objective
@@ -21,15 +21,15 @@
 **Environment:** VM (n8n localhost:5678)
 | Item | Status | Next Action |
 |---|---|---|
-| Workflow 3.1 Gmail Triage | ✅ Live | Monitor for misclassifications |
-| Workflow 3.2 Prospect Audit | ⏳ Blocked | Fix Google Sheets `__rl` node — Sheet ID: `1OePOK2GaGB2JrXO5QUSrXkzceGQ8V2l4` |
+| Workflow 3.1 Gmail Triage | ⏳ Blocked | **Was silently broken since Apr 13** — Gmail OAuth cred `68RydHz0N1dUAj9S` (MMM Trucking) refresh token revoked, every 2-hour run errored. Re-auth in n8n UI: Credentials → MMM Trucking → Reconnect |
+| Workflow 3.2 Prospect Audit | ⏳ Blocked on Gmail re-auth | Sheet ID **fixed Apr 26** — was `1OePOK2GaGB2JrXO5QUSrXkzceGQ8V2l4` (a Doc, not a Sheet); patched to `1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI` (versionId `2c1fb3d1-84b0-4498-81f0-28b29d91451b`). Backup: `C:\Users\aserc\.lux\workflows\3_2_backup_pre_patch.json`. After 3.1 cred re-auth, click Execute on `VvHYTjheeecJ441F` to fire end-to-end test |
 | Nimrat approval gate (3.1) | ⬜ Not started | Replace auto-send with draft-to-Nimrat flow |
-| n8n auto-start Task Scheduler | ⬜ Not started | `schtasks /create /tn "n8n" /tr "npx n8n start" /sc onstart /ru SYSTEM` |
+| n8n auto-start Task Scheduler | 🔨 Scripts staged Apr 26 | Two PS1 scripts at `handoff/vm-scripts/` ready to paste into elevated PowerShell on VM: `01_register_n8n_autostart.ps1` (Task Scheduler entry) + `02_add_mmm_sheets_url.ps1` (writes corrected sheet ID to `.n8n\.env`). n8n filesystem writes are blocked everywhere on VM, so deploy is manual paste — see scripts in repo |
 | HP Hood follow-up | 🔜 Deadline May 1 | Contact Matthew Bauer before May 1 re: full volume commitment |
 | Stemilt/Gordy Schulze outreach | 🔜 Queued | Email Gordy for warm intro to Brendan — Food Shippers PS line |
 | Second unpaid MMM client ($3K/mo) | ⏳ Blocked | Collection or renegotiation — unresolved |
-| Workflow 2.3 Hot Lead SMS | ⬜ Not started | Lofty webhook → Twilio → Loretta |
-| Workflow 2.4 Video Repurposing | ⬜ Not started | Edited video → Opus Clip → Reels → Buffer |
+| Workflow 2.3 Hot Lead SMS | 🔨 Skeleton built Apr 26 | Created inactive at id `AukTldfaY4oWcu1Q` — Gmail trigger on MMM inbox → reply filter → Claude classify → IF hot/warm → Twilio SMS + Gmail backup. **Blocked on:** Twilio credential (acct SID + auth token + from-number) and Loretta's mobile (E.164). Placeholders `__SET_LORETTA_MOBILE_E164__` / `__SET_TWILIO_FROM_E164__` / `__SET_TWILIO_CRED_ID__` in node "SMS Loretta". Note: trigger reuses dead Gmail cred, so will inherit 3.1's blocker |
+| Workflow 2.4 Video Repurposing | 📋 Scoped Apr 26 | Memo at `strategy/workflow_2_4_video_repurposing_scope.md`. Opus Clip API is public (1 credit = 1 min, 30 req/min, webhook callbacks). **Pre-build asks for Loretta:** Opus Clip plan tier (does it include API?), Buffer plan tier, approval-gate preference (auto-post vs review) |
 
 **Key contacts:** Nimrat Samra (CEO, lsercy@mmmtrucks.com) | Matthew Bauer (HP Hood) | Gordy Schulze (Stemilt)
 **Sheets:** MMM Prospect Tracker `1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI`
@@ -278,12 +278,15 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 
 | Session | Focus | Environment | Est. Time |
 |---|---|---|---|
-| ~~**A**~~ | ~~Governance~~ — ✅ Done Apr 25 (PROJECTS.md, Claude usage panel, loretta-os repo, cto.new note). Skill stubs deferred. | Host | — |
+| ~~**A**~~ | ~~Governance~~ — ✅ Done Apr 25 | Host | — |
+| **MMM-fix** | **🔥 First** — Re-auth Gmail cred `68RydHz0N1dUAj9S` in n8n UI, then run vm-scripts/01 + 02 in elevated PS on VM, then click Execute on workflow `VvHYTjheeecJ441F` to verify 3.2 audit emails Loretta. After that, 3.1 should resume hourly success | VM | 20 min |
+| **2.3-finish** | After Twilio account exists: store credential in n8n, fill `__SET_*__` placeholders in workflow `AukTldfaY4oWcu1Q`, activate. Need Loretta's mobile in E.164 | VM | 15 min |
 | **ApexBot S3** | Events.yaml, template capture, scheduler wiring, SVS test | Host | 60 min |
 | **L1** | Loretta: reduce Sheet friction, wire Telegram → brief, Buffer auto-post | VM | 60 min |
 | **L2** | Loretta: /relist-guide page, Lofty tagging, PDF delivery | VM | 90 min |
 | **L3** | Loretta: ManyChat RELIST trigger, first nurture sequence | VM | 60 min |
 | **W1** | Loretta: WordPress site build (Netlify, Roots & Room) | Host | 90 min |
+| **2.4-build** | After Loretta confirms Opus Clip + Buffer plan tiers and approval-gate preference, build per `strategy/workflow_2_4_video_repurposing_scope.md` | VM | 4–6 hr |
 | **MMM** | Chief of Staff Proposal — needs context dump from Alan | Host | 45 min |
 | **Veritas** | Painter SOW (after demo), health enthusiast SOW | Host | 45 min |
 | **GitHub** | alan-os repo, loretta-os repo, skill stubs populated | Host | 60 min |
