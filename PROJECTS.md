@@ -95,7 +95,7 @@
 | 2.2 YouTube Description Generator | ⏳ OAuth blocked | Works when creds valid; blocked on Google Sheets/Docs re-auth |
 | 2.5 UTM Slug Generator | ⏳ OAuth blocked | Trigger cred + Sheets cred both revoked |
 | 2.6 Content Intake Form | ⏳ OAuth blocked | Trigger cred + Sheets cred both revoked |
-| C — Loretta Telegram Topic Intake | 🔨 Built, inactive | Workflow `q0aogZju1nET96kP` committed Apr 26. Activate after OAuth re-auth and first manual smoke test |
+| C — Loretta Telegram Topic Intake | 🔨 Active, end-to-end tested Apr 26 PM | Workflow `q0aogZju1nET96kP`. Webhook URL `https://unaltered-stiffly-renewably.ngrok-free.dev/webhook/loretta-topic-intake`. Append to Content Calendar verified via exec `13476`. Telegram bot still needs `setWebhook` call to start receiving Loretta's real messages |
 | Wave Report landing page `/the-wave1` | ✅ Live | Live but Loretta not using system |
 | Auto-post to Instagram/YouTube | ⬜ Not built | Buffer/Publer selection pending |
 | ManyChat comment triggers | ⬜ Not built | Phase 1: RELIST trigger only |
@@ -105,16 +105,21 @@
 
 **OAuth re-auth queue (Apr 2026):** Three Google creds revoked refresh tokens around Apr 12–14. Re-auth must happen in the n8n web UI (Credentials → click cred → Reconnect → complete Google consent). Public REST API cannot perform the OAuth handshake.
 
-| Cred ID | Name | Blocks |
-|---|---|---|
-| `sG8kOyb5bJb0hjgS` | Google Sheets account | 2.1, 2.2, 2.5, 2.6, C, 3.2 |
-| `xkF1H9p5Q52UPPoi` | Google Sheets Trigger account | 2.5, 2.6 (trigger nodes) |
-| `gbwzaRu0ONWfhuUr` | Google Docs account | 2.1, 2.2 |
+**Apr 26 PM update:** Re-auth attempted, hit `redirect_uri_mismatch`. n8n's redirect URI is `https://unaltered-stiffly-renewably.ngrok-free.dev/rest/oauth2-credential/callback` — must be added to the Google OAuth client's "Authorized redirect URIs" in GCP Console → APIs & Services → Credentials. To find the right OAuth client: open the n8n credential edit form (Client ID is plaintext), or capture from Network tab during a "Sign in with Google" click. Workflow C's append-to-Sheet *did* succeed in test exec `13476`, suggesting `sG8kOyb5bJb0hjgS` may be partially functional — verification needed after browser re-auth completes.
+
+⚠️ **ngrok URL rotates on every restart**, breaking redirect URIs. Switch to a paid ngrok static subdomain or Cloudflare Tunnel before any further re-auth work.
+
+| Cred ID | Name | Blocks | Apr 26 PM status |
+|---|---|---|---|
+| `sG8kOyb5bJb0hjgS` | Google Sheets account | 2.1, 2.2, 2.5, 2.6, C, 3.2 | Append works (exec 13476); reads/triggers unverified |
+| `xkF1H9p5Q52UPPoi` | Google Sheets Trigger account | 2.5, 2.6 (trigger nodes) | Still failing |
+| `gbwzaRu0ONWfhuUr` | Google Docs account | 2.1, 2.2 | Unverified |
 
 #### Rebuild Plan (per Infrastructure Brief Apr 25)
 | Phase | Deliverable | Status |
 |---|---|---|
 | L1 | Reduce Sheet input to 2 fields | ✅ Apr 26 — Default Status node added to 2.1 (commit `912a6b9` in `loretta-os`); 10 cols hidden globally + `Loretta Input View` filter created (id `1704693960`) |
+| L1 | Telegram → Sheet topic intake (Workflow C) | ✅ Apr 26 PM — built, debugged, end-to-end verified (loretta-os commit `4a597f0` + follow-up). Three issues fixed: telegramTrigger swapped to regular webhook (auto-registration silently failing); Parse Topic reads `$json.body.message`; append needs `columns.schema` |
 | L1 | Wire Buffer auto-post | ⬜ Queued — L1 remainder |
 | L1 | `/relist-guide` landing page (Phase 1 per brief) | ⬜ Session L2 |
 | L2 | Lofty source tagging — 8 tags configured | ⬜ Session L2 |
