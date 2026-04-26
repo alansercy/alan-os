@@ -119,7 +119,7 @@
 | Phase | Deliverable | Status |
 |---|---|---|
 | L1 | Reduce Sheet input to 2 fields | ✅ Apr 26 — Default Status node added to 2.1 (commit `912a6b9` in `loretta-os`); 10 cols hidden globally + `Loretta Input View` filter created (id `1704693960`) |
-| L1 | Telegram → Sheet topic intake (Workflow C) | ✅ Apr 26 PM — built, debugged, end-to-end verified (loretta-os commit `4a597f0` + follow-up). Three issues fixed: telegramTrigger swapped to regular webhook (auto-registration silently failing); Parse Topic reads `$json.body.message`; append needs `columns.schema` |
+| L1 | Telegram → Sheet topic intake (Workflow C) | ✅ Apr 26 PM — built, debugged, end-to-end verified (loretta-os: `4a597f0` initial build + `2efbf53` debug fixes). Three issues fixed: telegramTrigger swapped to regular webhook (auto-registration silently failing); Parse Topic reads `$json.body.message`; append needs `columns.schema`. Webhook live at `https://unaltered-stiffly-renewably.ngrok-free.dev/webhook/loretta-topic-intake` |
 | L1 | Wire Buffer auto-post | ⬜ Queued — L1 remainder |
 | L1 | `/relist-guide` landing page (Phase 1 per brief) | ⬜ Session L2 |
 | L2 | Lofty source tagging — 8 tags configured | ⬜ Session L2 |
