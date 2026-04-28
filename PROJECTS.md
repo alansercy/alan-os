@@ -383,6 +383,215 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 - RageBot expiry: Apr 30 — market entry window
 
 ---
+
+## EXPANDED PROJECT DOCUMENTATION (Apr 28, 2026)
+
+This section captures canonical detail for projects whose at-a-glance status sits in the TIER tables above. Reference here for "what is this and what's the next move"; reference the TIER tables for "is anything active right now."
+
+### Alan OS Dashboard
+
+**Status:** Phases 1–4 complete | Phases 5–6 queued
+
+- **Server:** `C:\Users\aserc\.lux\workflows\alan_os_server.py`
+- **Dashboard URL:** `localhost:8000/dashboard`
+- **React UI:** `C:\Users\aserc\.lux\dashboard\index.html`
+- **Task Scheduler:** live (auto-start configured)
+- **Drive integration:** live (GCP project `lux-host-493415`, service account `lux-automation@lux-host-493415.iam.gserviceaccount.com`)
+- **Phases queued:**
+  - Phase 5 — Knowledge hub
+  - Phase 6 — Family stewardship + vault
+
+### NLM Intelligence Loop
+
+**Status:** Live (last confirmed run April 20, 2026)
+
+- **Engine:** `nlm_feed_builder.py` v1.4 at `C:\Users\aserc\.lux\workflows\`
+- **Notebooks (5):**
+  - AI Stack Intelligence
+  - Job Search Qualified
+  - Veritas AI Partners
+  - Real Estate AI
+  - MMM Trucking
+- **Pipeline:** Two-stage job search scoring
+- **Task Scheduler status:** unknown — needs verification
+
+**Next action:** Verify Task Scheduler entry is active and has been running since Apr 20.
+
+### Job Search OS
+
+**Status:** Partial — Workflows 1 and 2 built; 3 and 4 not yet built
+
+- **Workflow 1** — Job email scoring | built, active status unknown
+- **Workflow 2** — NLM push | built, active status unknown
+- **Workflow 3** — Resume tailoring (master → role-specific via Claude) | not built
+- **Workflow 4** — Outbound tracker Google Sheet | not built
+- **Master resume:** rebuilt today — `C:\Veritas\assets\veritas\resume\AlanSercy_Resume_Veritas_2025.docx`
+
+**Next action:** Confirm Workflows 1 and 2 active in n8n once the Loretta Sheets/Docs cred reauth lands; then build Workflow 3 (resume tailoring).
+
+### ApexBot
+
+**Status:** Sessions 1–2 complete | Session 3 pending | RageBot subscription concern
+
+- **Repo:** `github.com/alansercy/apexbot` (private) — local at `C:\Veritas\repos\apexbot`
+- **BlueStacks instances (5):** ports `5555 / 5595 / 5605 / 5625 / 5645`
+- **ADB path:** `C:\ProgramData\Rage Systems\Ragebot\Android\platform-tools\adb.exe`
+- **RageBot subscription:** may have lapsed — was expiring April 30, 2026. Verify before Session 3.
+
+### Lollie & Lovie Lou
+
+**Status:** Live — site, email, and brand assets in place
+
+- **Live site:** `lollieandlovielou.com` (Netlify)
+- **Email:** `loretta@lollieandlovielou.com` (Google Workspace)
+- **Built assets:** pitch deck, one-pager, submission package — at `C:\Veritas\assets\lovie-and-lollie\`
+- **Not yet:**
+  - **Series Bible** — character canon, story arc for the 4-book series, brand guardrails
+  - **Publisher targets** — named list of houses to query
+
+### Norman Inbox Guard
+
+**Status:** Live — daily 6AM digest to Marsha
+
+- **Script location:** `C:\Users\aserc\.lux\workflows\` (per Apr 28 inventory). Existing TIER 3 entry references the file at `C:\Users\aserc\.lux\norman_inbox_guard.py` — verify whether the canonical path is `.lux\` root or `.lux\workflows\` before any future edits.
+- **Schedule:** Daily 6AM via Task Scheduler ("Norman Inbox Guard")
+- **Whitelist:** `C:\Users\aserc\.lux\norman_whitelist.txt` (14 addresses + 2 domain rules)
+
+### Barn Conversion
+
+**Status:** Planning
+
+- **Building:** 30×40 metal building
+- **Budget ceiling:** $75K
+- **Layout:** locked
+- **HVAC:** locked — Mitsubishi `MXZ-3C36NA` (3-zone outdoor unit)
+
+**Next action:** Exit planning into spec / contractor selection.
+
+### Dominick / Endurance Warranty Claim
+
+**Status:** Active — Indiana DOI regulator tracker live
+
+- **Tracker:** Indiana Department of Insurance regulator
+- **Subject:** Endurance warranty claim, Dominick (Norman & Marsha vehicle)
+- **Note (potential conflict to reconcile):** the Estate Planning TIER 3 row above states "Indiana DOI closed." This expanded entry says the regulator tracker is active and ongoing. Verify whether a new/separate complaint is now open or whether the TIER 3 row is stale.
+
+---
+
+## ROADMAP — PLANNED OS COMPONENTS (Apr 28, 2026)
+
+### ORCH-3 — Agent-to-Agent Triggering
+
+**Status:** Planned
+**Priority:** High — unlocks fully autonomous pipeline
+
+**Description:**
+Extend ORCH-2's parallel execution engine to support automatic agent handoffs. When one workflow completes and meets defined criteria, it triggers the next agent without human intervention.
+
+**First two targets:**
+1. Workflow 3.2 prospect audit finds a gap → automatically triggers outbound sequencing agent.
+2. Deal marked closed in MMM tracker → automatically triggers Operations agent to generate onboarding SOP.
+
+**Depends on:** ORCH-2 (complete), Google Sheets webhook or polling layer.
+
+**Next action:** Design handoff contract spec — what data passes between agents, what conditions trigger the next agent, what happens on failure.
+
+### FinanceOS
+
+**Status:** Backburner — do not touch yet
+**Priority:** Highest long-term moat
+
+**Description:**
+AI finance agent handling nightly transaction reconciliation, revenue tracking, financial reporting, and commission calculations.
+
+**First client (planned):** Veritas / MMM revenue stack — $6K/mo MMM + $18K catch-up + Stemilt pipeline.
+
+**Architecture needs (deferred):** bank/transaction data source, Google Sheets or Quickbooks integration, nightly Claude API call for categorization and anomaly detection, morning summary report to Alan.
+
+**Blocker:** Needs dedicated architecture session before any build.
+
+**Canonical note:** Biggest commercial moat in the stack. Do not start until MMM and digital presence revenue is stable and the job search is resolved.
+
+**Next action:** Schedule architecture session — inputs, outputs, data sources, privacy model, report format.
+
+### Alan Sercy — LinkedIn Authority Track
+
+**Status:** Not started
+**Priority:** High — feeds Veritas BD pipeline and job search simultaneously
+
+**Description:**
+B2B personal brand content engine on LinkedIn targeting PE-backed operators, startup founders, and SMB owners who need AI revenue infrastructure. Separate from Loretta's real estate content. Alan's voice: 28-year revenue executive who builds and deploys AI ops systems — not a tech vendor, a trusted advisor.
+
+**Target audience:**
+- PE-backed company operators (Series A–C)
+- Startup founders needing first CRO / revenue infrastructure
+- SMB owners in financial services, trucking, real estate adjacent
+- Executive recruiters and hiring managers at AI-native companies
+
+**Content pillars (3):**
+1. **Revenue operations war stories** — 28 years of closes, turnarounds, lessons. Human, specific, no fluff.
+2. **AI in the field** — what actually works deploying for real clients (MMM, AgentOS, real results, no hype).
+3. **Executive perspective on AI** — where the market is going, what operators get wrong, what to build vs buy.
+
+**Posting cadence:** 3× per week minimum once launched.
+**Format priority:** Short-form text first (highest LinkedIn reach), video repurposing second once content rhythm is established.
+
+**Dependencies:**
+- Resume finalized (in progress — see Job Search OS)
+- LinkedIn profile updated to match new Veritas positioning
+- First 10 posts drafted before going live (content buffer)
+
+**Workflow to build (Phase 2):**
+- n8n **Workflow 5** — LinkedIn post scheduler from content brief
+- Claude drafts posts from Alan's voice guide
+- Alan reviews and approves before publish
+- Performance tracking in Google Sheet
+
+**Voice guide (to be written — session task):**
+Direct, warm, and earned. Lead with the specific and earn the general. Never thought-leadership clichés. Never "AI is transforming everything." Always: here is what I did, here is what happened, here is what it means for you.
+
+**Canonical assets:** `C:\Veritas\assets\veritas\linkedin\`
+
+**Next action:** Update LinkedIn profile headline and About section to reflect Veritas AI Partners positioning. Draft first 3 posts.
+
+### Veritas AI Partners — Product Waitlist Pages
+
+**Status:** Not started
+**Priority:** High — captures inbound while products are built
+
+**Description:**
+Single landing page per OS vertical capturing waitlist signups. No full site needed yet. One page per product: clear one-sentence value proposition, 3 bullets on what it does, email capture form. Goes live BEFORE the LinkedIn authority track launches so traffic has a destination.
+
+**Pages to build (in order):**
+1. **AgentOS** — "AI revenue operations for real estate agents. Find more leads, follow up automatically, close faster."
+2. **TradeOS** — "AI business development for trucking, HVAC, plumbing, and trades. Your pipeline runs while you work."
+3. **PersonalOS** — "AI life operations for executives and family stewards. Your life runs like a business."
+
+**Tech stack:**
+- Single HTML file per product (one Claude Code session each)
+- Veritas brand kit: Navy `#0B1E3D`, Gold `#C6A96A`, DM Sans + Cormorant Garamond
+- Email capture via Netlify Forms (free, no backend)
+- Subdomains:
+  - `agentos.veritasaipartners.com`
+  - `tradeos.veritasaipartners.com`
+  - `personalos.veritasaipartners.com`
+
+**MMP validation rule:**
+Each page goes live BEFORE full product build begins. <10 signups in 30 days → do not build that vertical. ≥10 signups → green light to build. **Exception:** AgentOS already deployed for MMM — use as social proof on the page.
+
+**Waitlist email sequence (3 emails, Claude drafts):**
+1. **Confirmation** — "You're on the list. Here's what we're building."
+2. **Week 2** — "Here's a real result from our current client."
+3. **Launch** — "Early access is open. Here's your invite."
+
+**Canonical assets:** `C:\Veritas\assets\veritas\waitlist-pages\`
+**Depends on:** LinkedIn authority track (traffic source), Veritas domain DNS access (subdomain setup).
+
+**Next action:** Build AgentOS waitlist page first — one Claude Code session, deploy to Netlify same day.
+
+**Strategic note:** This is the MMP validation gate. No more building OS verticals without a waitlist signal first.
+
+---
 *Generated: April 25, 2026 — End of cross-project governance session*
-*Last updated: April 28, 2026 — Workflow 2.4 build + Session Protocol SOP merge*
+*Last updated: April 28, 2026 — Workflow 2.4 build + Session Protocol SOP merge + repo migration to `C:\Veritas\repos\` + 12 new project entries*
 *Next update: push via `push_handoff.py` or `git commit` at end of next session*
