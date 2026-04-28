@@ -77,14 +77,32 @@
 
 ---
 
-### Job Search
+### Job Search — Resume & Outbound System
+**Status:** 🔨 In Progress
 **Target:** W2/1099 CRO or EVP BD roles (remote) | **Runway:** ~5 months
+**Canonical assets:** `C:\Veritas\assets\veritas\resume\` (planned post-reorg location)
+**Master resume Drive ID:** *(to be added after upload)*
+
+**Completed:**
+- Resume v2 built (Veritas brand, two-column, headshot, AI callout)
+- Cover letter exists (needs full rewrite)
+
+**Next actions (in order):**
+1. Fill placeholders — LinkedIn URL, Rocktop numbers, Citi years/title
+2. Add "Earlier Career — Citigroup/CitiMortgage" condensed line
+3. Rewrite cover letter — AI-native operator angle, no generic language
+4. Build Workflow 4 — resume auto-tailoring (master resume → role-specific version via Claude)
+5. Build Workflow 5 — outbound tracker Google Sheet
+6. Confirm Workflow 1 (job email scoring) and NotebookLM push are active
+7. Push resume to Drive canonical location, share link
+
+#### General job search items
 | Item | Status | Next Action |
 |---|---|---|
 | Job Search Brief | ✅ Live | Drive: `1PyDF_KKLmfE9uk5cDsHogKUzb55RNQWbwbJfxg7jwAQ` |
-| NLM Stage 2 job review workflow | ⬜ Not started | Build review/score/act pipeline — 10 jobs pending |
+| NLM Stage 2 job review workflow | ⬜ Not started | Build review/score/act pipeline — 10 jobs pending; queue file: `C:\Users\aserc\.lux\Data\pending_jobs.json` |
 | Rocktop/TSI/Mercury outreach | ⬜ Not started | 3 messages drafted but not sent |
-| EPR dedup logic | ⬜ Not started | EPR queued 3x in pending_jobs.json |
+| EPR dedup logic | ⬜ Not started | EPR queued 3x in `pending_jobs.json`; reset script: `C:\Users\aserc\.lux\workflows\reset_job_search_dedup.py` |
 
 ---
 
