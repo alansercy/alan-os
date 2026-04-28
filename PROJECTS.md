@@ -1,8 +1,8 @@
 # Alan OS — Master Project Registry
-**Last Updated:** April 26, 2026 (evening session — n8n autonomous fixes)
+**Last Updated:** April 28, 2026 (Workflow 2.4 built + Session Protocol SOP)
 **Owner:** Alan Sercy | CentPenny LLC / Veritas AI Partners
 **Canonical location:** GitHub → `alan-os` repo → `PROJECTS.md`
-**Session protocol:** Paste this file URL into Claude at session start + state environment (Host/VM) + objective
+**Session protocol:** See `SESSION_PROTOCOL.md` for the canonical open/close flow across claude.ai and Claude Code. Templates in `templates/`. Legacy: paste this file URL into Claude at session start + state environment (Host/VM) + objective.
 
 ---
 
@@ -29,10 +29,38 @@
 | Stemilt/Gordy Schulze outreach | 🔜 Queued | Email Gordy for warm intro to Brendan — Food Shippers PS line |
 | Second unpaid MMM client ($3K/mo) | ⏳ Blocked | Collection or renegotiation — unresolved |
 | Workflow 2.3 Hot Lead SMS | 🔨 Skeleton built Apr 26 | Created inactive at id `AukTldfaY4oWcu1Q` — Gmail trigger on MMM inbox → reply filter → Claude classify → IF hot/warm → Twilio SMS + Gmail backup. **Blocked on:** Twilio credential (acct SID + auth token + from-number) and Loretta's mobile (E.164). Placeholders `__SET_LORETTA_MOBILE_E164__` / `__SET_TWILIO_FROM_E164__` / `__SET_TWILIO_CRED_ID__` in node "SMS Loretta". Note: trigger reuses dead Gmail cred, so will inherit 3.1's blocker |
-| Workflow 2.4 Video Repurposing | 📋 Scoped Apr 26 | Memo at `strategy/workflow_2_4_video_repurposing_scope.md`. Opus Clip API is public (1 credit = 1 min, 30 req/min, webhook callbacks). **Pre-build asks for Loretta:** Opus Clip plan tier (does it include API?), Buffer plan tier, approval-gate preference (auto-post vs review) |
+| Workflow 2.4 Video Repurposing | ✅ Built Apr 28 — awaiting deployment | n8n JSON at `workflows/workflow_2_4_video_repurposing.json` (15 nodes, dual triggers manual + webhook, Opus Clip → Buffer → Sheets logging). Strategy memo still at `strategy/workflow_2_4_video_repurposing_scope.md`. **See Workflow 2.4 detail subsection below** for full pending/blockers/next-session breakdown. |
 
 **Key contacts:** Nimrat Samra (CEO, lsercy@mmmtrucks.com) | Matthew Bauer (HP Hood) | Gordy Schulze (Stemilt)
 **Sheets:** MMM Prospect Tracker `1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI`
+
+#### Workflow 2.4 detail (Apr 28 build)
+
+**Status:** BUILT — Awaiting Deployment
+
+**What's Done:**
+- `workflows/workflow_2_4_video_repurposing.json` — complete, importable n8n workflow (15 nodes)
+  - Dual triggers: Manual (n8n UI) + Webhook POST (`/webhook/video-repurpose`)
+  - Opus Clip API integration: submits video, waits 5 min, polls job status
+  - Buffer API integration: schedules each clip across platforms (Instagram, TikTok, Facebook)
+  - Google Sheets logging: appends result row on success and failure
+  - Target sheet: `1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM`, tab `Video Log`
+- `workflows/workflow_2_4_notes.md` — full deployment checklist, API notes, import instructions
+
+**Pending (Blocking):**
+1. **Google credential reauth** — three n8n creds revoked: `sG8kOyb5bJb0hjgS` (Sheets), `xkF1H9p5Q52UPPoi` (Sheets Trigger), `gbwzaRu0ONWfhuUr` (Docs). See OAuth re-auth queue in Loretta MoveWithClarity section. Required before the Sheets nodes will work.
+2. **Environment variables** — three must be set in n8n Settings → Environment before first run:
+   - `OPUS_CLIP_API_KEY` — from https://opus.pro → Settings → API
+   - `BUFFER_ACCESS_TOKEN` — OAuth token from Buffer developer dashboard
+   - `BUFFER_PROFILE_IDS` — comma-separated Buffer profile IDs for Loretta's accounts
+3. **Google Sheet tab** — `Video Log` tab must exist in the Content Tracker with columns: `Date | Video Title | Clips Generated | Platforms | Status | Buffer Response | Submitted At`
+4. **Workflow import** — import JSON into https://n8n.lorettasercy.com, swap `PLACEHOLDER_GOOGLE_SHEETS` credential on both Sheets nodes, run a test execution with a short MP4 URL, then activate
+
+**Next Session:**
+- Complete Google cred reauth (covers Workflows 2.1, 2.2, 3.1, 3.2 and unblocks 2.4 Sheets nodes)
+- Import and activate Workflow 2.4
+- Confirm Buffer profile IDs and test end-to-end with a real video URL
+- Move 2.4 from `queued` to `live` in `CONTEXT.json` once green
 
 ---
 
@@ -111,9 +139,11 @@
 
 | Cred ID | Name | Blocks | Apr 26 PM status |
 |---|---|---|---|
-| `sG8kOyb5bJb0hjgS` | Google Sheets account | 2.1, 2.2, 2.5, 2.6, C, 3.2 | Append works (exec 13476); reads/triggers unverified |
+| `sG8kOyb5bJb0hjgS` | Google Sheets account | 2.1, 2.2, 2.5, 2.6, C, 3.2, 2.4 | Append works (exec 13476); reads/triggers unverified |
 | `xkF1H9p5Q52UPPoi` | Google Sheets Trigger account | 2.5, 2.6 (trigger nodes) | Still failing |
 | `gbwzaRu0ONWfhuUr` | Google Docs account | 2.1, 2.2 | Unverified |
+
+**Note:** `CONTEXT.json` `workflows.needs_reauth` mirrors these three IDs as of Apr 28.
 
 #### Rebuild Plan (per Infrastructure Brief Apr 25)
 | Phase | Deliverable | Status |
@@ -250,6 +280,25 @@ Anthropic admin-scope keys (`sk-ant-admin01-...`) cannot be minted via API — t
 
 ---
 
+## ORCHESTRATION ENGINE
+
+| Component | Status | Notes |
+|---|---|---|
+| ORCH-1 (`orchestrator.py`)   | ✅ Live | Sequential agent execution; reads `DIRECTIVE.md`, decomposes via Claude Code, runs agents one at a time. |
+| ORCH-2 (`orchestrator_v2.py`) | ✅ Built and merged to `main` | Parallel execution via `ThreadPoolExecutor`. Two-wave model: `can_run_parallel: true` agents run concurrently, then sequential agents. Imports v1 helpers — no v1 changes. See `ORCH-2-SPEC.md`. |
+| `CONTEXT.json` | ✅ Updated v1.1 | Real system state: owner, clients (MMM Trucking, Veritas), Drive registry, people, product stack, job-search status, standing rules. `needs_reauth` carries real n8n cred IDs (`sG8kOyb5bJb0hjgS`, `xkF1H9p5Q52UPPoi`, `gbwzaRu0ONWfhuUr`) as of Apr 28. |
+| Agents | ✅ Defined | `agents/agent_a.md`, `agents/agent_b.md`, `agents/agent_c.md` |
+
+---
+
+## LIVE INFRASTRUCTURE
+
+| Component | Status | Notes |
+|---|---|---|
+| Session Protocol | ✅ COMPLETE (Apr 28) | `SESSION_PROTOCOL.md` defines how every session opens and closes across both surfaces (claude.ai and Claude Code). Templates in `templates/`: `HANDOFF_TEMPLATE.md` (manual fill-in for claude.ai close), `session_close.md` (paste into Claude Code to produce `SESSION_NOTES.md`), `session_start.md` (paste into new claude.ai chat to resume). Setup note: `<GITHUB_RAW_PROJECTS_URL>` placeholder in `session_start.md` must be filled in once a GitHub remote is configured. |
+
+---
+
 ## COMMUNICATION LAYER
 
 ### Telegram Bots (both live)
@@ -283,7 +332,7 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 | Lux Command Center | alansercy@gmail.com | `1hFOBfaKxBs1ZsP9hBfOXb17JZylScxkVRPpA6c0YWDc` |
 | Job Search Brief | alansercy@gmail.com | `1PyDF_KKLmfE9uk5cDsHogKUzb55RNQWbwbJfxg7jwAQ` |
 | MMM Prospect Tracker | lsercy@mmmtrucks.com | `1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI` |
-| Loretta Content Calendar | lorettasercy@gmail.com | `1D7krpNO3CmuZCWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM` # VERIFY: B or C after muZ — check against Drive before using in automation |
+| Loretta Content Calendar | lorettasercy@gmail.com | `1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM` |
 | Veritas AI Research Feed | alansercy@gmail.com | `1WD2Sr2HgSdMffSYv9bWIpPZOoef4_LDH27yQBiuuM6M` |
 | NLM Inbox Feed folder | alansercy@gmail.com | `1PIP2g8wVrtDON8FQ56PIsTTmxrrtJEMN` |
 
@@ -296,12 +345,12 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 | ~~**A**~~ | ~~Governance~~ — ✅ Done Apr 25 | Host | — |
 | **MMM-fix** | **🔥 First** — Re-auth Gmail cred `68RydHz0N1dUAj9S` in n8n UI, then run vm-scripts/01 + 02 in elevated PS on VM, then click Execute on workflow `VvHYTjheeecJ441F` to verify 3.2 audit emails Loretta. After that, 3.1 should resume hourly success | VM | 20 min |
 | **2.3-finish** | After Twilio account exists: store credential in n8n, fill `__SET_*__` placeholders in workflow `AukTldfaY4oWcu1Q`, activate. Need Loretta's mobile in E.164 | VM | 15 min |
+| **2.4-deploy** | Re-auth `sG8kOyb5bJb0hjgS` / `xkF1H9p5Q52UPPoi` / `gbwzaRu0ONWfhuUr`; set `OPUS_CLIP_API_KEY` / `BUFFER_ACCESS_TOKEN` / `BUFFER_PROFILE_IDS` env vars; create `Video Log` tab; import `workflows/workflow_2_4_video_repurposing.json`; test with short MP4; activate. | VM | 60 min |
 | **ApexBot S3** | Events.yaml, template capture, scheduler wiring, SVS test | Host | 60 min |
 | **L1** | Loretta: reduce Sheet friction, wire Telegram → brief, Buffer auto-post | VM | 60 min |
 | **L2** | Loretta: /relist-guide page, Lofty tagging, PDF delivery | VM | 90 min |
 | **L3** | Loretta: ManyChat RELIST trigger, first nurture sequence | VM | 60 min |
 | **W1** | Loretta: WordPress site build (Netlify, Roots & Room) | Host | 90 min |
-| **2.4-build** | After Loretta confirms Opus Clip + Buffer plan tiers and approval-gate preference, build per `strategy/workflow_2_4_video_repurposing_scope.md` | VM | 4–6 hr |
 | **MMM** | Chief of Staff Proposal — needs context dump from Alan | Host | 45 min |
 | **Veritas** | Painter SOW (after demo), health enthusiast SOW | Host | 45 min |
 | **GitHub** | alan-os repo, loretta-os repo, skill stubs populated | Host | 60 min |
@@ -317,4 +366,5 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 
 ---
 *Generated: April 25, 2026 — End of cross-project governance session*
+*Last updated: April 28, 2026 — Workflow 2.4 build + Session Protocol SOP merge*
 *Next update: push via `push_handoff.py` or `git commit` at end of next session*

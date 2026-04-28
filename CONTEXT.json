@@ -1,0 +1,63 @@
+{
+  "version": "1.1",
+  "updated": "2026-04-28",
+  "owner": "Alan Sercy",
+  "system": {
+    "host": "localhost",
+    "n8n_url": "https://n8n.lorettasercy.com",
+    "dashboard_url": "http://localhost:8000/dashboard",
+    "repos": ["alan-os", "loretta-os", "lux-os"],
+    "vm": "SecureAI-W11",
+    "python": "C:/Python314/python.exe"
+  },
+  "workflows": {
+    "live": ["2.1", "2.2", "3.1"],
+    "on_demand": ["3.2"],
+    "queued": ["2.3", "2.4"],
+    "needs_reauth": ["google_cred_1", "google_cred_2", "google_cred_3"]
+  },
+  "clients": {
+    "MMM_Trucking": {
+      "status": "active",
+      "contact": "Loretta Sercy (account lead), Nimrat Samra (CEO)",
+      "commission": "$6K/mo",
+      "catchup": "$18K",
+      "focus": "prospecting, AI automation, chief of staff support",
+      "prospect_tracker": "1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI"
+    },
+    "Veritas_Digital_Presence": {
+      "status": "2 clients ready",
+      "notes": "fastest near-term revenue"
+    }
+  },
+  "drive_registry": {
+    "handoff_doc": "1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ",
+    "mmm_prospect_tracker": "1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI",
+    "loretta_content_tracker": "1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM",
+    "veritas_research_feed": "1WD2Sr2HgSdMffSYv9bWIpPZOoef4_LDH27yQBiuuM6M",
+    "lux_command_center": "1hFOBfaKxBs1ZsP9hBfOXb17JZylScxkVRPpA6c0YWDc",
+    "job_search_brief": "1PyDF_KKLmfE9uk5cDsHogKUzb55RNQWbwbJfxg7jwAQ"
+  },
+  "people": {
+    "alan": "alansercy@gmail.com",
+    "loretta": "lorettasercy@gmail.com",
+    "mmm_ops": "lsercy@mmmtrucks.com"
+  },
+  "product_stack": {
+    "entity": "CentPenny LLC / Veritas AI Partners",
+    "products": ["AgentOS", "PersonalOS", "TradeOS", "SalesAgentOS", "FinanceOS", "Digital Presence"],
+    "orchestrator": "Claude Code via ORCH-1",
+    "finance_os": "BACKBURNER — do not touch yet"
+  },
+  "job_search": {
+    "status": "active",
+    "targets": "CRO / EVP BD — AI startups, PE-backed, remote",
+    "runway": "5-6 months"
+  },
+  "standing_rules": {
+    "never_broker": true,
+    "never_lead_with_price": true,
+    "mmm_positioning": "minority/women-owned, always",
+    "approval_flow": "Loretta drafts → Nimrat reviews → Nimrat sends"
+  }
+}
