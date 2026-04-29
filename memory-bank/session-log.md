@@ -285,3 +285,40 @@
 - **3.2 (`VvHYTjheeecJ441F`)** still `active=false` on the wire — UI re-toggle decision pending
 - **2.4 prerequisites** for first end-to-end test: `OPUS_CLIP_API_KEY` / `BUFFER_ACCESS_TOKEN` / `BUFFER_PROFILE_IDS` on n8n VM, three Google cred reauths
 - **Anthropic workspace key `pzDMW...`** in `.lux\.env` revoked — separate rotation owed
+
+## 2026-04-29 VIE 5.1 Spec — Audit + Rewrite (Python-first V1)
+- What was done
+  - Audited existing VIE components across alan-os/workflows, .lux/workflows, and live n8n. Found substantial prior art: `nlm_feed_builder.py` v1.4 (~800 lines, ~80% of V1 already done — multi-folder MSN reads, three Claude scoring prompts, Safelink unwrap, dedup, 5 NotebookLM sinks); `extract_ai_links.py` (14-category URL classifier + tracker skip-pattern); `ai_research_monitor.py` + `ai_research_backfill.py` (older single-Doc pair, superseded by nlm_feed_builder); n8n `AlanSercy MSN Flow` (`7GEpqCGS2cP0J8wY`, active — schedule trigger + Outlook reader + Anthropic classifier + 6-folder routing + digest webhook push)
+  - Flagged: AlanSercy MSN Flow uses `@n8n/n8n-nodes-langchain.anthropic` — violates CLAUDE.md §2 ("Never use the built-in Anthropic node"). Not fixed this session — only matters if a future session forks the workflow
+  - Reported audit, Alan picked **Option A — Python-first V1** with explicit constraints: extend `nlm_feed_builder.py`, capital-D `.lux\Data\ai_stack_feed.json`, `/ai_stack` endpoints in `alan_os_server.py`, dashboard panel, n8n deferred to V2
+  - Discovered a parallel-session spec already at `docs/workflow_5_1_spec.md` (commit `1747450`) anchored on the wrong engine (`ai_research_monitor.py`) with lowercase `data/` and per-email schema. Read it, then **rewrote** to anchor on `nlm_feed_builder.py`, capital-D `Data\`, per-URL schema (commit `af7b40d`, +204/−133)
+  - Mid-session Alan reported **a parallel Claude Code session is already building Steps 1–2** (endpoints + JSON skeleton + smoke test in progress). Stopped to avoid write conflicts; this session closed without touching `alan_os_server.py` or `ai_stack_feed.json`
+- What worked
+  - Live n8n REST via `.lux\.env` key worked when MCP child + User-scope env + `alan-os/.env` all returned 401. `.lux\.env` is the authoritative key location for this host
+  - Reading the existing parallel-session spec before overwriting — caught the engine and path mismatches that would have shipped if I'd just rewritten without reading
+- Blockers
+  - None for VIE V1. Branch is 1 commit ahead of `origin/main` (`af7b40d`), not pushed
+  - n8n MCP child still has stale env (same as 04-29 sessions) — needs Claude Code restart to refresh
+- Next step
+  - After parallel session lands Steps 1–2 in lux-os: end-to-end smoke test by running `nlm_feed_builder.py` against a known AI-research email; confirm one item per URL appears in `ai_stack_feed.json` via `GET /ai_stack`
+  - Then Step 3 (extract URLs + per-URL Claude enrichment + POST sink in `nlm_feed_builder.py`) and Step 4 (dashboard tab)
+
+## 2026-04-29 Claude Usage Dashboard Card — Built + Live
+- What was done
+  - Confirmed the data gap before writing code: `/health.claude_burn` carries 7-day token aggregation only — no 5h burn (that lives in the PowerShell statusline's per-message stdin, never reaches the server), no cost, no plan-ceiling reset. Reported three options to Alan; Alan picked **B — 7d card + estimated cost** (hardcode pricing table, flag as estimated).
+  - Extended `~/.lux/workflows/daily_burn_rate.py` with `_PRICING_USD_PER_MTOK` per-model-family rate dict (Opus 4.x / Sonnet 4.x / Haiku 4.x / 3.5 fallbacks / 3 Opus). Per-record cost computed by reading `message.model` from each JSONL entry. Aggregated into `today_cost`, `window_cost_so_far`, `avg_daily_cost`, `projected_window_cost`, plus per-day `cost` in `by_day[]`. Added `pricing_estimated: True` + `pricing_note` so the UI can flag honestly.
+  - Replaced `ClaudeUsageModule` placeholder in `~/.lux/Dashboard/index.html` with a real card that fetches `/health` (30s poll mirrors existing health refresh): 4 stat tiles (today's pace % vs 7d avg with green/amber/red coloring at <100/100-150/>150 thresholds, tokens used, cost est, window resets in Xd Yh) + 5-day vertical-bar sparkline + top-project + last-computed timestamp. New `.cu-*` CSS section reuses existing `--surface` / `--accent` / `--green/amber/red` theme tokens — works in both dark and light. "est. cost" pill on the module title carries the `pricing_note` as a tooltip.
+  - `/admin/restart` to reload `daily_burn_rate.py`. Live `/health` smoke confirmed all new fields after restart: today_cost=$306.73, window_cost=$934.10, avg_daily_cost=$186.82, projected_window_cost=$1496.70, pricing_estimated=true.
+  - Commit `53b60f3` on `~/.lux` main: "feat: Claude usage dashboard card" — only `workflows/daily_burn_rate.py` + `Dashboard/index.html` staged (273 +/2 −). `workflows/alan_os_server.py` had pre-existing uncommitted VIE/ai_stack endpoint work from the parallel session — left untouched/unstaged.
+- What worked
+  - Reporting current state vs the asked-for state before writing any code — caught that "5h and 7d burn rates" is statusline-stdin-only data, not server data, before building the wrong thing. Saved a 2-3hr branch (Option C).
+  - Selective `git add <paths>` instead of `-A` — kept the parallel session's in-flight VIE endpoint work out of this commit cleanly.
+  - Reusing `daily_burn_rate.py` as the single source — the dashboard card got cost data with zero new endpoints, mirroring how the `/health` `claude_burn` block was wired in the prior session.
+- Blockers / caveats
+  - **5h burn rate not exposed to the server.** Per-message rate-limit %s only flow through Claude Code's statusline stdin schema → `~/.claude/statusline.ps1`. To surface 5h on the dashboard, the statusline would need to POST `rate_limits.{five_hour,seven_day}.used_percentage` to a new server endpoint per fire (debounced 300ms). Deferred per Alan's "Option B" choice.
+  - **Cost is estimated, not authoritative.** Pricing rates are base-context published numbers; the user's session is `claude-opus-4-7[1m]` (1M context) which may have a premium rate not captured here. Flagged in UI via the "est. cost" pill + tooltip carrying `pricing_note`. Authoritative numbers still need an Anthropic admin-scope API key (PROJECTS.md line 233 — separate ongoing blocker).
+  - **Frontend-test gap:** verified HTTP 200 on `/dashboard`, verified the new component code is present in served HTML, verified `/health` returns every field the JSX references, but did not actually open a browser to render the React tree. If Babel-standalone trips on the JSX, only Alan loading `localhost:8000/dashboard` will catch it.
+- Next step
+  - Alan: load `localhost:8000/dashboard` → "Claude Usage" tab → confirm card renders without console errors. If anything breaks in the JSX, ping me with the console output.
+  - Optional follow-up (not committed): if 5h matters, build a tiny `POST /claude/statusline` endpoint + edit `~/.claude/statusline.ps1` to also fire it. Adds the missing tile.
+  - Optional follow-up: when admin API key lands, swap `daily_burn_rate.py`'s estimated-cost path for authoritative numbers from the Anthropic admin endpoint and reconcile drift.
