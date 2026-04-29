@@ -106,3 +106,8 @@ Pulled from `PROJECTS.md` Session Queue + TIER 1. Read `PROJECTS.md` for full co
 - Stay under **100K tokens**. Warn Alan if approaching the limit.
 - Use `/clear` when context is heavy — files are saved to disk, not memory.
 - **Never hold full file contents in memory** when a path reference works. Cite file paths instead of pasting.
+
+## MEMORY BANK PROTOCOL
+- Before starting any task: read memory-bank/session-log.md
+- After completing any task: append a dated summary to memory-bank/session-log.md
+- Format: ## [DATE] [TASK NAME]\n- What was done\n- What worked\n- Blockers\n- Next step
