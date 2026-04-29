@@ -90,3 +90,24 @@
 - Next step
   - First end-to-end run of 2.4 once env vars + Sheet tab are in place
   - Decide whether to re-toggle 3.2 active
+
+## 2026-04-29 N8N API Key Rotation + 3.1 Verification
+- What was done
+  - User rotated n8n API key in UI and persisted to User-scope env (`setx`); new JWT has jti `437d9b01-093d-4f64-82e7-6819e1998bff`, iat `1777470745`, replacing prior `e5d6b857...` / iat `1777219215`
+  - Wrote new key to `C:\Veritas\repos\alan-os\.env` (new file, 281 bytes; `.env` already in `.gitignore`)
+  - Updated `C:\Users\aserc\.lux\.env` — preserved existing `ANTHROPIC_API_KEY` line, added `N8N_API_KEY`
+  - Updated `C:\Users\aserc\.claude.json` at `mcpServers.n8n-mcp.env.N8N_API_KEY` via literal substring replace (single occurrence verified before write); JSON re-parsed clean post-write; backup `.bak-20260429` was created during write but was cleaned up afterward (Claude Code rewrites `.claude.json` continuously on session metadata — file remained intact)
+  - Live API verified: `GET https://n8n.lorettasercy.com/api/v1/workflows?limit=1` → 200 with new key
+  - Workflow 3.1 (`r1pkTZ94DuuWrTtA` MMM Trucking Gmail Triage) confirmed `active=True`, Schedule Trigger; last 5 executions all `success`, 2-hour cadence — latest `2026-04-29T02:00:00Z` clean. No reactivation needed.
+  - Video Log tab created in Loretta Content Tracker Sheet `1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM` (new sheetId `915616600`) via service account `lux-automation@lux-host-493415` with header row `Date | Video Title | Clips Generated | Platforms | Status | Buffer Response | Submitted At` (done in prior turn this session)
+- What worked
+  - `[Environment]::GetEnvironmentVariable('N8N_API_KEY','User')` correctly reads the registry-persisted value across fresh PowerShell shells without inheriting stale env from parent
+  - Literal-string Replace on the JWT (no regex) — safer than re-serializing JSON; preserved file structure exactly
+  - Service account remains the cleanest path for direct Sheet edits from the host (no OAuth handshake needed)
+- Blockers
+  - Workflow 2.4 deploy still pending: needs (1) `OPUS_CLIP_API_KEY` / `BUFFER_ACCESS_TOKEN` / `BUFFER_PROFILE_IDS` env vars on the n8n VM (cannot be verified from host), (2) the three Google credential reauths (`sG8kOyb5bJb0hjgS`, `xkF1H9p5Q52UPPoi`, `gbwzaRu0ONWfhuUr`)
+  - Note: `C:\Users\aserc\.lux\.env` still carries the revoked `pzDMW...` Anthropic workspace key — separate rotation owed (per PROJECTS.md line 227)
+- Next step
+  - Set the three env vars on the n8n VM (Settings → Environment, or `.n8n\.env` directly)
+  - Reconnect the three Google creds in n8n UI
+  - Then deploy Workflow 2.4: POST `workflows/workflow_2_4_video_repurposing.json` with `PLACEHOLDER_GOOGLE_SHEETS` swapped to `sG8kOyb5bJb0hjgS` on both Sheets nodes; activate; smoke-test with a short MP4 URL
