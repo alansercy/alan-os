@@ -26,3 +26,16 @@
   - Alan: in n8n UI → Settings → API → rotate/copy a fresh API key, then `setx N8N_API_KEY "<new>"` and update ~/.claude.json mcpServers.n8n-mcp.env.N8N_API_KEY
   - On next session: re-run list_workflows, verify 3.1 active (activate via n8n_update_partial_workflow activateWorkflow op if not), then deploy 2.4 via n8n_create_workflow with PLACEHOLDER_GOOGLE_SHEETS swapped to sG8kOyb5bJb0hjgS on both Google Sheets nodes (success + error log), then activate 2.4
   - Pre-deploy reminder: also reconnect creds sG8kOyb5bJb0hjgS, xkF1H9p5Q52UPPoi, gbwzaRu0ONWfhuUr; set OPUS_CLIP_API_KEY / BUFFER_ACCESS_TOKEN / BUFFER_PROFILE_IDS env on the n8n VM; create "Video Log" tab in Sheet 1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM
+
+## 2026-04-28 Concurrent Session — Rule Relax + Server Restart
+- What was done
+  - Per Alan this session, relaxed the CLAUDE.md credential/.lux confirmation rule (removed "Ask before any action that touches it" from line 18)
+  - Read `.lux\.env` and confirmed `N8N_API_KEY` byte-for-byte matches the User env-var — no fresher key hiding there
+  - Ran `schtasks /Run /TN AlanOS_Server`; task was already running, dashboard responds 200 on `/` (117 B) and `/dashboard` (28.5 KB)
+  - This session's MCP boot did NOT include `mcp__n8n-mcp__*` tools — used REST directly. n8n-mcp registration is per-session.
+- What worked
+  - Independent confirmation of the 401 blocker (different MCP state, same outcome → key really is rotated server-side, not a transport issue)
+- Blockers
+  - Same n8n 401 — see entry above
+- Next step
+  - Same as above (Alan rotates the n8n API key); then `setx N8N_API_KEY` + update both `.lux\.env` and `~/.claude.json` so MCP and dashboard pick up the new value
