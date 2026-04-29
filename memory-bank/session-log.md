@@ -159,3 +159,72 @@
   - Then: I draft a PowerShell move script with `-WhatIf` first, scoped to one category at a time (suggest order: archive folder first → Veritas assets → personal absorption → deletions last)
   - Handle `AWS New Biz Photos\` separately and first — encrypted destination of Alan's choice, then verify-and-shred the original
 
+## 2026-04-29 Claude Code Statusline Wired — Live Token/Cost Display
+- What was done
+  - Wrote `C:\Users\aserc\.claude\statusline.ps1` — PowerShell script reading the official statusline stdin schema (snake_case nested: `model.display_name`, `context_window.used_percentage`, `context_window.total_input_tokens` + `total_output_tokens`, `cost.total_cost_usd`, `cost.total_duration_ms`, `rate_limits.{five_hour,seven_day}.used_percentage`)
+  - Output is two lines: `[Model] dir | branch` then `[bar] pct% | NK tok | $cost | duration | rate limits`. Bar is green/yellow/red at 0-69/70-89/90+ thresholds. ASCII-only (no emojis, no unicode blocks) for Windows terminal compatibility. Rate limits gracefully omitted when absent (non-Pro/Max sessions)
+  - Updated `C:\Users\aserc\.claude\settings.json` to add `statusLine` block: `{"type":"command","command":"powershell -NoProfile -File C:/Users/aserc/.claude/statusline.ps1","padding":1}`
+  - Pre-write backup: both files copied to `C:\Veritas\archive\backups\2026-04-29\` (CLAUDE.md 5415B, settings.json 248B — pre-modification)
+- What worked
+  - Verified disk reality before implementing — research agent had given a guessed camelCase schema (`contextUsage.inputTokens`) that doesn't match the real Claude Code schema. Authoritative source is `https://code.claude.com/docs/en/statusline`. Confirmed `~/.claude/stats-cache.json` does NOT exist (research agent claim was wrong). Confirmed transcripts at `~/.claude/projects/<slug>/<sessionId>.jsonl` DO carry per-message `.message.usage` blocks with `input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens` — so cross-session aggregation IS possible
+  - Tested two mock payloads (low pct + rate limits, high pct without) — both rendered correctly. Caught a PS5.1 silent-fail: `'{0:D2}' -f` on a `[double]` returns empty string under `$ErrorActionPreference='SilentlyContinue'`. Fix: cast to `[int]` before format. Worth remembering for any PS5.1 number formatting
+- Blockers
+  - Statusline updates are debounced 300ms and only fire after assistant messages / permission changes / vim toggles — won't update during long-running tool calls. Acceptable for v1
+  - First-time activation may require accepting the workspace-trust dialog; if you see "statusline skipped · restart to fix", restart Claude Code
+- Next step
+  - **NEXT PRIORITY: build "Claude Usage" dashboard card on the Automation tab** (spec is in this session's report, not yet committed to a docs file). Backend: add `GET /claude/usage?range=today|week|live` to `C:\Users\aserc\.lux\workflows\alan_os_server.py`. Aggregate `~/.claude/projects/*/*.jsonl` assistant-message `usage` blocks, group by `.timestamp` date and `.message.model`. Live session = latest-modified `.jsonl` (or cross-ref `~/.claude/sessions/<pid>.json` `status:"busy"`). Cache 30s (mirror `_n8n_cache`). Pricing must be a configurable JSON, not hardcoded — flag as estimated cost in UI. Frontend: card on Automation tab with 4 tiles (Live, Today, Week, Sparkline 14d). Polls `/claude/usage` every 30s while tab visible. Effort: 3-4 hours. Out of scope for v1: real-time deltas (would need a hook), authoritative cost (no Anthropic usage API for Claude Code), per-project breakdown
+  - When `/usage` actually used, capture a sample `stats-cache.json` if one materializes — current claim is the file doesn't exist, but `/usage` slash-command output may write it on first invocation
+
+## 2026-04-29 daily_burn_rate.py + /health wiring
+- What was done
+  - Wrote `C:\Users\aserc\.lux\workflows\daily_burn_rate.py` — walks `~/.claude/projects/*/*.jsonl`, sums `message.usage` blocks per UTC date for the rolling 7-day window, returns dict with `today_billable`, `window_billable_so_far`, `avg_daily_billable`, `projected_window_total`, `window_days_elapsed/remaining`, `by_day`, `top_projects`. 30s in-memory cache, no network calls, importable + runnable
+  - Wired into `/health` endpoint: top-of-file try-import (graceful fallback if module missing), call `_get_claude_burn()` inside `health()` and add `claude_burn` key to the response
+  - Both files committed in this session's lux-os push
+- What worked
+  - Live `/health` smoke test after `/admin/restart`: today_billable=3.76M, window_billable_so_far=14.5M, avg_daily=2.91M, projected_window_total=23.5M (4 active days × 2.91M + 3.08 days remaining). 29 transcript files scanned, 0 parse errors. Cache observed to dedupe consecutive calls
+  - Reused the JSONL-parsing logic from the ad-hoc burn-rate script earlier this turn — single source of truth now lives in workflows/
+- Blockers
+  - None for the burn-rate logic itself
+  - **Plan ceiling unknown** — daily_burn_rate.py emits raw token counts only. Translating to "% of plan ceiling" still blocked on (a) knowing which Claude plan tier is active and (b) the dashboard's Claude Usage panel which is itself blocked on the admin API key (PROJECTS.md line 233). Workaround: the user can manually pair the projected_window_total with their plan tier's published ceiling
+- Next step
+  - When admin API key lands, add a second function `get_official_usage()` calling Anthropic's admin endpoint and reconcile against local transcript sum to detect drift
+  - Optional: surface `claude_burn` on a dashboard card — cheap because the data is already in `/health`
+
+## 2026-04-29 Task Scheduler Patch — Blocked on Elevation
+- What was done
+  - Inspected existing `AlanOS_Server` task XML: 4/7 of the desired spec already correct (LogonTrigger, restart-on-failure, IgnoreNew single-instance, runs `python.exe alan_os_server.py`). Three deltas vs. "background, no console window": missing `<Hidden>true</Hidden>`, `<ExecutionTimeLimit>P1D</ExecutionTimeLimit>` (24h cap), both battery flags `true`
+  - Built patched XML at `C:\Users\aserc\.lux\workflows\AlanOS_Server.xml.patched` (Hidden=true, battery flags=false, ExecTimeLimit=PT0S). Backup at `AlanOS_Server.xml.bak` (gitignored as `*.bak`). XML schema-verified in PowerShell before registering
+  - Tried three registration paths from non-elevated PowerShell: `schtasks /Create /XML /F`, `Register-ScheduledTask -Force`, `Set-ScheduledTask`. All three returned "Access is denied"
+- What worked
+  - The patched XML is correct — verified by re-parsing it post-write with a separate XmlNamespaceManager and asserting all four fields. Ready to apply once an elevated shell runs the registration
+- Blockers
+  - **Live task config unchanged.** Just confirmed via fresh `schtasks /Query /XML`: `Hidden=<missing>`, `ExecTimeLimit=P1D`, `DisallowStartIfOnBatteries=true`, `StopIfGoingOnBatteries=true`. Patch has NOT been applied
+  - Claude Code session is non-elevated (`IsInRole(Administrator) = False`). Modifying tasks at `\AlanOS_Server` requires admin regardless of which API path
+- Next step
+  - **Alan: run elevated PowerShell once.** The exact one-liner sequence (apply + kill old python + /Run + verify hidden) was provided in this session's conversation; the file path to register from is `C:\Users\aserc\.lux\workflows\AlanOS_Server.xml.patched`. Verification target: live XML query shows `Hidden=true` AND new python.exe has empty `MainWindowTitle`/`MainWindowHandle=0`. Until this is done, server still pops a console window on login and dies after 24h
+  - Alternatively: restart Claude Code as admin and ping me — I'll re-run from this side
+
+## 2026-04-29 Session Closeout
+- Net delivered today (committed + pushed across two repos):
+  - SalesOS Phase 1: schema (`leads.json`, `competitors.json`), 5 endpoints (`GET /leads`, `GET /leads/pipeline`, `POST /leads`, `PATCH /leads/{id}`, `GET /competitors`), workflow 4.1 spec, dashboard tab spec
+  - `/admin/restart` self-restart bug fixed (detached helper, ping-as-sleep, taskkill)
+  - `daily_burn_rate.py` + `/health` `claude_burn` block (live, 30s cached)
+  - alan-os CLAUDE.md tightened (memory bank reads precede skill invocations) — separate parallel-session commit `ee3571e`
+  - Statusline wired at `~/.claude/statusline.ps1` referenced from `~/.claude/settings.json` (parallel-session work, not this Claude Code session)
+- Carry-forward (next session must address):
+  1. **Run elevated `schtasks /Create /XML /F` with the patched file** — Task Scheduler patch unfinished
+  2. **`/plugin install superpowers@claude-plugins-official`** — pre-flight done, install user-invoked only; after install, audit plugin's CLAUDE.md / skills / hooks against this repo's existing protocols before any merge
+  3. **n8n VM ↔ host reachability for Workflow 4.1 Step 4** — open question in `docs/workflow_4_1_spec.md` (3 resolution options listed)
+  4. **Admin API key creation** — single biggest dashboard gap (PROJECTS.md line 233); unblocks both Claude Usage panel and SalesOS-vs-plan-ceiling math
+- Burn-rate snapshot at close: 14.5M billable / 7-day window, day 3.92 of 7, projected end-of-window ~23.5M
+
+## 2026-04-29 Superpowers Plugin Install — Pre-flight + Inventory Pending
+- What was done
+  - Marketplace `claude-plugins-official` (anthropics/claude-plugins-official) is registered in settings.json and synced at `C:\Users\aserc\.claude\plugins\marketplaces\claude-plugins-official\` (lastUpdated 2026-04-29T17:12:25Z). Marketplace manifest `marketplace.json` at line 1868 lists `superpowers` as a `url`-source plugin pointing to `https://github.com/obra/superpowers.git`
+  - Pre-install backups (CLAUDE.md, settings.json) confirmed at `C:\Veritas\archive\backups\2026-04-29\` per Alan's directive
+- Blockers
+  - Cannot run `/plugin install superpowers@claude-plugins-official` from agent side — `/plugin` is a Claude Code built-in slash command, user-invoked only. Alan must paste it. Once it lands, plugin files appear under `~/.claude/plugins/` (likely `external_plugins/superpowers/` since the marketplace entry is `source.source: "url"` not the local `plugins/` tree)
+- Next step
+  - Alan pastes `/plugin install superpowers@claude-plugins-official`
+  - I inventory `skills/`, `commands/`, `agents/`, `hooks/`, `scripts/` under the installed plugin dir, diff plugin's `CLAUDE.md` against `C:\Veritas\repos\alan-os\CLAUDE.md` (specifically MEMORY BANK PROTOCOL on lines 88-91, technical rules §2, session protocol §4, 100K token discipline §6), and report any conflict before suggesting any change
+
