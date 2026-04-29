@@ -228,3 +228,50 @@
   - Alan pastes `/plugin install superpowers@claude-plugins-official`
   - I inventory `skills/`, `commands/`, `agents/`, `hooks/`, `scripts/` under the installed plugin dir, diff plugin's `CLAUDE.md` against `C:\Veritas\repos\alan-os\CLAUDE.md` (specifically MEMORY BANK PROTOCOL on lines 88-91, technical rules §2, session protocol §4, 100K token discipline §6), and report any conflict before suggesting any change
 
+## 2026-04-29 Superpowers Installed + Inventoried + CLAUDE.md §4 Patched
+- What was done
+  - Alan ran `/plugin install superpowers@claude-plugins-official` then `/reload-plugins` — install reported `1 plugin · 3 skills · 6 agents · 1 hook · 0 plugin MCP servers · 0 plugin LSP servers`. `enabledPlugins: {"superpowers@claude-plugins-official": true}` written to `~/.claude/settings.json` automatically
+  - Plugin landed at `C:\Users\aserc\.claude\plugins\cache\claude-plugins-official\superpowers\5.0.7\` — note this is the **cache** subdir, not `external_plugins/` as the pre-flight entry guessed. Worth knowing for future plugin debug: Anthropic-marketplace plugins cache by `<marketplace>/<plugin>/<version>/`
+  - Inventory:
+    - **14 skills** (skills/): using-superpowers, brainstorming, writing-plans, executing-plans, subagent-driven-development, dispatching-parallel-agents, test-driven-development, systematic-debugging, verification-before-completion, requesting-code-review, receiving-code-review, finishing-a-development-branch, using-git-worktrees, writing-skills
+    - **3 commands**: `/brainstorm`, `/write-plan`, `/execute-plan`
+    - **1 agent file**: `code-reviewer.md` (the "6 agents" reload count includes 5 internal subagents that skills spawn)
+    - **1 hook**: `SessionStart` only, fires on `startup|clear|compact`. Reads `using-superpowers/SKILL.md` (~3KB) and injects it as `additionalContext`. **No PreToolUse / PostToolUse / Stop / SessionEnd hooks** — nothing wraps real tool calls. Polyglot wrapper at `hooks/run-hook.cmd` finds Git Bash on Windows
+  - CLAUDE.md diff result: plugin's own `CLAUDE.md` is a contributor guide for `obra/superpowers` PRs (94% rejection rate context) — irrelevant unless contributing back. The behaviorally-loaded file is `using-superpowers/SKILL.md`, which has aggressive "before ANY response including clarifying questions" trigger language but explicitly states (lines 18-26) that user CLAUDE.md instructions take priority over skills (priority 1 vs 2 vs 3)
+  - **Patched alan-os CLAUDE.md §4 Session Protocol**: added `**Memory bank reads precede all skill invocations.**` as the first bullet, restating the precedence in the project's voice. Commit `ee3571e` on `main`
+- What worked
+  - Verifying actual install path on disk before assuming — the `external_plugins/` guess from the pre-flight entry was wrong. The marketplace.json's `source.source: "url"` plugins still cache locally, just under `cache/<marketplace>/<plugin>/<version>/`
+  - Reading the plugin's own `using-superpowers/SKILL.md` priority section confirmed no real conflict before patching — the plugin authors anticipated this exact tension
+- Blockers
+  - None functional. Skills with aggressive auto-trigger language (using-superpowers, brainstorming, verification-before-completion, tdd, systematic-debugging) will fire on most builds going forward. Expected to add value on spec-first work (Claude Usage card, Workflow 4.1, SalesOS dashboard) and possibly add ceremony to one-shot ops. Per-skill disable list deferred until experienced
+- Next step
+  - Watch for `brainstorming` skill on the next "build X" request — that's the most aggressive auto-trigger
+  - If skill ceremony becomes friction on small ops, add disable list to `~/.claude/settings.json`
+
+## 2026-04-29 SESSION CLOSE — Final Roll-up
+**Today's deliverables (committed + pushed unless flagged):**
+1. **n8n API key rotated** — auth restored, 3.1 (`r1pkTZ94DuuWrTtA`) confirmed active 2h cadence, Video Log Sheet tab created via service account
+2. **Workflow 2.4 deployed + activated** — `tX09Uxf9LdjVLmvl`, 15 nodes, validator clean
+3. **SalesOS Phase 1 LIVE** — `data/leads.json` + `data/competitors.json`, 5 endpoints in `alan_os_server.py`, all smoke-tested. Specs: `docs/workflow_4_1_spec.md`, `docs/salesOS_dashboard_spec.md`
+4. **`/admin/restart` fixed** — detached-helper subprocess pattern, end-to-end verified
+5. **`daily_burn_rate.py` + `/health` `claude_burn`** — Claude token aggregation v0 from `~/.claude/projects/*/*.jsonl`, 30s cached. Live snapshot at close: 14.5M billable in window, day 3.92/7, projected ~23.5M
+6. **Claude Code statusline LIVE** — `~/.claude/statusline.ps1` (PowerShell, 2-line, color-coded ctx bar) wired into `~/.claude/settings.json`
+7. **Superpowers plugin installed + inventoried** — 14 skills, 3 commands, 1 agent, 1 SessionStart-only hook
+8. **CLAUDE.md §4 patched** — "Memory bank reads precede all skill invocations" — commit `ee3571e`
+9. **Desktop inventory + org plan** — 480GB scanned, plan ready in `2026-04-29 Desktop Inventory + Org Plan` entry above. **On hold pending backup**. AWS New Biz Photos flagged sensitive (DL.jpg + SS Card.jpg) — must be handled FIRST and SEPARATELY
+10. **Task Scheduler patch FILE built** at `~/.lux/workflows/AlanOS_Server.xml.patched` (Hidden=true, battery=false, ExecTimeLimit=PT0S) — **NOT applied to live task**, blocked on elevation
+
+**Pre-write backups kept:** `C:\Veritas\archive\backups\2026-04-29\CLAUDE.md`, `settings.json`
+
+**Next session priorities (Alan-stated, in order):**
+1. **Claude Usage dashboard card** — backend `/claude/usage?range=today|week|live` endpoint extracted from existing `daily_burn_rate.py` aggregation, frontend 4-tile + sparkline card on Automation tab. Spec is in the 2026-04-29 statusline entry. Effort 3-4h
+2. **SalesOS dashboard tab** — kanban view per `docs/salesOS_dashboard_spec.md`, drawer-based stage transitions. Blocked on host-VM connectivity decision
+3. **Workflow 4.1** — n8n lead enrichment per `docs/workflow_4_1_spec.md`. Blocked on same host-VM connectivity decision (Step 4 POST to `/leads` needs the host reachable from the n8n VM — three resolution options listed in spec: ngrok / `/admin/write-file` / move alan-os to VM)
+4. **Desktop backup + cleanup** — Alan confirms full-disk backup → I draft PowerShell `-WhatIf` move script scoped one category at a time → AWS New Biz Photos handled FIRST (encrypted relocation), then archive → assets → personal → deletions
+
+**Open carry-forward blockers:**
+- **Apply Task Scheduler patch** — needs elevated PS: `schtasks /Update /TN AlanOS_Server /XML "C:\Users\aserc\.lux\workflows\AlanOS_Server.xml.patched"`, then kill old python, `/Run`, verify Hidden=true and `MainWindowHandle=0`. Until applied, server pops a console window on login and dies after 24h
+- **Admin API key creation** — biggest dashboard gap (PROJECTS.md line 233); unblocks Claude Usage panel official numbers + SalesOS-vs-plan-ceiling math
+- **3.2 (`VvHYTjheeecJ441F`)** still `active=false` on the wire — UI re-toggle decision pending
+- **2.4 prerequisites** for first end-to-end test: `OPUS_CLIP_API_KEY` / `BUFFER_ACCESS_TOKEN` / `BUFFER_PROFILE_IDS` on n8n VM, three Google cred reauths
+- **Anthropic workspace key `pzDMW...`** in `.lux\.env` revoked — separate rotation owed
