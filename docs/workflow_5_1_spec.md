@@ -1,114 +1,66 @@
-# Workflow 5.1 Spec — VIE V1 (Email → AI Stack Feed)
+# Workflow 5.1 Spec — VIE Email Feed (Veritas Intelligence Engine V1)
 
-**Status:** SPEC ONLY — not yet built (substantial Python prior art exists, see "Existing assets")
+**Status:** SPEC ONLY — not yet built
 **Owner:** Alan Sercy / Veritas AI Partners
-**Phase:** Veritas Intelligence Engine (VIE) — V1
+**Phase:** Veritas Intelligence Engine (VIE) — V1 (email-only)
+**Architecture:** Python-first — extends `nlm_feed_builder.py` v1.4. **No new n8n workflow in V1.** n8n deferred to V2.
 **Last updated:** 2026-04-29
 
 ---
 
 ## Purpose
 
-Replace the manual "save link, read later, evaluate" loop with a continuously-running pipeline that scans Outlook inboxes for AI-related research, enriches each item via Claude (summarize, categorize, score relevance against Veritas / AgentOS / PersonalOS pipelines), and surfaces ranked recommendations on the alan-os dashboard.
+Autonomous AI research radar. Walks MSN Outlook `Filing\` folders for new emails, extracts URLs, enriches each via Claude (summarize, score relevance, fit-tag against Veritas/AgentOS/PersonalOS pipelines), persists to `ai_stack_feed.json`, and surfaces a ranked dashboard panel. Replaces the manual "save link, read later, evaluate" loop with a continuously-running pipeline that pre-digests inputs before Alan ever sees them.
 
-**V1 scope:** email-only input. Proves the enrichment + ranking + surface loop end-to-end.
-**V2 scope (out of scope here):** multi-source fan-in — GitHub trending, RSS, X/Twitter saves, Reddit. Same enrichment pipeline, additional collectors.
+V1 ships email-only. V2 adds multi-source fan-in (GitHub trending, RSS, X/Twitter saves, Reddit) onto the same enrichment pipeline + storage + dashboard.
 
-## Versioning + transport decision
+## Why Python-first (vs. an n8n workflow)
 
-| Version | Transport | Trigger | Sink | Status |
-|---|---|---|---|---|
-| **V1** | **Python** (Outlook COM + `anthropic` SDK + Google Docs API) | Task Scheduler — daily 7am | `ai_stack_feed.json` (NEW) **AND** Veritas AI Research Feed Doc (existing) | THIS SPEC |
-| V2 | n8n HTTP Request to Anthropic per CLAUDE.md §2 (typeVersion 4.2, `x-api-key`, raw body) | n8n Schedule Trigger | Same `ai_stack_feed.json` via `POST http://host:8000/ai_stack` | Future — after VM↔host reachability resolved (same blocker as Workflow 4.1 Step 4) |
+`C:\Users\aserc\.lux\workflows\nlm_feed_builder.py` v1.4 already implements ~80% of the V1 pipeline:
+- Reads MSN > `Filing\{AI Research, Job Search, Veritas, Real Estate, MMM}` via Outlook COM
+- Calls Claude Haiku per email with three folder-aware scoring prompts (`AI_STACK_PROMPT`, `VERITAS_PROMPT`, `JOB_STAGE1_PROMPT`)
+- Has `unwrap_safelink()`, `extract_youtube_url()`, `extract_job_urls()` — Outlook Safe Links resolution included
+- Persistent dedup at `.lux\Data\nlm_processed_ids.json`
+- Pushes to 5 NotebookLM notebooks + appends to Veritas AI Research Feed Google Doc
 
-**Why Python first:** ~70% of V1 already exists in `~/.lux/workflows/ai_research_monitor.py` and `extract_ai_links.py`. The net-new piece is JSON emission and the dashboard panel. Building V1 in Python ships the loop in hours; rebuilding in n8n now would discard working code and hit the host-reachability blocker that's also gating Workflow 4.1.
+The only gaps are (a) emitting per-URL enriched records to a JSON sink and (b) a dashboard surface. Building a parallel n8n flow that hits the same inbox would duplicate the Outlook reader, dedup registry, and Safelink unwrap logic for no functional gain. V2 is the right time to migrate to n8n once VIE earns multi-source inputs.
 
-## Existing assets (do not rebuild)
+The legacy `ai_research_monitor.py` / `ai_research_backfill.py` pair (single-Doc target) is **not** the engine for V1 — `nlm_feed_builder.py` is the more comprehensive successor and is already scheduled per the v1.4 commentary. The legacy scripts stay in place for backfill/audit but VIE V1 does not augment them.
 
-| File | Role in V1 |
-|---|---|
-| `~/.lux/workflows/ai_research_monitor.py` | **Augment** — already does daily Outlook scan + Claude Haiku summary + Google Doc append. Add a second sink: build a structured record per email and append to `ai_stack_feed.json`. |
-| `~/.lux/workflows/ai_research_backfill.py` | Twin of monitor; same augmentation applies if backfill is re-run. |
-| `~/.lux/workflows/extract_ai_links.py` | URL extraction reference — its categorization regex (14 categories, skip-pattern for trackers) becomes the URL-extraction step in the augmented monitor. |
-| `~/.lux/workflows/nlm_feed_builder*.py` | Adjacent; pushes to NotebookLM. Out of scope for VIE V1 — leave running. |
+## Trigger
 
-## Canonical Google Doc
+Same Task Scheduler entry that runs `nlm_feed_builder.py` (Sunday weekly per the v1.4 commentary). No new trigger required for V1.
 
-**Decision:** the only canonical AI research feed doc is `1WD2Sr2HgSdMffSYv9bWIpPZOoef4_LDH27yQBiuuM6M` ("Veritas AI Research Feed", owned by alansercy@gmail.com, registered in `drive_registry` and `ASSET_URLS` in `alan_os_server.py`).
+For ad-hoc runs: `python C:\Users\aserc\.lux\workflows\nlm_feed_builder.py` from the host.
 
-The legacy doc `1f3RGBRlmFr7b4Mb-94RoAydAn3ClnmjFN2eO7VLeVyg` previously written to by `ai_research_monitor.py` and `ai_research_backfill.py` is **abandoned**. Historical summaries written there are not migrated. Going forward, both scripts write to `1WD2Sr2H...`. (See "Cutover notes" below.)
+## Storage — `ai_stack_feed.json`
 
-## Watched email sources
+**Path:** `C:\Users\aserc\.lux\Data\ai_stack_feed.json` (capital D — matches `nlm_processed_ids.json` and `pending_jobs.json` casing in the same directory)
 
-Keep the existing source list:
-- `asercy@msn.com` — `Inbox`, `Inbox/Filing/AI Research`, `Inbox/Job Search`
-- `alansercy@gmail.com` — `Inbox`, `Inbox/JobSearch`, `Inbox/AI Stack`
-- `asercy@icloud.com` — when present in Outlook profile
-
-Pre-filter: `RESEARCH_KEYWORDS` whitelist (already defined in `ai_research_monitor.py`) to keep Claude calls cheap. Skip-pattern for tracking pixels / unsubscribe links from `extract_ai_links.py`.
-
-## Steps
-
-### Step 1 — Scan inbox (existing)
-
-`ai_research_monitor.py:get_inbox()` already does this. No change.
-
-### Step 2 — Extract URLs from each candidate email (NEW — port from `extract_ai_links.py`)
-
-For every candidate email after pre-filter, run the URL pattern (`https?://[^\s<>"'\)\]]+`) over `Body + HTMLBody`, apply `SKIP_PATTERN` to drop tracker / unsubscribe / image links, dedup against `~/.lux/ai_links_seen.txt` (existing registry).
-
-Each remaining URL becomes a `links[]` entry on the ai_stack record. An email with zero URLs still produces a record (tagged `kind: "insight"` instead of `kind: "link"`).
-
-### Step 3 — Enrich via Claude (existing, structured output expanded)
-
-Use the existing `summarize_email()` Claude Haiku call. **Expand the prompt** to also return:
-- `relevance_score` — integer 0–100
-- `fit_tags` — array, subset of: `veritas_bd`, `agentos`, `personalos`, `tradeos`, `mmm_trucking`, `loretta_re`, `job_search`, `general_ai`
-- existing fields: `category`, `key_points`, `action`
-
-Enforce structured-JSON output (no prose). Parse with the same `try / strip-fences / retry` pattern used in Workflow 4.1 Step 3.
-
-### Step 4 — Append to canonical Google Doc (existing, fix doc ID)
-
-`append_to_doc(GOOGLE_DOC_ID, ...)` already runs. **Change** `GOOGLE_DOC_ID` constant in both `ai_research_monitor.py` and `ai_research_backfill.py` from `1f3RGBRl...` to `1WD2Sr2H...`. Format unchanged.
-
-### Step 5 — Append to `ai_stack_feed.json` (NEW)
-
-After successful Doc append, build the structured record (schema below) and append to `~/.lux/data/ai_stack_feed.json` via the new `POST /ai_stack` endpoint on `alan_os_server.py`. Failures here MUST NOT block Doc appends — the JSON sink is best-effort, the Doc is the durable record.
-
-### Step 6 — Surface on dashboard (NEW — separate ticket)
-
-New "AI Stack" panel on the dashboard. Lists last 50 items, sortable by `relevance_score`, filterable by `fit_tags` and `category`. Click-through opens the URL or a drawer with the full summary. Mark reviewed / promote to a SalesOS lead / dismiss.
-
-This step is a separate dashboard work item, sized after V1 backend is live.
-
-## `ai_stack_feed.json` schema
-
-Wrapped-object format (mirrors `leads.json` / `competitors.json`):
+**Wrapped-object schema** (mirrors `leads.json` / `competitors.json` so `read_wrapped` / `write_wrapped` helpers in `alan_os_server.py:452-465` work unchanged):
 
 ```json
 {
   "items": [
     {
-      "id": "uuid-v4",
-      "kind": "link" | "insight",
-      "email_id": "Outlook EntryID — for dedup against backfill_tracker",
-      "subject": "...",
-      "sender_name": "...",
-      "sender_email": "...",
-      "received_at": "ISO-8601",
-      "source_folder": "msn>Inbox>Filing>AI Research",
-      "links": [
-        { "url": "...", "category": "Anthropic" }
-      ],
-      "category": "AI Research" | "Job Opportunity" | "Industry Intel" | "Veritas Business" | "Real Estate" | "Newsletter" | "Other",
+      "id": "uuid4",
+      "url": "https://example.com/article",
+      "url_category": "YouTube|Anthropic|OpenAI|GitHub|n8n / Automation|AI Research|HBR / Strategy|Newsletter|LinkedIn|Real Estate|Other",
+      "title": "Page title or email subject if not fetched",
+      "summary": "Claude 1-3 sentence summary",
       "relevance_score": 0,
-      "fit_tags": ["veritas_bd", "agentos"],
-      "summary": "...",
-      "key_points": ["...", "..."],
-      "action": "None",
-      "status": "new" | "reviewed" | "promoted" | "dismissed",
-      "promoted_lead_id": null,
+      "fit_pipeline": "ai_stack|veritas|agentos|personalos|loretta|mmm|none",
+      "fit_rationale": "Why this scored where it did — one sentence",
+      "tags": [],
+      "status": "new",
+      "source": {
+        "type": "email",
+        "email_hash": "md5 — same hash nlm_feed_builder uses for dedup",
+        "folder": "ai_research|veritas|real_estate|mmm|job_search",
+        "subject": "...",
+        "sender": "...",
+        "date": "YYYY-MM-DD"
+      },
       "created_at": "ISO-8601",
       "updated_at": "ISO-8601"
     }
@@ -118,77 +70,196 @@ Wrapped-object format (mirrors `leads.json` / `competitors.json`):
 }
 ```
 
-## API endpoints (add to `alan_os_server.py`)
+**Schema choice — per-URL, not per-email:** the VIE charter ("ranked recommendations") wants the dashboard to rank links, not emails. One email with three URLs becomes three items, each with its own `relevance_score` and `fit_pipeline`. An email with zero URLs produces zero items (it's already captured by the existing nlm_feed_builder Doc + NotebookLM sinks).
 
-Mirror the SalesOS `/leads` pattern exactly. Use the existing `read_wrapped` / `write_wrapped` helpers — the wrapped-object schema fits.
+**Field constraints:**
+- `relevance_score`: integer 0–10 (10 = must-read for Alan now; 0 = noise)
+- `fit_pipeline` enum: `ai_stack` | `veritas` | `agentos` | `personalos` | `loretta` | `mmm` | `none`
+- `status` enum: `new` | `reviewed` | `saved` | `dismissed`
+- `url_category` reuses the categorizer in `extract_ai_links.py:21-36`
 
-| Method + Path | Purpose |
+## Steps
+
+### Step 1 — Add a URL extractor to `nlm_feed_builder.py`
+
+Add alongside the existing `extract_youtube_url()` / `extract_job_urls()`:
+
+```python
+AI_STACK_CATEGORIES = [
+    ("YouTube",          r"youtube\.com|youtu\.be"),
+    ("Anthropic",        r"anthropic\.com|claude\.ai"),
+    ("OpenAI",           r"openai\.com|platform\.openai"),
+    ("GitHub",           r"github\.com"),
+    ("n8n / Automation", r"n8n\.io|zapier\.com|make\.com"),
+    ("AI Research",      r"arxiv\.org|huggingface\.co|paperswithcode"),
+    ("HBR / Strategy",   r"hbr\.org|sequoiacap\.com|a16z\.com"),
+    ("Newsletter",       r"substack\.com|beehiiv\.com|therundown\.ai|lennysnewsletter"),
+    ("LinkedIn",         r"linkedin\.com"),
+    ("Real Estate",      r"nar\.realtor|inman\.com|tomferry|lofty\.com"),
+    ("Other",            r".*"),
+]
+
+SKIP_URL_PATTERN = re.compile(
+    r"(unsubscribe|tracking|pixel|click\.|redirect|utm_|mailchimp|"
+    r"sendgrid|mandrillapp|postmark|cmail\.|r\.email|"
+    r"images\.|\.(gif|png|jpg|jpeg|css|js|ico|woff)|"
+    r"privacy|legal|terms|support\.google|accounts\.google|"
+    r"mail\.google|calendar\.google)",
+    re.IGNORECASE
+)
+
+def extract_ai_stack_urls(body: str) -> list[dict]:
+    """Return [{url, category}] for each non-junk URL in body, Safelink-unwrapped."""
+    out = []
+    seen = set()
+    for raw in re.findall(r'https?://[^\s<>"\']+', body):
+        clean = raw.rstrip(".,;:!?)")
+        resolved = unwrap_safelink(clean)
+        if len(resolved) < 20 or SKIP_URL_PATTERN.search(resolved) or resolved in seen:
+            continue
+        seen.add(resolved)
+        category = next((name for name, pat in AI_STACK_CATEGORIES
+                         if re.search(pat, resolved, re.IGNORECASE)), "Other")
+        out.append({"url": resolved, "category": category})
+    return out
+```
+
+Logic ported from `extract_ai_links.py:21-46`; Safelink-unwrap is reused from `nlm_feed_builder.py:104-113`.
+
+### Step 2 — Per-URL Claude enrichment
+
+After an email passes the existing folder scoring (`score_email()`), call Claude once per extracted URL to produce the enriched record. Reuse the existing `CLAUDE_API_URL` / `CLAUDE_MODEL` / `httpx` plumbing.
+
+**Prompt (constant `AI_STACK_URL_ENRICH_PROMPT`):**
+```
+You are enriching a URL for Alan Sercy's AI Stack research feed.
+
+Alan runs:
+- Veritas AI Partners (fractional CRO/BD for PE-backed AI companies)
+- AgentOS (commercial AI OS for real estate agents)
+- PersonalOS (personal AI operating system, Python + n8n)
+- Loretta MoveWithClarity (real estate content brand)
+- MMM Trucking (logistics SMB)
+
+URL: {url}
+URL category: {url_category}
+Email subject: {subject}
+Email sender: {sender}
+Email body excerpt (first 800 chars): {body_excerpt}
+
+Respond with JSON only, no preamble:
+{
+  "summary": "1-3 sentences on what this URL is and why it matters",
+  "relevance_score": 0-10 integer,
+  "fit_pipeline": "ai_stack|veritas|agentos|personalos|loretta|mmm|none",
+  "fit_rationale": "one sentence on why this maps to that pipeline"
+}
+```
+
+V1 does **not** fetch the URL — Claude works from email context alone. Page-fetch + content-extract per URL category lands in V2 once we know which categories repay the latency.
+
+Parse with the same `try / strip-fences / retry` pattern used in `score_email()`.
+
+### Step 3 — Append to `ai_stack_feed.json` via `POST /ai_stack`
+
+Per enriched URL, POST to `http://localhost:8000/ai_stack` with the per-URL payload. The endpoint generates `id`, `created_at`, `updated_at`, defaults `status=new`, defaults `tags=[]`, and writes via `write_wrapped`.
+
+`nlm_feed_builder.py` treats POST failures as non-fatal — the email's still in the existing `processed_ids` registry, so a retry won't re-enrich. Log a warning, continue to the next URL.
+
+**Dedup at write time:** `POST /ai_stack` returns 200 with `{"dedup": true, "id": <existing_id>}` if an item with the same `url` already exists. This prevents duplicate records when the same URL appears across multiple emails (common with newsletter resends).
+
+### Step 4 — `alan_os_server.py` endpoints
+
+Add to the SalesOS section (mirror the `/leads` block at `alan_os_server.py:441-611`).
+
+| Endpoint | Purpose |
 |---|---|
-| `GET /ai_stack` | List items, optional filters: `?status=new`, `?category=X`, `?fit_tag=veritas_bd`, `?min_score=70`. Default returns last 50 sorted by `received_at` desc. |
-| `POST /ai_stack` | Create item. Payload matches schema above minus `id` / `created_at` / `updated_at` / `status` (defaults to `new`). Validates `kind` and `category` against enums. |
-| `PATCH /ai_stack/{id}` | Patch `status`, `fit_tags`, `relevance_score`, `promoted_lead_id`. Bumps `updated_at`. |
-| `GET /ai_stack/by_score` | Returns top N items by `relevance_score` for "ranked recommendations" dashboard tile. |
+| `GET /ai_stack` | List items. Query params: `status`, `fit_pipeline`, `min_score`, `category`, `limit` (default 100). Returns sorted by `relevance_score` desc, then `created_at` desc. |
+| `POST /ai_stack` | Create item. Validates `fit_pipeline` ∈ enum, `status` ∈ enum, `relevance_score` 0–10. Generates `id` + timestamps. Dedups on `url`. |
+| `PATCH /ai_stack/{id}` | Update `status` and/or `tags`. Bumps `updated_at`. Returns full updated item. |
+| `GET /ai_stack/digest` | Top-N (default 10) `status=new` items by score for the dashboard panel. |
 
-Validation enums:
-- `STACK_KINDS = {"link", "insight"}`
-- `STACK_CATEGORIES = {"AI Research", "Job Opportunity", "Industry Intel", "Veritas Business", "Real Estate", "Newsletter", "Other"}`
-- `STACK_STATUSES = ["new", "reviewed", "promoted", "dismissed"]`
-- `STACK_FIT_TAGS = {"veritas_bd", "agentos", "personalos", "tradeos", "mmm_trucking", "loretta_re", "job_search", "general_ai"}`
+Pydantic models follow the `NewLead` / `LeadPatch` pattern. Enum constants (place near the existing `LEAD_*` constants):
 
-## Cutover notes (Doc ID fix)
+```python
+AI_STACK_PIPELINES = {"ai_stack", "veritas", "agentos", "personalos", "loretta", "mmm", "none"}
+AI_STACK_STATUSES  = {"new", "reviewed", "saved", "dismissed"}
+AI_STACK_CATEGORIES_ENUM = {"YouTube", "Anthropic", "OpenAI", "GitHub", "n8n / Automation",
+                            "AI Research", "HBR / Strategy", "Newsletter", "LinkedIn",
+                            "Real Estate", "Other"}
+```
 
-When the Doc ID flips from `1f3RGBRl...` to `1WD2Sr2H...`:
-- The `backfill_tracker.json` `processed_ids` list still works as dedup — those Outlook EntryIDs are not in either doc, but the tracker prevents re-processing regardless of which doc is downstream
-- Historical summaries previously written to `1f3RGBRl...` are NOT migrated; they remain in that doc as a frozen archive
-- If a complete history is wanted in `1WD2Sr2H...`, run `ai_research_backfill.py` after deleting the relevant entries from `processed_ids` (or run with a `--force` flag — TODO if needed)
-- Confirm canonical doc has the service account `lux-automation@lux-host-493415.iam.gserviceaccount.com` shared with edit access (already true — `nlm_feed_builder.py` writes there today)
+Register `GET /ai_stack/digest` BEFORE any `/ai_stack/{id}` route (same precedence rule the SalesOS `/leads/pipeline` route follows at `alan_os_server.py:498`).
+
+### Step 5 — Dashboard panel
+
+New tab in `C:\Users\aserc\.lux\dashboard\index.html` named **AI Stack**.
+
+**Default view:** `GET /ai_stack/digest` — top 10 unread items by score.
+
+**Full view:** `GET /ai_stack` — paginated table with filter chips for `fit_pipeline` + `status` + `category`.
+
+**Per-row UI:**
+- Title (links to URL, opens in new tab)
+- Category badge | Pipeline badge | Score (color-coded: 0–3 grey, 4–6 yellow, 7–10 green)
+- Summary (one line collapsed, full on hover/click)
+- Source line: `[folder] sender · YYYY-MM-DD · email subject`
+- Action buttons: **Save** (PATCH `status=saved`), **Dismiss** (PATCH `status=dismissed`), **Reviewed** (PATCH `status=reviewed`)
+- Tag input (free-form, comma-separated, PATCH `tags`)
+
+**Polling:** 60s while tab visible. Mirrors the existing `_n8n_cache` / SalesOS pattern.
 
 ## Error handling
 
-Per-step error policy:
-- Outlook COM error → log, abort run, no partial writes
-- Claude API error on a single email → log, skip email, continue with next
-- Google Doc append error → log, skip JSON write for that email, continue (Doc is the durable record — if it failed, do not record a "shipped" state in JSON)
-- JSON write error → log, do NOT roll back Doc write (Doc append is idempotent enough; user can resync from Doc later)
+- Claude enrichment failures (per URL): log a warning, skip that URL, continue. Email's still marked processed via the existing `nlm_processed_ids.json` registry.
+- POST `/ai_stack` failures: log + skip. Same reasoning.
+- Server is on `localhost` from the host's perspective — no VM↔host bridging issue. **This is the win vs. Workflow 4.1**, which still has open questions on the same hop.
 
 ## Credentials needed
 
 | Credential | Status | Notes |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | Live | Workspace key in `~/.lux/.env` |
-| Google Docs OAuth (alansercy) | Live | `~/.lux/data/google_credentials.json` + `google_token.json` |
-| Service account (alt path) | Live | `~/.lux/credentials/service_account.json` already used by `nlm_feed_builder.py`. V1 uses OAuth — service account is the n8n V2 path |
-| Outlook COM access | Live | Outlook must be running for `win32com` |
+| `ANTHROPIC_API_KEY` (host env) | Live | Already loaded by `nlm_feed_builder.py` via `os.environ.get` |
+| Outlook COM | Live | Already used by nlm_feed_builder |
+| Google Docs service account | Already wired | Optional for V1 — keep the existing Veritas Feed Doc append running as a backup audit log |
+| n8n API key / OAuth | **Not needed in V1** | Deferred to V2 |
 
-## Schedule
+## Validation / smoke test plan
 
-Task Scheduler entry (mirror `Norman Inbox Guard`):
-- **Trigger:** daily 7:00 AM (after Norman Guard 6:00 AM)
-- **Action:** PowerShell → `python C:\Users\aserc\.lux\workflows\ai_research_monitor.py`
-- **Working dir:** `C:\Users\aserc\.lux\workflows`
-- **Run whether logged on or not:** No (needs Outlook session)
-- **Idempotent:** yes — `processed_ids` tracker dedups, JSON writes are appends keyed by `email_id`
+1. Add `extract_ai_stack_urls()` + `AI_STACK_URL_ENRICH_PROMPT` + POST sink to `nlm_feed_builder.py`
+2. Add `read_wrapped("ai_stack_feed.json", "items")` skeleton + 4 endpoints to `alan_os_server.py`; `curl -X POST http://localhost:8000/admin/restart`
+3. Smoke test endpoints with a hand-crafted item before wiring nlm_feed_builder
+4. Run `nlm_feed_builder.py` against a known AI-research email; confirm one item per URL appears in `ai_stack_feed.json` with all fields populated
+5. Run twice; confirm dedup-on-url returns 200 with `dedup=true` and no duplicate row
+6. Add dashboard tab; verify panel renders, score color thresholds correct, action buttons round-trip status
 
-## Out of scope for V1 (V2+)
+## Out of scope (V2+)
 
-- Multi-source collectors (GitHub trending, RSS, X saves, Reddit) — V2 fan-in
-- n8n transport — V2 upgrade once VM↔host reachability resolved (shared blocker with Workflow 4.1 Step 4)
-- Auto-promote `relevance_score >= 90` items to SalesOS leads — Phase 3
-- Per-`fit_tag` digest emails — Phase 3
-- Vector search over the JSON corpus — Phase 4
+- **Multi-source fan-in** — GitHub trending, RSS feeds, X/Twitter saves, Reddit subscriptions. Same enrichment pipeline + storage + dashboard, new ingestors.
+- **n8n migration** — once V2's multi-source fan-in lands, the orchestration is worth lifting into n8n with one workflow per source feeding a shared `POST /ai_stack` webhook.
+- **URL fetch + content extract** — currently Claude scores from email context only. Fetch + Readability extract per URL category in V2.
+- **Auto-promote `relevance_score >= 9` to a SalesOS lead** when `fit_pipeline ∈ {veritas, agentos}` — needs Phase 2 dedup logic on `/leads` first.
+- **Telegram inline alert** for `score=10` items — would reuse the Daily Email Digest webhook pattern (`TOxyxAf39pjlRNfN`).
+- **Per-pipeline NotebookLM mirror** — push enriched records into the existing 5 NotebookLM notebooks. nlm_feed_builder already has the auth + adapter; one-line wire later.
 
-## Open questions
+## Open questions (for V1 build session)
 
-1. Does `relevance_score` need calibration? V1 Claude scores will drift across runs; consider posting calibration prompts (a known-good item batch) and normalizing.
-2. Should `extract_ai_links.py` legacy text-output be retired, or kept as a parallel artifact for grep-friendly review? Default: keep until dashboard panel is live.
-3. Backfill strategy for existing 50-200 emails in MSN `Filing/AI Research` against `ai_stack_feed.json` — re-run `ai_research_backfill.py` once it's augmented, or one-shot import script? Default: re-run backfill, accept duplicate Doc entries (cosmetic).
+1. **Score calibration drift** — Claude `relevance_score` will drift across runs. V1 accepts the drift; V2 may need a known-good calibration batch.
+2. **`extract_ai_links.py` retirement** — keep as parallel grep artifact, or retire once dashboard is live? Default: keep until dashboard lands.
+3. **Backfill** — re-run nlm_feed_builder against existing 50–200 emails in MSN `Filing/AI Research`? Default: no backfill in V1; let the feed grow forward from first run.
 
 ## Build sequence
 
-1. **THIS COMMIT** — Doc ID fix in `ai_research_monitor.py` + `ai_research_backfill.py` (no schema change, no new deps)
-2. Add `/ai_stack` endpoints to `alan_os_server.py` + create `ai_stack_feed.json` skeleton (mirror SalesOS Phase 1 pattern)
-3. Augment `ai_research_monitor.py`: expand Claude prompt for `relevance_score` + `fit_tags`, build structured record, POST to `/ai_stack`
-4. Smoke test against current MSN inbox (single email round-trip)
-5. Re-run `ai_research_backfill.py` against canonical doc (optional — see Open Question 3)
-6. Build dashboard "AI Stack" panel (separate ticket)
-7. Schedule Task Scheduler entry
+1. Add `/ai_stack` endpoints + `ai_stack_feed.json` skeleton to `alan_os_server.py` (mirror SalesOS Phase 1 pattern). Smoke-test with `curl`.
+2. Augment `nlm_feed_builder.py`: add URL extractor, enrichment prompt + parser, POST sink.
+3. End-to-end smoke test against a single AI-research email.
+4. Build dashboard "AI Stack" tab.
+5. Confirm scheduled run picks up the new sink without further changes.
+
+## References
+
+- Engine: `C:\Users\aserc\.lux\workflows\nlm_feed_builder.py` (v1.4, ~800 lines)
+- URL category source: `C:\Users\aserc\.lux\workflows\extract_ai_links.py:21-46`
+- Wrapped-object endpoint pattern: `C:\Users\aserc\.lux\workflows\alan_os_server.py:441-611` (`/leads`, `/competitors`)
+- Sister spec: `docs/workflow_4_1_spec.md` (SalesOS lead enrichment — n8n-first, host-VM bridging concerns; VIE 5.1 sidesteps both by staying on the host)
+- Project entry: `PROJECTS.md:610-636` (VIE roadmap)
