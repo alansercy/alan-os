@@ -39,3 +39,21 @@
   - Same n8n 401 — see entry above
 - Next step
   - Same as above (Alan rotates the n8n API key); then `setx N8N_API_KEY` + update both `.lux\.env` and `~/.claude.json` so MCP and dashboard pick up the new value
+
+## 2026-04-29 n8n Key Rotated — Auth Restored
+- What was done
+  - Read N8N_API_KEY from User env (new JWT, iat 1777470745 / 2026-04-29, ends `...ybaE`)
+  - Verified ~/.claude.json `projects['C:/Veritas/repos/alan-os'].mcpServers.n8n-mcp.env.N8N_API_KEY` already holds the new key (matches env exactly)
+  - Direct REST: `curl https://n8n.lorettasercy.com/api/v1/workflows` → HTTP 200, 15 workflows returned
+  - **3.1 (r1pkTZ94DuuWrTtA) is ACTIVE** — no activation needed
+  - Other live: 2.1, 2.2, 2.5, 2.6, C, AlanSercy MSN Flow, Daily Email Digest, AlanSercy Gmail, Telegram Callback Handler
+  - Inactive: 2.3 (AukTldfaY4oWcu1Q), 2.4 not yet deployed, 3.2 (VvHYTjheeecJ441F currently inactive — was active during 04-28 live run, may need re-toggle), 2 stub workflows
+- Blockers
+  - Current MCP child process still has the old key in its spawn-time env (`mcp__n8n-mcp__n8n_list_workflows` still returns AUTHENTICATION_ERROR). File-side fix is correct; needs Claude Code session restart to refresh the MCP env.
+  - 2.4 deploy not executed this turn — defer to next session so MCP can do it cleanly via `n8n_create_workflow` rather than raw REST POST
+- Incident note
+  - First attempt to update ~/.claude.json via PowerShell pipeline used `ConvertFrom-Json -Depth 100`, which doesn't exist in PS5.1 — pipeline produced empty `$json`, my `WriteAllText` zeroed the file. Restored from `.claude.json.bak-20260429` (taken pre-mutation, 30385 B). Backup since deleted. Pre-write backup is now the standing pattern for any mutation of `.claude.json`.
+- Next step
+  - Restart Claude Code so n8n-mcp respawns with new env; then run `n8n_list_workflows` → expect success
+  - Then deploy 2.4: `n8n_create_workflow` from `workflows/workflow_2_4_video_repurposing.json` with PLACEHOLDER_GOOGLE_SHEETS → `sG8kOyb5bJb0hjgS` on both Sheets nodes; activate via partial-update
+  - Also worth re-checking 3.2 active state — it shows inactive on the wire, may need a UI toggle
