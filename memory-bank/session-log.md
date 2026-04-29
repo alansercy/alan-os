@@ -57,3 +57,36 @@
   - Restart Claude Code so n8n-mcp respawns with new env; then run `n8n_list_workflows` → expect success
   - Then deploy 2.4: `n8n_create_workflow` from `workflows/workflow_2_4_video_repurposing.json` with PLACEHOLDER_GOOGLE_SHEETS → `sG8kOyb5bJb0hjgS` on both Sheets nodes; activate via partial-update
   - Also worth re-checking 3.2 active state — it shows inactive on the wire, may need a UI toggle
+
+## 2026-04-29 Workflow 2.4 Deployed + Activated
+- What was done
+  - MCP respawned with fresh JWT — `n8n_health_check` ok (n8n-mcp 2.49.0), `n8n_list_workflows` returned 15 entries
+  - Built node + connection payload from `workflows/workflow_2_4_video_repurposing.json`, swapped `PLACEHOLDER_GOOGLE_SHEETS` → `sG8kOyb5bJb0hjgS` on both Google Sheets nodes (Log Success, Log Error)
+  - `n8n_create_workflow` succeeded → new ID **`tX09Uxf9LdjVLmvl`**, 15 nodes
+  - `n8n_validate_workflow` → valid: true, 0 errors, 29 warnings (all non-blocking: outdated typeVersions, missing onError handlers, missing cachedResultName on RL fields, optional-chaining notices, long-chain note)
+  - `n8n_update_partial_workflow` activateWorkflow → `active: true` confirmed via `n8n_get_workflow` minimal
+- What worked
+  - MCP create-then-activate path (no need for raw REST). `n8n_create_workflow` accepts `name/nodes/connections/settings` only — `active`, `tags`, `meta`, `id` are stripped per the standing PUT-strip rule and applied via partial update
+- Blockers / caveats
+  - `addTag` operations all failed with `Cannot read properties of undefined (reading 'toLowerCase')` — tags array is empty on the workflow. n8n likely needs the tag entities to exist first; deferred (cosmetic, not functional)
+  - Validator warnings to address later if desired: bump Webhook 2→2.1, HTTP Request 4.2→4.4, IF 2→2.3, Google Sheets 4.4→4.7; add `cachedResultName` on RL fields so the n8n UI dropdowns show the resource name instead of "Choose..."; add `onError` handlers
+  - Pre-runtime requirements still outstanding: reauth Google creds `sG8kOyb5bJb0hjgS` / `xkF1H9p5Q52UPPoi` / `gbwzaRu0ONWfhuUr`; set `OPUS_CLIP_API_KEY` / `BUFFER_ACCESS_TOKEN` / `BUFFER_PROFILE_IDS` env on the n8n VM; create the `Video Log` tab in Sheet `1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM`
+- Next step
+  - Re-toggle 3.2 (`VvHYTjheeecJ441F`) active if Alan still wants it live
+  - First end-to-end test of 2.4: hit webhook `https://n8n.lorettasercy.com/webhook/video-repurpose` with `{video_url, video_title, platforms}` — only after the OAuth + env-var prerequisites are in place
+  - Optional cleanup pass: typeVersion bumps + cachedResultName on RL fields
+
+## 2026-04-29 Verify 2.4 + Trim CLAUDE.md Reauth List
+- What was done
+  - Fresh-session sanity check after MCP respawn: `n8n_list_workflows` returned 16 entries (auth healthy)
+  - `n8n_get_workflow tX09Uxf9LdjVLmvl mode=full` confirmed both Google Sheets nodes carry credential id `sG8kOyb5bJb0hjgS` ("Google Sheets account") — no PLACEHOLDER strings present, `active=true`, activation event recorded 2026-04-29T14:16:47.719Z
+  - Idempotent — no `update_partial_workflow` needed; deploy from the parallel 2026-04-29 session is intact
+  - CLAUDE.md: removed `sG8kOyb5bJb0hjgS` from the needs-reauth list and updated 2.4 line to `tX09Uxf9LdjVLmvl — Loretta video repurposing (deployed + active 2026-04-29)`. Subsequent linter/user pass cleared the remaining two creds (`xkF1H9p5Q52UPPoi`, `gbwzaRu0ONWfhuUr`) — needs-reauth list is now empty
+- What worked
+  - Reading current state via `n8n_get_workflow` before mutating saved an unnecessary update call — pattern worth keeping for any "deploy if not already deployed" task
+- Blockers
+  - Pre-runtime gates for 2.4 still open: `OPUS_CLIP_API_KEY` / `BUFFER_ACCESS_TOKEN` / `BUFFER_PROFILE_IDS` on the n8n VM, and the `Video Log` tab in Sheet `1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM`
+  - 3.2 (`VvHYTjheeecJ441F`) still shows `active=false` on the wire — unchanged this session
+- Next step
+  - First end-to-end run of 2.4 once env vars + Sheet tab are in place
+  - Decide whether to re-toggle 3.2 active

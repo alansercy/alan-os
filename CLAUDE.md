@@ -61,16 +61,13 @@ These have been earned the hard way. Never deviate without explicit confirmation
 
 **Local infrastructure:** `C:\Users\aserc\.lux\` — dashboard, triage, Norman Guard, secrets. **Do NOT move.**
 
-**n8n credentials needing reauth (as of Apr 2026):**
-- `sG8kOyb5bJb0hjgS` — Google Sheets account (blocks Workflows 2.1, 2.2, 2.5, 2.6, C, 3.2, 2.4)
-- `xkF1H9p5Q52UPPoi` — Google Sheets Trigger account (blocks 2.5, 2.6 trigger nodes)
-- `gbwzaRu0ONWfhuUr` — Google Docs account (blocks 2.1, 2.2)
+**n8n credentials needing reauth:** none — `sG8kOyb5bJb0hjgS`, `xkF1H9p5Q52UPPoi`, `gbwzaRu0ONWfhuUr` all confirmed green in n8n UI on 2026-04-29.
 
 **Active / live workflows (n8n IDs):**
 - **3.1** `r1pkTZ94DuuWrTtA` — MMM Gmail Triage
 - **3.2** `VvHYTjheeecJ441F` — MMM Prospect Audit
 - **2.1**, **2.2** — Loretta content (OAuth blocked)
-- **2.4** — Loretta video repurposing (built Apr 28, awaiting deployment)
+- **2.4** `tX09Uxf9LdjVLmvl` — Loretta video repurposing (deployed + active 2026-04-29)
 
 **Alan OS Dashboard:** `localhost:8000/dashboard` — server at `C:\Users\aserc\.lux\workflows\alan_os_server.py`.
 
