@@ -387,6 +387,7 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 | **MMM** | Chief of Staff Proposal — needs context dump from Alan | Host | 45 min |
 | **Veritas** | Painter SOW (after demo), health enthusiast SOW | Host | 45 min |
 | **GitHub** | alan-os repo, loretta-os repo, skill stubs populated | Host | 60 min |
+| **VIE** | ⚠️ **Stub — description TBD.** Captured 2026-04-29 at session close per Alan's directive ("Don't lose the idea"). No scope, owner, pipeline, or context yet. **Action for Alan next session:** fill in what VIE stands for, the goal, and which TIER it slots into. Until then, treat as placeholder. | TBD | TBD |
 
 ---
 

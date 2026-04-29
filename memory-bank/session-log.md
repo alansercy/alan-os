@@ -218,6 +218,16 @@
   4. **Admin API key creation** — single biggest dashboard gap (PROJECTS.md line 233); unblocks both Claude Usage panel and SalesOS-vs-plan-ceiling math
 - Burn-rate snapshot at close: 14.5M billable / 7-day window, day 3.92 of 7, projected end-of-window ~23.5M
 
+## 2026-04-29 VIE — Stub Captured (description TBD)
+- What was done
+  - At session close, Alan said "add VIE to PROJECTS.md as a queued project" with the directive "Don't lose the idea"
+  - Searched both repos (alan-os + lux-os) for prior mentions of "VIE" — zero hits. No description, scope, owner, pipeline, or context exists on disk
+  - Added stub row to `PROJECTS.md` Session Queue table flagging the gap, so the name persists for the next session and a grep for "VIE" surfaces the capture
+- Blockers
+  - Description is missing. Cannot infer what VIE stands for or what the project is without Alan filling it in
+- Next step
+  - Alan: define VIE next session — what it stands for, goal, owner, pipeline (`veritas_bd` / `loretta_re` / `mmm_trucking` / family / personal), TIER, dependencies. Then move from stub row to a proper TIER section
+
 ## 2026-04-29 Superpowers Plugin Install — Pre-flight + Inventory Pending
 - What was done
   - Marketplace `claude-plugins-official` (anthropics/claude-plugins-official) is registered in settings.json and synced at `C:\Users\aserc\.claude\plugins\marketplaces\claude-plugins-official\` (lastUpdated 2026-04-29T17:12:25Z). Marketplace manifest `marketplace.json` at line 1868 lists `superpowers` as a `url`-source plugin pointing to `https://github.com/obra/superpowers.git`
