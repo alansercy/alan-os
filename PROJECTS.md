@@ -387,7 +387,7 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 | **MMM** | Chief of Staff Proposal — needs context dump from Alan | Host | 45 min |
 | **Veritas** | Painter SOW (after demo), health enthusiast SOW | Host | 45 min |
 | **GitHub** | alan-os repo, loretta-os repo, skill stubs populated | Host | 60 min |
-| **VIE** | ⚠️ **Stub — description TBD.** Captured 2026-04-29 at session close per Alan's directive ("Don't lose the idea"). No scope, owner, pipeline, or context yet. **Action for Alan next session:** fill in what VIE stands for, the goal, and which TIER it slots into. Until then, treat as placeholder. | TBD | TBD |
+| **VIE** | Veritas Intelligence Engine — V1: Workflow 5.1 (inbox → URL extract → Claude enrich → `ai_stack_feed.json` → dashboard panel). Full spec in ROADMAP section below. Ready to spec next session, no blockers. | Host | 90 min |
 
 ---
 
@@ -606,6 +606,34 @@ Each page goes live BEFORE full product build begins. <10 signups in 30 days →
 **Next action:** Build AgentOS waitlist page first — one Claude Code session, deploy to Netlify same day.
 
 **Strategic note:** This is the MMP validation gate. No more building OS verticals without a waitlist signal first.
+
+### Veritas Intelligence Engine (VIE)
+
+**Status:** Queued — ready to spec
+**Priority:** High — eliminates manual research loop; sellable component inside PersonalOS and AgentOS
+
+**Description:**
+Autonomous AI research radar. Monitors email inbox for AI/tool links, enriches each via Claude (summarize, evaluate fit, relevance score), stores in `ai_stack_feed.json`, surfaces ranked recommendations on the dashboard. The goal is to replace the manual "save link, read later, evaluate" loop with a continuously-running pipeline that pre-digests and ranks new inputs before Alan ever sees them.
+
+**Versioning:**
+- **V1 — email only.** Inbox is the single source. Proves the enrichment + ranking + surface loop end-to-end.
+- **V2 — multi-source fan-in.** Same enrichment pipeline, additional inputs: GitHub trending, RSS feeds, X/Twitter saves, Reddit subscriptions. All converge on `ai_stack_feed.json`.
+
+**First build — Workflow 5.1:**
+1. Trigger: scheduled scan of inbox (Gmail OAuth via existing creds)
+2. Extract: URLs from email bodies + subject lines
+3. Enrich: HTTP Request to Anthropic per CLAUDE.md §2 (typeVersion 4.2, `x-api-key`, raw body) — Claude summarizes, scores relevance, evaluates fit against Veritas/AgentOS/PersonalOS pipelines
+4. Store: append enriched record to `C:\Users\aserc\.lux\data\ai_stack_feed.json`
+5. Surface: dashboard panel with ranked recommendations + filter by pipeline/score
+
+**Why it matters:**
+- Eliminates manual research loop (Alan's current bottleneck on AI tool tracking)
+- Sellable component inside PersonalOS and AgentOS — every executive client has the same problem
+- Reuses the SalesOS pattern (wrapped JSON file + FastAPI endpoint + dashboard panel) — low marginal cost to ship
+
+**Blocker:** None. Ready to spec next session.
+
+**Next action:** Draft Workflow 5.1 spec to `docs/workflow_5_1_spec.md` (mirror the structure of `workflow_4_1_spec.md`); add `ai_stack_feed.json` schema + `GET /ai_stack`, `POST /ai_stack` endpoints to `alan_os_server.py` (mirror `/leads` pattern).
 
 ---
 *Generated: April 25, 2026 — End of cross-project governance session*
