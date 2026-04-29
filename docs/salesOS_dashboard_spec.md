@@ -1,7 +1,7 @@
 # SalesOS Dashboard Tab Spec
 
-**Status:** SPEC ONLY — not yet built
-**Target file:** `C:\Users\aserc\.lux\dashboard\index.html` (or `claude_usage_dashboard.html` if that path is canonical — verify before build)
+**Status:** V1 SHIPPED 2026-04-29 (table view) — kanban deferred to V2
+**Target file:** `C:\Users\aserc\.lux\claude_usage_dashboard.html` (Lux Command Center on `localhost:8081`)
 **Phase:** SalesOS Phase 1
 **Last updated:** 2026-04-29
 
@@ -9,141 +9,153 @@
 
 ## Purpose
 
-A new **SalesOS** tab in the Alan OS dashboard that shows the live pipeline as a kanban board, scoped per pipeline (Veritas BD / Loretta RE / MMM Trucking), with a collapsible competitor intel panel underneath. Read-only first pass except stage transitions and quick-edits to `next_action`. Backed entirely by the new `/leads`, `/leads/pipeline`, and `/competitors` endpoints added in Phase 1.
+A new **SalesOS** tab in the Lux Command Center showing leads as a sortable table with stage / pipeline / owner filters, plus a competitor intel grid filtered by the same pipeline. Read-only V1. No backend changes — everything reads from the existing `/leads` and `/competitors` endpoints in `alan_os_server.py` (port 8000) via the already-open CORS allow-list.
+
+## Why a table, not a kanban
+
+The original spec called for a 7-column kanban with side-drawer stage transitions. V1 ships a simpler **sortable table** instead because:
+
+- Faster to ship (one panel, one fetch, no drag/drop scaffolding)
+- Easier to scan when the pipeline is empty or sparse — kanban columns of 0 leads are visual noise
+- Stage transitions are deferred to V2 anyway in the original spec (drag/drop was Phase 2, side-drawer was Phase 1) — table + filter is functionally equivalent for browsing
+- Stage values still appear as colored badges, so the visual semantics carry over
+
+The kanban remains a valid V2 — the same endpoints support both.
+
+## Live state confirmed before build
+
+- Lux Command Center is `~/.lux/claude_usage_dashboard.html` served on **port 8081** by `~/.lux/claude_usage_dashboard.py`
+- Alan OS server (`alan_os_server.py`) on **port 8000** ships CORS `allow_origins=["*"]` so 8081 → 8000 fetches work directly
+- Existing tabs: automation, projects, tasks, n8n, digest, vault — SalesOS slots after vault
+- Brand kit already centralized: `--navy #0B1E3D`, `--navy-deep #061328`, `--gold #C6A96A`, `--surface #0F2548`, plus `--green/amber/red/idle` for status colors
 
 ## Tab placement
 
-New top-level tab labeled **SalesOS** in the existing dashboard nav, sitting alongside the current panels (Projects, Tasks, n8n, Knowledge, etc.). Default landing state: pipeline filter = `veritas_bd`, owner filter = "all".
+New nav button labeled **SalesOS** after `vault`. Sets `data-tab="salesos"`, content section `id="tab-salesos"`.
 
 ## Layout
 
 ```
-+--------------------------------------------------------------------------+
-| SalesOS                                          [+ New Lead]  [Refresh] |
-+--------------------------------------------------------------------------+
-| Pipeline: [veritas_bd v]    Owner: [all v]    Stage filter: [all v]      |
-+--------------------------------------------------------------------------+
-|                          KANBAN BOARD (7 columns)                        |
-|  +----------+----------+----------+----------+----------+----------+--+  |
-|  | prospect |researched|contacted |responded |qualified | closed   |..|  |
-|  |   (3)    |   (2)    |   (1)    |   (0)    |   (1)    |   (0)    |..|  |
-|  +----------+----------+----------+----------+----------+----------+--+  |
-|  | [Card]   | [Card]   | [Card]   |          | [Card]   |          |..|  |
-|  | [Card]   | [Card]   |          |          |          |          |..|  |
-|  | [Card]   |          |          |          |          |          |..|  |
-|  +----------+----------+----------+----------+----------+----------+--+  |
-+--------------------------------------------------------------------------+
-| > Competitor Intel (collapsed)                                           |
-+--------------------------------------------------------------------------+
++------------------------------------------------------------+
+| Filters bar                                                |
+|  Pipeline [all ▾]  Owner [all ▾]  Stage [all ▾]   [Refresh]|
++------------------------------------------------------------+
+| Leads · N total · M after filter                           |
+|  +------------------------------------------------------+  |
+|  | Company | Contact | Stage | Last contact | Next acti |  |
+|  |  ...    |   ...   |  ...  |    ...       |    ...    |  |
+|  +------------------------------------------------------+  |
++------------------------------------------------------------+
+| Competitor intel · scoped to {pipeline}                    |
+|   [card] [card] [card] ...                                 |
++------------------------------------------------------------+
 ```
 
-## Filters (top bar)
+## Filters
 
-| Filter | Values | Notes |
+| Filter | Values | Sent to endpoint |
 |---|---|---|
-| Pipeline | `veritas_bd`, `loretta_re`, `mmm_trucking` | Single-select dropdown. No "all" — pipeline drives competitor panel scoping. Default: `veritas_bd`. |
-| Owner | `all`, `alan`, `loretta`, `mmm` | Single-select. |
-| Stage | `all` + each of the 7 stages | Hides columns when filtering to one stage; useful for export views later. |
+| Pipeline | `all`, `veritas_bd`, `loretta_re`, `mmm_trucking` | `?pipeline=` (omitted if `all`) |
+| Owner | `all`, `alan`, `loretta`, `mmm` | `?owner=` (omitted if `all`) |
+| Stage | `all`, `prospect`, `researched`, `contacted`, `responded`, `qualified`, `closed`, `dead` | `?stage=` (omitted if `all`) |
 
-State of all three filters held in component state and synced to URL query params (`?pipeline=...&owner=...`) so a refresh keeps context.
+Filters held in module-local state. Selection triggers an immediate refetch + re-render. No URL sync in V1 (YAGNI; can add later if Alan wants share-links).
 
-## Kanban columns
+## Mapping note (versus original ask)
 
-Seven columns, one per stage value, in the order from the data schema:
+The user request named `status (new/contacted/qualified/closed)`, `last_activity`, and `score`. Mapped to the actual schema:
 
-`prospect -> researched -> contacted -> responded -> qualified -> closed -> dead`
+| Asked | Built | Reason |
+|---|---|---|
+| Status filter (4 values) | Stage filter (7 values) | Schema field is `stage`. Collapsing 7 → 4 would silently hide leads in `prospect`/`researched`/`responded`/`dead`. |
+| `last_activity` | `last_contact` | Same intent, schema's name. |
+| `score` column | Omitted V1 | No score field exists on leads. Workflow 4.1 (deferred) is what would add `relevance_score`. Re-add the column when 4.1 lands. |
 
-Column header: stage name + count badge. The 7th column (`dead`) is collapsed by default behind a "Show dead (N)" toggle to keep the active pipeline visually clean.
+## Lead table
 
-**Data source:** `GET /leads/pipeline?pipeline={pipeline}&owner={owner}` — already returns leads grouped by stage with counts. One request per render; no client-side grouping needed.
+Columns:
 
-## Lead cards
+| Column | Source | Render |
+|---|---|---|
+| Company | `company` | bold |
+| Contact | `contact_name` + `contact_title` | name (top), title (muted, smaller) |
+| Stage | `stage` | colored `.badge` (see palette below) |
+| Last contact | `last_contact` | relative ("3d ago") with absolute as tooltip; "—" if blank |
+| Next action | `next_action` + `next_action_date` | text + small date chip; "—" if blank |
+| Owner | `owner` | small `.badge.gold` pill |
+| Pipeline | `pipeline` | small muted text |
 
-Each card shows:
+Sortable by clicking any column header (client-side; toggle asc/desc). Default sort: `last_contact desc` (most recent activity first), then `created_at desc` as tiebreak.
 
-- **Company** (bold, top line)
-- **Contact name** + title (one line, secondary color)
-- **Last contact** (relative date — "3d ago", "2w ago"; falls back to absolute YYYY-MM-DD if blank)
-- **Next action** (if set, in accent color) + **next_action_date** as small chip
-- Owner pill in the corner (`alan` / `loretta` / `mmm` colored differently)
-- **Source icon** (linkedin / referral / inbound / research)
+### Stage badge palette
 
-Click a card -> opens a side-drawer with the full lead record, all fields editable, scrollable notes pane, Save button hits `PATCH /leads/{id}`.
-
-**Stage transitions:** drag-and-drop between columns is Phase 2. For Phase 1, stage changes via the side-drawer's stage dropdown (PATCH on save). Cheap to ship.
-
-## "New Lead" button
-
-Top-right button -> modal with the `POST /leads` form. Required fields highlighted: `owner`, `pipeline`, `company`. Optional fields collapsed under a "More fields" expander to keep the modal small. Submit -> POST -> on success, refresh kanban + close modal + flash a "Lead created" toast with the new ID.
-
-## Competitor Intel panel
-
-Collapsible (collapsed by default), placed below the kanban. When expanded:
-
-- Header: "Competitor intel for {pipeline}" (scoped by the top-bar pipeline filter)
-- Grid of competitor cards:
-  - **Name** + website link
-  - **Strengths** (chip list, green)
-  - **Weaknesses** (chip list, red)
-  - **Positioning** (1-2 lines)
-  - **Last researched** (date, with "stale" badge if > 90 days)
-- Click a card -> side-drawer with full record + notes (read-only Phase 1; edits Phase 2)
-
-**Data source:** `GET /competitors?pipeline={pipeline}` — already implemented. Empty state: "No competitor records yet for {pipeline}. Add via `POST /competitors` (not yet wired in UI)."
-
-## States to handle
-
-- **Empty state per column:** subtle "No leads in this stage" placeholder
-- **Empty pipeline:** big empty state in the board area: "No leads yet for {pipeline}. Run Workflow 4.1 to enrich the first one."
-- **Loading:** skeleton cards (3 per column) while `/leads/pipeline` is in flight
-- **API error:** banner at top "Failed to load leads — check that alan_os_server is running" + Retry button
-- **Filter combination yielding zero:** "No leads match owner={owner} in pipeline={pipeline}." with a Clear filters link
-
-## Color tokens (reuse existing dashboard palette)
-
-| Element | Token |
+| Stage | Badge class |
 |---|---|
-| Pipeline accent — `veritas_bd` | Navy `#0B1E3D` |
-| Pipeline accent — `loretta_re` | Sage `#7A9E7E` |
-| Pipeline accent — `mmm_trucking` | Steel `#4A5568` |
-| Stage column header bg | dashboard's existing `--panel-bg` |
-| Card bg | `--card-bg` (existing) |
-| `next_action` chip | accent gold `#C6A96A` |
-| Owner pill — alan | navy text on light grey |
-| Owner pill — loretta | sage text on light grey |
-| Owner pill — mmm | steel text on light grey |
+| `prospect` | `.badge.idle` |
+| `researched` | `.badge.idle` |
+| `contacted` | `.badge.amber` |
+| `responded` | `.badge.amber` |
+| `qualified` | `.badge.gold` |
+| `closed` | `.badge.green` |
+| `dead` | `.badge.red` |
 
-If the dashboard doesn't yet have these tokens centralized, the SalesOS build session is the right time to extract them into a `:root` block.
+## Competitor intel grid
 
-## API contract reference (already shipped, Phase 1)
+Below the lead table, in its own `.panel`:
+
+- Header: `Competitor intel · {pipeline}` (or `· all pipelines` when filter is `all`)
+- Card grid (reuses `.vault-grid` class for consistency):
+  - **Name** + website link (if present)
+  - **Strengths** as `.badge.green` chips
+  - **Weaknesses** as `.badge.red` chips
+  - **Positioning** (1-2 lines)
+  - **Last researched** (date, with "stale" amber pill if > 90 days)
+- Empty state: `No competitor records yet.` (V1 has no UI to add — `POST /competitors` deferred to V2)
+
+## States
+
+| State | Treatment |
+|---|---|
+| Loading | `<div class="empty">Loading leads…</div>` (matches existing tab pattern) |
+| API error | `.error-box` banner with the error message |
+| Empty after filter | `No leads match these filters.` with Clear filters button |
+| Empty pipeline globally | `No leads yet. Create one via POST /leads or run Workflow 4.1 once it ships.` |
+
+## Refresh + counts
+
+- `loadSalesOS()` joins `Promise.allSettled` in `refreshAll()` (60s interval already in place)
+- Nav badge `count-salesos` shows total active leads (everything except `closed` and `dead`)
+- Manual refresh = the existing top-right `↻` button
+
+## API contract reference
 
 | Method | Path | Purpose |
 |---|---|---|
-| GET | `/leads` | List with optional `owner` / `pipeline` / `stage` filters |
-| GET | `/leads/pipeline` | Grouped by stage — primary kanban data source |
-| POST | `/leads` | Create from "New Lead" modal |
-| PATCH | `/leads/{id}` | Side-drawer save |
-| GET | `/competitors` | Competitor panel — optional `pipeline` filter |
+| GET | `/leads?owner=&pipeline=&stage=` | Table data |
+| GET | `/competitors?pipeline=` | Competitor grid |
 
-## Out of scope (Phase 2+)
+## Out of scope (V2+)
 
-- Drag-and-drop stage changes
-- Inline card edits without opening the drawer
-- Competitor record create/edit UI (`POST /competitors`, `PATCH /competitors/{id}`)
-- Lead -> competitor linking (which competitors are mentioned in which leads)
-- Activity timeline per lead (calls, emails, notes with timestamps)
-- CSV export per filter view
-- Bulk stage transition (multi-select)
-- Search across lead notes / competitor positioning text
+- Kanban view + drag-and-drop stage transitions
+- Side-drawer with full lead edit + `PATCH /leads/{id}`
+- New Lead modal (`POST /leads`)
+- Competitor record create/edit (`POST /competitors`, `PATCH /competitors/{id}`)
+- Score column (blocked on Workflow 4.1)
+- URL state sync for filters
+- CSV export
+- Search across notes
+- Activity timeline per lead
 
-## Build estimate
+## V1 build estimate
 
-One Claude Code session, ~60-90 min:
-1. Add the SalesOS tab + nav entry (10 min)
-2. Filters + kanban grid + cards (30 min)
-3. Side-drawer with PATCH (15 min)
-4. New Lead modal with POST (15 min)
-5. Competitor panel — read-only grid (10 min)
-6. Empty / loading / error states (10 min)
+~30-45 min in one Claude Code session. Single file edit (`claude_usage_dashboard.html`), no server changes.
 
-Test plan: create 2-3 leads via curl, verify they appear correctly, drag through stages via the side-drawer, open competitor panel, refresh and verify URL state is preserved.
+## V1 test plan
+
+1. POST a couple of test leads via curl across pipelines/owners
+2. Open `localhost:8081`, click SalesOS tab → table renders, badge counts correct
+3. Filter by pipeline → competitor section relabels + filters
+4. Filter by stage → table filters
+5. Sort by clicking column headers
+6. Refresh button reloads
+7. DELETE the test leads (or leave 1-2 as fixtures)
