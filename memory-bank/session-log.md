@@ -111,3 +111,51 @@
   - Set the three env vars on the n8n VM (Settings → Environment, or `.n8n\.env` directly)
   - Reconnect the three Google creds in n8n UI
   - Then deploy Workflow 2.4: POST `workflows/workflow_2_4_video_repurposing.json` with `PLACEHOLDER_GOOGLE_SHEETS` swapped to `sG8kOyb5bJb0hjgS` on both Sheets nodes; activate; smoke-test with a short MP4 URL
+
+## 2026-04-29 SalesOS Phase 1 — Schema + API + Specs
+- What was done
+  - Created `C:\Users\aserc\.lux\data\leads.json` (`{leads: [], schema_version: "1.0", last_updated: ""}`) and `C:\Users\aserc\.lux\data\competitors.json` (`{competitors: [], schema_version: "1.0"}`)
+  - Added 5 SalesOS endpoints to `C:\Users\aserc\.lux\workflows\alan_os_server.py`: `GET /leads` (filterable owner/pipeline/stage), `POST /leads` (auto-uuid + timestamps + enum validation on owner/pipeline/stage/source), `PATCH /leads/{id}` (whitelisted patchable fields, bumps `updated_at`), `GET /leads/pipeline` (registered before any `/leads/{id}` route, returns `{stages, grouped, counts, total}` for kanban), `GET /competitors` (optional pipeline filter). Helpers `read_wrapped` / `write_wrapped` added since the wrapped-object schema doesn't fit the existing `read_json`/`write_json` (those expect a bare array)
+  - Specs written (build-not-yet): `C:\Veritas\repos\alan-os\docs\workflow_4_1_spec.md` (n8n lead enrichment workflow — Anthropic HTTP Request per CLAUDE.md §2 rules, two trigger modes, POST-to-/leads + email summary), `C:\Veritas\repos\alan-os\docs\salesOS_dashboard_spec.md` (kanban tab spec backed by the new endpoints, drawer-based stage transitions for Phase 1, drag-drop deferred to Phase 2)
+  - Smoke-tested all 5 endpoints end-to-end — POST creates lead with uuid, GET filters work, PATCH transitions stage, kanban groups correctly, invalid `owner` returns HTTP 400. Cleaned up smoke-test row, leads.json back to empty
+- What worked
+  - Inserted new section between `/digest` and `/dashboard` routes — clean isolation from existing array-shaped data files. Validation errors (Pydantic + manual enum checks) return 400, not 422, matching the existing `/projects` HTTPException pattern
+  - Pre-validated parse with `ast.parse` against `utf-8-sig` — file has a BOM at byte 0, so plain `utf-8` parse fails noise-only. Worth knowing: alan_os_server.py is BOM-prefixed (the existing `.env` loader on line 25 already handles this with `encoding="utf-8-sig"`)
+- Blockers / caveats
+  - **Restart trap (FIXED later this session):** original `/admin/restart` issued `schtasks /End` + `/Run` — `/End` did NOT kill the orphaned uvicorn (PID 29404). The `/Run` failed with Last Result 1 (port 8000 bound) and the OLD code kept serving. Had to `Stop-Process -Force` manually. See "/admin/restart fix" entry below.
+  - n8n VM -> host (`localhost:8000`) reachability for Workflow 4.1 Step 4 is unverified — flagged as an open question in `workflow_4_1_spec.md`. Three resolution options listed (ngrok / `/admin/write-file` direct / move alan-os to VM)
+- Next step
+  - Decide host-VM connectivity for 4.1 before building the workflow
+  - Build SalesOS dashboard tab per `docs/salesOS_dashboard_spec.md` once the connectivity question is resolved (so the "New Lead" modal has a backing path)
+
+## 2026-04-29 /admin/restart fix — proper self-restart
+- What was done
+  - Replaced `schtasks /End`-based handler with a detached helper subprocess pattern: spawn `cmd /c` with `DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP`, helper waits ~2s, `taskkill /F /PID <self>`, waits ~1s, `schtasks /Run /TN AlanOS_Server`. Endpoint returns the response synchronously before the kill fires.
+  - Edited `C:\Users\aserc\.lux\workflows\alan_os_server.py` `restart_server()` (single-function change, no other touches)
+- What worked
+  - End-to-end test verified live: BEFORE_PID 11720 → response returned `{status:ok, pid:11720, message:...}` → AFTER_PID 9108 ~6s later → new server serves `/` (200) and `/leads` (count=0, schema_version=1.0). PID actually changed; SalesOS endpoints survived the restart
+  - `ping -n N 127.0.0.1 >nul` as the sleep mechanism — `timeout.exe /t` requires a console (it errors with "Input redirection is not supported" in a detached process). `ping` has no console requirement and is built-in everywhere
+- Blockers
+  - None. The endpoint is now idempotent and self-contained — code changes to alan_os_server.py can be deployed by `curl -X POST http://localhost:8000/admin/restart` from anywhere
+- Next step
+  - Commit the SalesOS Phase 1 work (alan-os: docs + memory-bank) and the lux-os work (alan_os_server.py + data/leads.json + data/competitors.json) — separate commits, separate repos
+
+## 2026-04-29 Desktop Inventory + Org Plan (report-only, on hold pending backup)
+- What was done
+  - Scanned `C:\Users\aserc\Desktop` — 24 folders + 40 top-level files, ~480GB total (dominated by `Personal Desktop\` at 477GB and `Capcut\` at 1.2GB)
+  - Produced grouped inventory + recommended org plan: keep ~10 launcher `.lnk` shortcuts on Desktop; redistribute everything else to `C:\Veritas\assets\{loretta,mmm,veritas,sanmiguel,dominick}\`, `C:\Veritas\repos\alan-os\docs\` (for `agentOS_build_plan.docx`, `East-of-Dallas-AgentOS-SOP.docx`, `CLAUDECODE.md.txt`), `C:\Veritas\archive\` (Rockop Work, TA Services, 2024 Resume, alan_os_phase2_backend + .zip, AutoRecovery duplicates), and `Personal Desktop\` (absorbs personal items already on top level)
+  - Per CLAUDE.md rule, nothing recommended for `.lux\` — that directory stays as-is
+  - Deletion candidates flagged: `New folder\` + `__New folder\` (both contain identical `BlueStacksBackup_1370806923`), `desktop.ini`, `___All_Errors.txt`, broken `.lnk` (empty filename), `Shortcut to Desktop (OneDrive - Personal).lnk` (self-referential), the `Apps\` folder of duplicate launcher shortcuts
+  - **PRIORITY SENSITIVE: `AWS New Biz Photos\`** contains `DL.jpg` (driver's license) and `SS Card.jpg` (Social Security card) plus LinkedIn headshots. Currently sitting unencrypted on Desktop. Recommend encrypted relocation (Proton Drive, BitLocker volume, or 7-Zip AES archive). Do NOT include in any synced/asset folder as-is.
+  - Other notable findings: `Alan AI Stack\Veritas AI Partners\` is an empty stub (28K total, four empty subfolders) superseded by `C:\Veritas\repos\`; `alan_os_phase2_backend\` + `.zip` are likewise superseded; `Capcut\` (1.2GB) is the source media for workflow 2.4 video repurposing — belongs under `assets\loretta\`
+- What worked
+  - `du -sh` on suspect folders surfaced the 477GB `Personal Desktop\` immediately — cleanup blast radius is dominated by that single folder, so any move plan must sequence around it
+  - Reading inside `Alan AI Stack\` (28K total) confirmed it's an empty scaffolding folder, not a parallel doc source
+- Blockers
+  - **Cleanup is on hold pending backup.** No moves, no deletes until Alan confirms a full-disk backup exists. Especially critical given the 477GB `Personal Desktop\` blob and the unencrypted DL/SSN images.
+  - Some folders need investigation before a final decision: `Turks Photos\` (appeared empty in listing — verify), `Sanmiguel Painting Co\` (active client deliverable or one-off handoff?), `Alan AI Stack\AI Vault\inbox_dashboard.md` (single file — confirm nothing in `.lux\` reads it before deleting parent stub)
+- Next step
+  - Alan: confirm/run full backup before any Desktop mutation
+  - Then: I draft a PowerShell move script with `-WhatIf` first, scoped to one category at a time (suggest order: archive folder first → Veritas assets → personal absorption → deletions last)
+  - Handle `AWS New Biz Photos\` separately and first — encrypted destination of Alan's choice, then verify-and-shred the original
+
