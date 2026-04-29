@@ -77,6 +77,7 @@ These have been earned the hard way. Never deviate without explicit confirmation
 
 See `SESSION_PROTOCOL.md` for the full canonical protocol. Always:
 
+- **Memory bank reads precede all skill invocations.**
 - Read `PROJECTS.md` first.
 - Read `SESSION_NOTES.md` if it exists (most recent breadcrumb).
 - Report current state before building anything.
