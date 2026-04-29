@@ -226,11 +226,12 @@
 
 | Item | Status | Next Action |
 |---|---|---|
-| Dashboard live | ✅ Live | Evolving — needs Claude usage panel |
+| Dashboard live | ✅ Live | Estimated Claude Usage panel shipped Apr 29 (lux-os `3941978`); authoritative admin-API panel still blocked on admin key |
 | Daily digest email | ✅ Live | 8:05 AM, includes command center |
 | Email triage — 5 accounts | ✅ Live | MSN, Gmail, Loretta, Keys, MMM |
 | Drive integration — 6 assets | ✅ Live | Service account: `lux-automation@lux-host-493415.iam.gserviceaccount.com` |
-| Claude usage panel | ⏳ Blocked on admin key | `.env` currently holds a workspace key (`sk-ant-api03-...`), not an admin-scope key — admin endpoints will reject. Loader is BOM-tolerant (line 12). Needs true `sk-ant-admin01-...` key in `ANTHROPIC_ADMIN_API_KEY` — see "Admin API key" below for creation steps. |
+| Claude usage panel — estimated (local) | ✅ Live | Apr 29 (lux-os `3941978`): "Estimated Local Usage" panel on Lux Command Center (port 8081). Today's pace, window tokens, est cost, reset countdown, snapshot-trend sparkline. Persists to `~/.lux/Data/claude_burn_history.json` (gitignored, 5-min cadence, 30-day retention). Cost uses base-context published rates per model family — flagged "est" in UI. |
+| Claude usage panel — authoritative (admin API) | ⏳ Blocked on admin key | `.env` currently holds a workspace key (`sk-ant-api03-...`), not an admin-scope key — admin endpoints will reject. Loader is BOM-tolerant (line 12). Needs true `sk-ant-admin01-...` key in `ANTHROPIC_ADMIN_API_KEY` — see "Admin API key" below for creation steps. The estimated panel above gives drift-check value once this lands. |
 | Push handoff to Drive | ✅ Live | `push_handoff.py` |
 | Task Scheduler (alan_os_server) | ⬜ Not started | Add auto-start at login |
 | Obsidian install + setup | ⬜ Queued | Scoped, not installed |
@@ -245,7 +246,7 @@
 4. **Identify AlanSercy MSN Flow purpose** — n8n workflow ID `7GEpqCGS2cP0J8wY` surfaced during the rotation (no Anthropic key, so just bystander). Likely part of the 5-account email triage stack. Confirm whether it's redundant with the Python `triage.py` scripts in `lux-os/workflows/` or doing something different.
 
 #### Admin API key (manual creation required)
-Anthropic admin-scope keys (`sk-ant-admin01-...`) cannot be minted via API — they must be created interactively by an org-admin. This is the single blocker for the Claude usage panel.
+Anthropic admin-scope keys (`sk-ant-admin01-...`) cannot be minted via API — they must be created interactively by an org-admin. This is the single blocker for the **authoritative** Claude usage panel; the **estimated** panel (lux-os `3941978`) ships without needing this key.
 
 1. Open https://console.anthropic.com/settings/admin-keys (must be signed in as an Organization Admin — not just a workspace member).
 2. Click **Create Key** → name it e.g. `alan-os-dashboard-admin` → confirm.

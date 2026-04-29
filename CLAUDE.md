@@ -109,3 +109,6 @@ Pulled from `PROJECTS.md` Session Queue + TIER 1. Read `PROJECTS.md` for full co
 - Before starting any task: read memory-bank/session-log.md
 - After completing any task: append a dated summary to memory-bank/session-log.md
 - Format: ## [DATE] [TASK NAME]\n- What was done\n- What worked\n- Blockers\n- Next step
+
+## Required context
+- C:\Veritas\assets\veritas\veritas-company-narrative.md — load every session for company vision, product portfolio, and exit thesis
