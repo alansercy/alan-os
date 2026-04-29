@@ -10,7 +10,8 @@ How every working session opens and closes. Two surfaces: **claude.ai** (browser
 |------|----------|---------|-----------|
 | `PROJECTS.md` | repo root | Live status board across all workflows and infra | Updated during work; source of truth |
 | `CONTEXT.json` | repo root | Machine-readable system state (clients, workflows, drive registry, rules) | Updated during work; source of truth |
-| `SESSION_NOTES.md` | repo root | Most-recent Claude Code session handoff | **Overwritten** each Claude Code close |
+| `SESSION_NOTES.md` | repo root | Most-recent Claude Code session handoff (terse breadcrumb) | **Overwritten** each Claude Code close |
+| `CLOSEOUT.md` | repo root | High-altitude structured session record (commits, decisions, blockers, credentials, memory) | **Overwritten** each session close (Claude Code or claude.ai) |
 | `HANDOFF_YYYY-MM-DD.md` | repo root | Dated handoff from a claude.ai session | **Accumulates** — one per claude.ai session |
 | `templates/HANDOFF_TEMPLATE.md` | repo | Blank form Alan fills in to produce a `HANDOFF_<date>.md` | Static template |
 | `templates/session_close.md` | repo | Prompt Alan pastes into Claude Code to close a session | Static template |
@@ -75,3 +76,48 @@ Until then, paste `PROJECTS.md` contents into the chat alongside the handoff.
 - **`HANDOFF_*.md` files accumulate.** They are the only persistent record of claude.ai sessions, since those chats aren't in the repo.
 - **`PROJECTS.md` and `CONTEXT.json` are updated during the session, not at close.** Close steps capture what changed, they don't catch up on stale state.
 - **Commit on close.** Every close should end with a commit so the next session starts from a clean tree.
+
+---
+
+## Session Closeout
+
+`CLOSEOUT.md` is a high-altitude session summary distinct from `SESSION_NOTES.md` (Claude Code breadcrumb, terse, operational) and `HANDOFF_<date>.md` (claude.ai-only, manually filled). It captures what shipped with commit hashes, decisions, blockers, credential state, and memory updates — the structured record a human or claude.ai session can absorb without reading the full git log.
+
+**Lifecycle:** `CLOSEOUT.md` lives at repo root and is **overwritten** each closeout (history lives in git). Fill it in at the end of any session — Claude Code or claude.ai — when the work is substantial enough to warrant a structured record (multi-commit sessions, credential rotations, blocker changes, anything a future session needs to pick up cold).
+
+**Template** — paste this structure into `CLOSEOUT.md` at session close:
+
+```markdown
+# Session Closeout — [DATE]
+
+## What shipped
+- [commit hash] — [description]
+
+## Decisions made
+- [decision and rationale]
+
+## Blockers carrying forward
+- [blocker] — [what is needed to unblock]
+
+## Open items for next session (priority order)
+1. [item]
+2. [item]
+3. [item]
+
+## Credential state
+- ANTHROPIC_API_KEY: [LIVE / DEAD / ROTATED]
+- n8n API token: [LIVE / DEAD / ROTATED]
+- Google OAuth: [GREEN / issues]
+
+## Key file locations changed
+- [any new or moved canonical files]
+
+## Memory updates needed
+- [anything Claude.ai memory should know]
+```
+
+**Conventions:**
+- Always use absolute dates (`YYYY-MM-DD`).
+- Always include short commit hashes (7 chars) next to each shipped item — Alan reads commit hashes back to verify.
+- "Credential state" lists the three live-key categories that gate work; expand if a new credential class enters the stack.
+- "Memory updates needed" is the bridge to claude.ai's persistent memory — anything claude.ai should remember in the next session goes here so Alan can paste it forward.
