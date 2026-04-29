@@ -2,3 +2,4 @@ orch.log
 RESULTS.md
 agents/results/
 .claude/
+.env

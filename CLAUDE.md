@@ -15,7 +15,7 @@ This file is read automatically by Claude Code at session start. It carries the 
 - `C:\Veritas\repos\loretta-os` — Loretta MoveWithClarity n8n workflows
 - `C:\Veritas\repos\apexbot` — ApexBot Evony automation (Python)
 
-`C:\Users\aserc\.lux\` is **not** a repo — it stays where it is. It holds the dashboard server, triage scripts, secrets (`.env`), and the Norman Inbox Guard. Never move it. Ask before any action that touches it.
+`C:\Users\aserc\.lux\` is **not** a repo — it stays where it is. It holds the dashboard server, triage scripts, secrets (`.env`), and the Norman Inbox Guard. Never move it.
 
 **Canonical assets** live under `C:\Veritas\assets\` (veritas, loretta, mmm, lovie-and-lollie, apexbot, personal). Archive is at `C:\Veritas\archive\`.
 
