@@ -116,6 +116,9 @@ Until then, paste `PROJECTS.md` contents into the chat alongside the handoff.
 - [anything Claude.ai memory should know]
 ```
 
+**Sync step (after writing `CLOSEOUT.md`):**
+- Run: `python scripts/post_closeout_to_drive.py` — appends `CLOSEOUT.md` to the Veritas Session Log Google Doc so claude.ai sessions can fetch it via Drive MCP. Non-fatal: prints a warning and exits 0 on any failure; never blocks session close. Spec: `docs/closeout_sync_spec.md`.
+
 **Conventions:**
 - Always use absolute dates (`YYYY-MM-DD`).
 - Always include short commit hashes (7 chars) next to each shipped item — Alan reads commit hashes back to verify.
