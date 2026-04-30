@@ -37,7 +37,7 @@
 | Item | Status | Next Action |
 |---|---|---|
 | Workflow 3.1 Gmail Triage | ✅ Active | Gmail OAuth cred `68RydHz0N1dUAj9S` reauthed Apr 29; workflow `r1pkTZ94DuuWrTtA` confirmed active. Hourly runs resumed. |
-| Workflow 3.2 Prospect Audit | 🔜 Ready to fire | Sheet ID fixed Apr 26 (`1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI`, versionId `2c1fb3d1-84b0-4498-81f0-28b29d91451b`). Cred reauth done Apr 29. **Next:** click Execute on `VvHYTjheeecJ441F` for end-to-end audit; consider re-toggling active. Backup at `C:\Users\aserc\.lux\workflows\3_2_backup_pre_patch.json`. |
+| Workflow 3.2 Prospect Audit | ✅ Verified clean | Sheet ID fixed Apr 26 (`1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI`, versionId `2c1fb3d1-84b0-4498-81f0-28b29d91451b`). Cred reauth done Apr 29. Last clean run: exec `16437` 2026-04-30, 26 prospects, audit email sent. Audit is on-demand — `active` flag is moot for Manual Trigger. Backup at `C:\Users\aserc\.lux\workflows\3_2_backup_pre_patch.json`. |
 | Nimrat approval gate (3.1) | ⬜ Not started | Replace auto-send with draft-to-Nimrat flow |
 | n8n auto-start Task Scheduler | 🔨 Scripts staged Apr 26 | Two PS1 scripts at `handoff/vm-scripts/` ready to paste into elevated PowerShell on VM: `01_register_n8n_autostart.ps1` (Task Scheduler entry) + `02_add_mmm_sheets_url.ps1` (writes corrected sheet ID to `.n8n\.env`). n8n filesystem writes are blocked everywhere on VM, so deploy is manual paste — see scripts in repo |
 | HP Hood follow-up | 🔜 Deadline May 1 | Contact Matthew Bauer before May 1 re: full volume commitment |
