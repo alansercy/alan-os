@@ -1,94 +1,104 @@
-# Workflow 4.1 Spec — SalesOS Lead Enrichment
+# Workflow 4.1 Spec — SalesOS Lead Enrichment (Hybrid C)
 
-**Status:** SPEC ONLY — not yet built
+**Status:** SPEC — pending build
 **Owner:** Alan Sercy / Veritas AI Partners
 **Phase:** SalesOS Phase 1
-**Last updated:** 2026-04-29
+**Last updated:** 2026-04-30
 
 ---
 
 ## Purpose
 
-Take a target company / contact as input, run web research via Claude, extract a structured lead record, post it to the alan-os SalesOS API at `POST /leads`, and email a summary to Alan. This is the on-ramp into the SalesOS pipeline — every other stage assumes the lead already exists in `leads.json`.
+Take a `lead_id` referencing a row in the MMM Prospect Tracker Sheet, run web research via Claude, write enrichment back to the Sheet AND POST a normalized lead to the alan-os SalesOS API at `POST /leads`. This is the on-ramp into the SalesOS pipeline for MMM Trucking prospects — the Sheet stays the operational source of truth for Loretta/Nimrat, while `leads.json` carries the SalesOS-dashboard view.
+
+This is the "hybrid C" design — Sheet-in / Sheet-out **and** SalesOS POST in the same flow. Both stores stay in sync at enrichment time.
 
 ## Trigger
 
-Two trigger modes on the same workflow:
+Webhook only — `POST https://n8n.lorettasercy.com/webhook/salesos-enrich`.
 
-1. **Manual trigger** (n8n UI Execute Workflow) — for ad-hoc research on a single target. Input via "Edit Fields (Set)" node.
-2. **Webhook trigger** — `POST https://n8n.lorettasercy.com/webhook/salesos-enrich` for programmatic input from the dashboard or a CSV-driven batch job later.
-
-Both paths converge on a single normalized payload via a Merge node.
+Manual trigger node is wired in for ad-hoc testing in n8n UI; both paths converge on the normalized payload via Merge.
 
 ### Input contract
 
 ```json
-{
-  "company": "Acme Logistics",
-  "contact_name": "Jane Doe",
-  "contact_title": "VP of Operations",
-  "contact_email": "",
-  "contact_linkedin": "",
-  "owner": "alan",
-  "pipeline": "veritas_bd",
-  "source": "research",
-  "notes": ""
-}
+{ "lead_id": "1" }
 ```
 
-`owner` and `pipeline` are required; everything else is optional and will be enriched in Step 2.
+`lead_id` is the value in the `#` column (col B) of the `WA Prospect Tracker (n8n)` tab. Numeric or string. Required. No other fields accepted in V1.
+
+## Sheet contract — MMM Prospect Tracker
+
+**Spreadsheet:** `MMM_Trucking_Prospect_Tracker` · ID `1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI`
+**Tab (V1, only):** `WA Prospect Tracker (n8n)` — separate from the human `WA Prospect Tracker` tab so manual edits and machine writes don't collide.
+**Header row:** row 3 (rows 1–2 are banner / context).
+**Columns (A–S):** `Priority | # | Company | City / State | Address | Type | What They Ship | Known Ship-To (CA) | Est. Loads/Wk | Warm Intro? | Contact Name | Title / Role | Phone | Email | Outreach Status | Last Contact | Who Sent | Next Step | Notes`
+
+Other tabs (`HP Hood Lane Tracker`, `Utah-Idaho Corridor`, `CA Receivers (Backhaul Intel)`, `Strategy & Key`) are out of scope for V1. Adding them = parameterize `sheetName` and add per-tab schema mapping.
 
 ## Steps
 
-### Step 1 — Accept + normalize input
+### Step 1 — Triggers + normalize
 
-Node: **Edit Fields (Set)** + **Merge** (combine manual + webhook paths)
-Output: single item with the normalized payload above. Validate required fields (`company`, `owner`, `pipeline`); fail-fast via IF node if missing.
+Nodes: **Webhook** + **Manual Trigger** → **Merge** → **Set: Normalize Input**.
 
-### Step 2 — Web research via HTTP Request to Anthropic
+Outputs single item:
+```json
+{ "lead_id": "<string>", "submitted_at": "<ISO timestamp>" }
+```
 
-Node: **HTTP Request** (typeVersion 4.2)
+If `lead_id` missing or empty: **IF: Validate Input** routes to a respond-400 path.
 
-**Per CLAUDE.md Section 2 (non-negotiable):**
-- Method: POST
-- URL: `https://api.anthropic.com/v1/messages`
-- Headers:
-  - `x-api-key`: `={{ $env.ANTHROPIC_API_KEY }}`
-  - `anthropic-version`: `2023-06-01`
-  - `content-type`: `application/json`
-- `contentType`: `raw`
-- Body: `={{ $json.apiBody }}` (built in a preceding Code node — see below)
-- **Never use the built-in Anthropic node.**
+### Step 2 — Read row from Sheet
 
-**Preceding Code node — build `apiBody`:**
+Node: **Google Sheets — Lookup row** (typeVersion 4.4 or higher)
+
+- `documentId`: `__rl` wrapper, mode `id`, value `1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI`
+- `sheetName`: `__rl` wrapper, mode `name`, value `WA Prospect Tracker (n8n)`
+- Operation: `lookup`
+- Lookup column: `#`
+- Lookup value: `={{ $json.lead_id }}`
+- Header row: 3
+- Data starts at row: 4
+- Credential: existing `sG8kOyb5bJb0hjgS` ("Google Sheets account")
+
+If no match: **IF: Row Found** routes to a respond-404 path with `{error: "lead_id not in tracker"}`.
+
+### Step 3 — Build apiBody for Claude
+
+Node: **Code — Build apiBody** (JavaScript)
 
 ```javascript
-const input = $input.item.json;
-const systemPrompt = `You are a B2B sales research assistant. Given a company name (and optionally a contact), return a JSON object with these fields and nothing else:
+const row = $input.item.json;
+const systemPrompt = `You are a B2B sales research assistant for MMM Trucking — a reefer-and-produce, asset-based, minority/women-owned carrier running NorCal → Washington → Utah/Idaho → SoCal/NorCal.
+
+Given a Washington-state shipper prospect, return a JSON object with EXACTLY these fields and nothing else:
 {
-  "company": "...",
-  "contact_name": "...",
-  "contact_title": "...",
-  "contact_email": "...",
-  "contact_linkedin": "...",
-  "competitor_notes": "...",
-  "company_summary": "...",
-  "fit_signal": "high|medium|low",
-  "fit_rationale": "..."
+  "type": "<grower / packer / shipper / cold-storage / processor / etc.>",
+  "what_they_ship": "<commodity description, year-round vs seasonal>",
+  "known_ship_to": "<CA destinations / DCs / receivers if known>",
+  "est_loads_per_week": "<range like 5-10 or 10-20, or '' if unknown>",
+  "company_summary": "<2-3 sentence factual summary>",
+  "fit_signal": "high" | "medium" | "low",
+  "fit_rationale": "<1-2 sentence reason — lane fit, year-round volume, reefer needs, current carrier landscape>",
+  "competitor_notes": "<who currently hauls for them if known, or '' >"
 }
 Output ONLY the JSON object, no preamble, no markdown fences.`;
 
-const userPrompt = `Pipeline: ${input.pipeline}
-Owner: ${input.owner}
-Company: ${input.company}
-Known contact: ${input.contact_name || 'unknown'} (${input.contact_title || 'title unknown'})
-Seed notes: ${input.notes || 'none'}
+const userPrompt = `Company: ${row['Company'] || ''}
+City/State: ${row['City / State'] || ''}
+Address: ${row['Address'] || ''}
+Existing Type: ${row['Type'] || '(unknown)'}
+Existing What They Ship: ${row['What They Ship'] || '(unknown)'}
+Existing Known Ship-To (CA): ${row['Known Ship-To (CA)'] || '(unknown)'}
+Existing Est. Loads/Wk: ${row['Est. Loads/Wk'] || '(unknown)'}
+Existing Notes: ${row['Notes'] || '(none)'}
 
 Research and return the JSON.`;
 
 return [{
   json: {
-    ...input,
+    ...row,
     apiBody: JSON.stringify({
       model: "claude-sonnet-4-6",
       max_tokens: 1024,
@@ -99,15 +109,30 @@ return [{
 }];
 ```
 
-### Step 3 — Extract enriched fields
+### Step 4 — HTTP Request to Anthropic
 
-Node: **Code** (parse Claude response into a typed lead object)
+Node: **HTTP Request** (typeVersion 4.2)
+
+Per CLAUDE.md §2 (non-negotiable):
+- Method: POST
+- URL: `https://api.anthropic.com/v1/messages`
+- Headers:
+  - `x-api-key`: `={{ $env.ANTHROPIC_API_KEY }}`
+  - `anthropic-version`: `2023-06-01`
+  - `content-type`: `application/json`
+- `contentType`: `raw`
+- Body: `={{ $json.apiBody }}`
+- **Never** use the built-in Anthropic node. It does not work on this n8n install.
+
+### Step 5 — Parse Claude response
+
+Node: **Code — Parse Response** (JavaScript)
 
 ```javascript
-const original = $('Step 1 — Normalize').item.json;
+const original = $('Step 2 — Lookup Row').item.json;
 const apiResp  = $input.item.json;
-
 const raw = apiResp.content?.[0]?.text || '{}';
+
 let enriched = {};
 try {
   enriched = JSON.parse(raw);
@@ -116,88 +141,160 @@ try {
   enriched = JSON.parse(stripped);
 }
 
-const lead = {
-  owner: original.owner,
-  pipeline: original.pipeline,
-  source: original.source || 'research',
-  company: enriched.company || original.company,
-  contact_name: enriched.contact_name || original.contact_name || '',
-  contact_title: enriched.contact_title || original.contact_title || '',
-  contact_email: enriched.contact_email || original.contact_email || '',
-  contact_linkedin: enriched.contact_linkedin || original.contact_linkedin || '',
-  stage: 'researched',
-  competitor_notes: enriched.competitor_notes || '',
-  notes: [
-    original.notes,
-    enriched.company_summary ? `Summary: ${enriched.company_summary}` : '',
-    enriched.fit_signal ? `Fit: ${enriched.fit_signal} — ${enriched.fit_rationale || ''}` : ''
-  ].filter(Boolean).join('\n\n')
+const today = new Date().toISOString().slice(0, 10);
+const enrichedNoteBlock = [
+  `[salesos-enrich ${today}]`,
+  enriched.company_summary ? `Summary: ${enriched.company_summary}` : '',
+  enriched.fit_signal ? `Fit: ${enriched.fit_signal} — ${enriched.fit_rationale || ''}` : '',
+  enriched.competitor_notes ? `Competitors: ${enriched.competitor_notes}` : ''
+].filter(Boolean).join('\n');
+
+const existingNotes = original['Notes'] || '';
+const mergedNotes = existingNotes
+  ? `${existingNotes}\n\n${enrichedNoteBlock}`
+  : enrichedNoteBlock;
+
+const writeback = {
+  '#': original['#'],
+  Type:                 original['Type']                || enriched.type || '',
+  'What They Ship':     original['What They Ship']      || enriched.what_they_ship || '',
+  'Known Ship-To (CA)': original['Known Ship-To (CA)']  || enriched.known_ship_to || '',
+  'Est. Loads/Wk':      original['Est. Loads/Wk']       || enriched.est_loads_per_week || '',
+  Notes: mergedNotes
 };
 
-return [{ json: { lead, fit_signal: enriched.fit_signal, fit_rationale: enriched.fit_rationale } }];
+const salesosLead = {
+  owner: 'alan',
+  pipeline: 'mmm_trucking',
+  source: 'mmm_prospect_tracker',
+  company: original['Company'] || '',
+  contact_name: original['Contact Name'] || '',
+  contact_title: original['Title / Role'] || '',
+  contact_email: (original['Email'] || '').includes('@') ? original['Email'] : '',
+  contact_linkedin: '',
+  stage: 'researched',
+  last_contact: original['Last Contact'] || '',
+  next_action: original['Next Step'] || '',
+  next_action_date: '',
+  notes: `[mmm:#=${original['#']}] ${mergedNotes}`
+};
+
+return [{
+  json: {
+    lead_id: original['#'],
+    writeback,
+    salesos_lead: salesosLead,
+    enriched
+  }
+}];
 ```
 
-### Step 4 — POST to /leads endpoint
+### Step 6 — Update Sheet row (write-back)
+
+Node: **Google Sheets — Update row** (same typeVersion as Step 2)
+
+- `documentId` / `sheetName`: same `__rl` wrappers as Step 2
+- Operation: `update`
+- Match column: `#`
+- Match value: `={{ $json.lead_id }}`
+- Columns: define `Type`, `What They Ship`, `Known Ship-To (CA)`, `Est. Loads/Wk`, `Notes` from `$json.writeback.*`
+- Header row: 3
+- Credential: same `sG8kOyb5bJb0hjgS`
+
+**Blank-only policy:** the four operational columns (Type / What They Ship / Known Ship-To / Est. Loads/Wk) are written only if the existing cell is blank — preserves Loretta's manual edits. The merge logic lives in the Step 5 Code node (`original['Type'] || enriched.type`).
+
+**Notes always appends.** A re-run of the same `lead_id` will append a second `[salesos-enrich YYYY-MM-DD]` block to Notes.
+
+### Step 7 — POST to alan-os /leads
 
 Node: **HTTP Request** (typeVersion 4.2)
+
 - Method: POST
-- URL: `http://host.docker.internal:8000/leads` — n8n runs on the VM; alan-os runs on the host. Reachable network path needs verification before first run; fallback options below.
+- URL: `={{ $env.ALAN_OS_PUBLIC_URL }}/leads`
+- Headers: `content-type: application/json`
 - `contentType`: `raw`
-- Body: `={{ JSON.stringify($json.lead) }}`
-- Header: `content-type: application/json`
-- Response: capture `id` from the JSON response — that is the SalesOS lead ID for the summary email.
+- Body: `={{ JSON.stringify($json.salesos_lead) }}`
+- Capture response `id` as `$json.salesos_lead_id` for the webhook response.
 
-**Open question (resolve before build):** does the n8n VM have a reachable path to `localhost:8000` on the host? If not, options are (a) expose alan-os via ngrok / Cloudflare Tunnel, (b) write directly to `leads.json` via the existing `/admin/write-file` endpoint, or (c) move alan-os onto the VM. Decide before first build.
+**`ALAN_OS_PUBLIC_URL`** is an env var on the n8n VM that points to the host's `localhost:8000` exposed via ngrok. Resolution decision (2026-04-30): ngrok over the other two options in the V0 spec (FastAPI `/admin/write-file`, move alan-os to VM). Alan sets the actual URL before first live run.
 
-### Step 5 — Summary email to Alan
+### Step 8 — Respond to webhook
 
-Node: **Gmail — Send a message** (existing Gmail OAuth cred, alansercy@gmail.com)
-- To: `alansercy@gmail.com`
-- Subject: `[SalesOS] New lead: {{ $json.lead.company }} ({{ $json.lead.pipeline }})`
-- Body:
+Node: **Respond to Webhook**
 
-```
-SalesOS lead created.
-
-Company:     {{ $json.lead.company }}
-Pipeline:    {{ $json.lead.pipeline }}
-Owner:       {{ $json.lead.owner }}
-Contact:     {{ $json.lead.contact_name }} — {{ $json.lead.contact_title }}
-Email:       {{ $json.lead.contact_email }}
-LinkedIn:    {{ $json.lead.contact_linkedin }}
-Stage:       researched
-Fit:         {{ $json.fit_signal }} — {{ $json.fit_rationale }}
-
-Competitor notes:
-{{ $json.lead.competitor_notes }}
-
-Notes:
-{{ $json.lead.notes }}
-
-Lead ID: {{ $('Step 4 — POST /leads').item.json.id }}
-Dashboard: http://localhost:8000/dashboard#salesos
+Body:
+```json
+{
+  "lead_id": "{{ $json.lead_id }}",
+  "salesos_lead_id": "{{ $('Step 7 — POST /leads').item.json.id }}",
+  "enriched": "{{ $json.enriched }}"
+}
 ```
 
 ## Error handling
 
-- Each HTTP node gets `onError: continueErrorOutput` so failures route to a single **Gmail — Send error email** node that emails Alan with the failing node name + error message + original input.
-- The `/leads` POST is idempotent on the client side (no dedup yet — Phase 2 may add company-name dedup); a duplicate run will create two records. Alan reviews the summary email and can PATCH `stage=dead` on the dupe.
+Every HTTP / Sheets node: `onError: continueErrorOutput`.
 
-## Credentials needed
+All error branches converge on a single **Gmail — Send Error** node:
+- To: `alansercy@gmail.com`
+- Subject: `[SalesOS 4.1] Error enriching lead_id={{ $json.lead_id }}`
+- Body: failing node + error message + lead_id + timestamp.
+
+Webhook still responds (500) with `{error: "<short tag>"}` so callers see the failure.
+
+## Dedup
+
+None in V1. Re-firing same `lead_id`:
+- Sheet: appends a new `[salesos-enrich]` block to Notes; operational cols stay (blank-only policy).
+- `/leads`: creates a duplicate record. The notes carry an `[mmm:#=N]` tag — Phase 2 `POST /leads` can dedup on that tag and skip the create.
+
+## Credentials
 
 | Credential | Status | Notes |
 |---|---|---|
+| Google Sheets — `sG8kOyb5bJb0hjgS` | Live | Read + update on `WA Prospect Tracker (n8n)` |
 | `ANTHROPIC_API_KEY` (env) | Live | Already on VM |
-| Gmail OAuth (Alan) | Live | Same cred used by 3.1 / 3.2 |
-| alan-os reachability from VM | Unverified | See Step 4 open question |
+| Gmail OAuth (Alan, alansercy@gmail.com) | Live | Used by 3.1 / 3.2 — error path only |
+| `ALAN_OS_PUBLIC_URL` (env) | **To be set** | Alan sets ngrok URL before first live run |
 
-## Validation profile
+## Validation
 
-When this is built, run `mcp__n8n-mcp__validate_workflow` at profile `runtime` and resolve all errors before activation. Warnings about `typeVersion` and `cachedResultName` are non-blocking per the 2.4 deploy precedent.
+Run `mcp__n8n-mcp__validate_workflow` at profile `runtime` and resolve all errors before activation. `typeVersion` and `cachedResultName` warnings are non-blocking (per 2.4 deploy precedent).
+
+## Mapping table — Sheet → SalesOS lead
+
+| Sheet column | SalesOS field | Notes |
+|---|---|---|
+| (fixed) | `owner` | `"alan"` — this is Alan's SalesOS engine |
+| (fixed) | `pipeline` | `"mmm_trucking"` |
+| (fixed) | `source` | `"mmm_prospect_tracker"` |
+| Company | `company` | |
+| Contact Name | `contact_name` | |
+| Title / Role | `contact_title` | |
+| Email | `contact_email` | only if contains `@`; else blank |
+| (none) | `contact_linkedin` | always blank in V1 |
+| (fixed) | `stage` | `"researched"` |
+| Last Contact | `last_contact` | |
+| Next Step | `next_action` | |
+| (none) | `next_action_date` | always blank in V1 |
+| Notes + enrichment | `notes` | prefixed with `[mmm:#=N]` for Phase 2 dedup |
 
 ## Out of scope (Phase 2+)
 
-- Dedup logic on `POST /leads` (company-name fuzzy match)
+- Dedup on `POST /leads` (`[mmm:#=N]` tag match)
+- Adding new columns to `(n8n)` tab for `Company Summary` / `Fit Signal` / `Fit Rationale` / `Competitor Notes` (V1 compresses these inside Notes)
+- Other tabs (HP Hood, Utah-Idaho, CA Receivers) — parameterize `sheetName` and per-tab schema
 - Auto-trigger of an outbound sequencing agent when `fit_signal == high`
-- Bulk CSV input via webhook batch
-- Competitor record creation from `competitor_notes` (will need its own flow that POSTs to a future `POST /competitors`)
+- Bulk webhook input (array of `lead_id`s)
+- Competitor record creation from `competitor_notes` (would need `POST /competitors`, not yet built)
+
+## Decisions locked (do not relitigate)
+
+- Trigger: webhook only (`POST /salesos-enrich`); manual trigger for testing only
+- Lead ID = `#` column (col B) on `(n8n)` tab
+- Owner = `alan` (not Loretta — Loretta as sender stays in Sheet's `Who Sent` column as operational data)
+- Blank-only write-back for the four operational columns; Notes always appends
+- Compressed-in-Notes for V1 (no new Sheet columns until Phase 2)
+- `(n8n)` tab only for V1
+- VM→host resolution = ngrok via `ALAN_OS_PUBLIC_URL` env var
+- Webhook response = `{lead_id, salesos_lead_id, enriched}` (small payload, not full row)
