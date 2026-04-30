@@ -1,43 +1,41 @@
-# SESSION_NOTES — 2026-04-29 (close)
+# SESSION_NOTES — 2026-04-30 (close)
 
-**Session focus:** Claude Usage card — false start on the orphan port-8000 dashboard, then correctly built as an estimated-usage panel + persistence on the active Lux Command Center (port 8081).
+**Session focus:** VIE Step 4 — built the AI Stack tab on Lux Command Center (`localhost:8081`, `claude_usage_dashboard.html`) and visually verified it renders with the live `:8000` `/ai_stack` feed.
 
 ## What changed (this session)
 
 **lux-os (commits):**
-- `53b60f3` — feat: Claude usage dashboard card (port-8000 React dashboard, `Dashboard/index.html` + `workflows/daily_burn_rate.py` cost computation). **Now orphan code** — landed on the wrong dashboard before Alan corrected me.
-- `3941978` — feat: estimated local usage panel for Lux Command Center (`claude_usage_dashboard.html` panel + `workflows/daily_burn_rate.py` snapshot persistence to `~/.lux/Data/claude_burn_history.json`).
-- (parallel session) `952862e`, `eb97800`, `3ef9724` — VIE `/ai_stack` endpoints, AI research script Doc-ID fix, SalesOS dashboard tab. Mine + parallel-session work do not overlap.
+- `33f5e86` — `feat: AI Stack tab on Lux Command Center` (`claude_usage_dashboard.html` only, +445 lines). New 8th tab after SalesOS. Default mode `Top picks` calls `GET /ai_stack/digest?limit=10`; `All items` mode calls `GET /ai_stack` with chip filters (`status` / `fit_pipeline` / `category`) and client-side pagination at 20/page. Per-row `Save` / `Reviewed` / `Dismiss` → `PATCH /ai_stack/{id}` with `{status}`. Brand-consistent (Navy `#0B1E3D` + Gold `#C6A96A`, reuses `--surface` / `--border` / `.badge` / `.btn` tokens, mirrors SalesOS panel pattern). Wired into `refreshAll()` (60s).
 
 **alan-os (commits):**
-- `37f7993` — feat: SalesOS dashboard spec V1 + memory-bank entry. **Bundled my "Lux Command Center — Estimated Usage Panel + Burn-Rate Persistence" memory-bank append** alongside the parallel session's spec/memory-bank work in a single commit.
-- (parallel session) `1f431c9`, `f6e1f56`, `af7b40d`, `1747450` — VIE 5.1 spec rewrites + closeout entries.
+- `35ef160` — `chore: session log — VIE Step 4 AI Stack dashboard tab` (memory-bank, +22 lines).
 
-**This close** — `SESSION_NOTES.md` rewrite + `PROJECTS.md` updates (3 lines: dashboard row reflects estimated panel shipped, panel row split into estimated-live vs authoritative-blocked, admin-key blocker scoped to authoritative path only). **Uncommitted at session close** — see Open threads below.
+**This close (uncommitted):**
+- `SESSION_NOTES.md` — this file, fresh rewrite.
+- `PROJECTS.md` — Session Queue line 392 updated to reflect VIE V1 build is now complete (endpoints + enrichment + dashboard tab all landed); remaining work is the end-to-end real-email run. Single-line factual fix, no stylistic rewrite.
 
 ## Decisions made (don't relitigate)
 
-- **Estimated cost stays in `daily_burn_rate.py`** with hardcoded per-model-family rates (Opus 4.x / Sonnet 4.x / Haiku 4.x / 3.5 fallbacks). Flagged "est" in the UI. Authoritative numbers wait on the admin API key.
-- **Persistence lives in `daily_burn_rate.py`, not a separate service.** `_record_snapshot()` writes a 15-key lean record per `get_burn_rate()` cache miss. Throttled to 5 min between writes (independent of the 30s data cache). Atomic via `.json.tmp` + `os.replace`. Persistence errors swallowed so `/health` cannot break.
-- **History exposed via `/health.claude_burn.history`** rather than a new `/local_burn` endpoint — single endpoint, single cache, dashboard JS already cross-fetches `localhost:8000`.
-- **Estimated panel coexists with the (still-empty) admin-API panel** on Lux Command Center. When admin key lands, both render side-by-side and act as a drift check.
-- **Orphan commit `53b60f3` left in place.** Doesn't break anything; minimal cost to keep until/unless port-8000 dashboard is intentionally retired.
+- **Two-mode segmented control over a single combined view.** `Top picks` (digest) vs `All items` (full filterable list). Filters and paginator only show in `All items` — `Top picks` stays clean by design. Action buttons work identically in both modes.
+- **Chip values pulled from backend constants, not the spec.** Read `AI_STACK_PIPELINES` / `AI_STACK_STATUSES` / `AI_STACK_CATEGORIES_ENUM` directly from `~/.lux/workflows/alan_os_server.py:625-630`. If spec and code disagree, code wins — chips will always reflect what `POST /ai_stack` will accept.
+- **Client-side pagination at 20/page.** `GET /ai_stack` already returns up to 500 items in one call; slicing in the browser is simpler than wiring `offset`/`limit` query params and keeps the count meta accurate after filter changes.
+- **Optimistic-with-refetch on PATCH.** Click Save → buttons disable → `PATCH /ai_stack/{id}` → `loadAIStack()` on success, re-enable on failure with alert. Simpler than full optimistic-update with rollback; one extra round-trip is fine at human click speed.
+- **Backend untouched.** All four endpoints from VIE Steps 1–2 (`952862e`) cover the tab's needs. No new server work.
 
 ## Open threads
 
-- **Uncommitted at close:** `SESSION_NOTES.md` (this file, rewrite) + `PROJECTS.md` (3 factual updates, lines 229 / 233-now-234 / authoritative-key paragraph). Asking before commit per close template.
-- **Trend sparkline cold-start:** first snapshot persists on first `/health` call after server restart; informative shape needs ~few hours of accumulation. Empty-state copy already covers <1 snapshot.
-- **Orphan port-8000 card** (`53b60f3`) — invisible unless that dashboard is opened. Carry-forward decision: revert vs leave.
-- **n8n REST 401** carry-forward from the parallel VIE session (User-scope env, `~/.lux/.env`, alan-os `.env` — all rejected). Not blocking VIE V1 (Python-only).
-- **AlanOS_Server task patch** still needs elevated `schtasks /Create /F` against `~/.lux/workflows/AlanOS_Server.xml.patched`. Carry-forward from prior sessions.
-- **Test data left in place from parallel SalesOS session:** `~/.lux/Data/leads.json` has 4 records, `competitors.json` has 2. For visual verification when Alan loads the dashboard.
+- **Uncommitted at close:** `SESSION_NOTES.md` (this rewrite) + `PROJECTS.md` (line 392 factual update). Asking before commit per close template.
+- **First real-email run** of `nlm_feed_builder.py` Step 2 enrichment hasn't fired against a real AI-research email yet — the only feed item is the VIE Step 2 hand-crafted smoke seed. Pagination, multi-page filter, and "no items match these filters" empty-state copy are coded but exercised only by mock-data inspection.
+- **Lux Command Center server (`:8081`) was started this session** (`python ~/.lux/claude_usage_dashboard.py`) and is still running in background after verification. If Alan wants it running long-term, leave it; if not, kill the process this session started.
 
 ## Next action
 
-**Alan:** load `localhost:8081`, scroll to "Estimated Local Usage" panel, confirm it renders the way the screenshot-from-disk verification suggests (4 tiles + sparkline + footer with snapshot count). Ping back if anything is broken.
+Run `nlm_feed_builder.py` against a real AI-research email (or seed a few realistic items via `POST /ai_stack`) so the dashboard tab can be exercised at real volume — pagination, chip filtering across multiple categories, and the dismissed/saved status round-trip all need >1 item to be meaningful.
 
 ## Blockers
 
-- **Anthropic admin-scope API key** — manual mint required (Org Admin only, console.anthropic.com). Single blocker on authoritative panel; estimated panel ships without it. Process documented in PROJECTS.md lines 247-259.
-- **Elevated PowerShell** for AlanOS_Server task patch (carry-forward).
-- **Plan-ceiling math** still impossible without admin key (drift-check requires authoritative org-wide numbers to compare estimated against).
+- **None for the AI Stack tab itself.** Code is shipped, render is verified, PATCH round-trip works.
+- **Carry-forward from prior sessions (unchanged):**
+  - AlanOS_Server elevated reregister still owed (patched XML at `~/.lux/workflows/AlanOS_Server.xml.patched`).
+  - Anthropic admin-scope API key still pending (PROJECTS.md line 233) — blocks the authoritative Claude usage panel.
+  - Workflow 2.4 first end-to-end run still waiting on `OPUS_CLIP_API_KEY` / `BUFFER_ACCESS_TOKEN` / `BUFFER_PROFILE_IDS` + Loretta source video.

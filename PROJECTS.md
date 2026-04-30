@@ -389,7 +389,7 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 | **MMM** | Chief of Staff Proposal — needs context dump from Alan | Host | 45 min |
 | **Veritas** | Painter SOW (after demo), health enthusiast SOW | Host | 45 min |
 | **GitHub** | alan-os repo, loretta-os repo, skill stubs populated | Host | 60 min |
-| **VIE** | Veritas Intelligence Engine — V1: Workflow 5.1 (inbox → URL extract → Claude enrich → `ai_stack_feed.json` → dashboard panel). Full spec in ROADMAP section below. Ready to spec next session, no blockers. | Host | 90 min |
+| **VIE** | Veritas Intelligence Engine — V1 build complete: `/ai_stack` endpoints (lux-os `952862e`), per-URL enrichment in `nlm_feed_builder.py` (lux-os `e990881`), AI Stack dashboard tab on Lux Command Center 8081 (lux-os `33f5e86`, 2026-04-30). Remaining: end-to-end run against a real AI-research email to confirm the full pipeline. | Host | 30 min |
 
 ---
 
