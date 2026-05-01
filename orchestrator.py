@@ -27,6 +27,16 @@ AGENTS_DIR  = ROOT / "agents"
 RESULTS     = ROOT / "RESULTS.md"
 LOG         = ROOT / "orch.log"
 
+# ── Model tier routing (Pattern 1, memory-bank/VIE_PATTERN_ACTION_LIST.md) ───
+# plan → architecture / decomposition / complex reasoning
+# execute → code generation / standard tasks
+# classify → triage / lookups / summarization
+MODEL_TIERS = {
+    "plan":     "claude-opus-4-7",
+    "execute":  "claude-sonnet-4-6",
+    "classify": "claude-haiku-4-5-20251001",
+}
+
 # ── Bootstrap: create dirs and starter files if missing ──────────────────────
 def bootstrap():
     AGENTS_DIR.mkdir(exist_ok=True)
@@ -239,7 +249,7 @@ def run_claude(prompt: str) -> str:
         import anthropic
         client = anthropic.Anthropic()
         msg = client.messages.create(
-            model="claude-sonnet-4-6",
+            model=MODEL_TIERS["plan"],
             max_tokens=4096,
             messages=[{"role": "user", "content": prompt}]
         )

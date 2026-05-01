@@ -60,7 +60,16 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 AI_STACK_API_URL  = os.environ.get("AI_STACK_API_URL", "http://127.0.0.1:8000/ai_stack")
 ADMIN_TOKEN       = os.environ.get("ALAN_OS_ADMIN_TOKEN", "")  # /ai_stack itself isn't admin-gated
 
-CLAUDE_MODEL = "claude-sonnet-4-6"
+# Model tier routing (Pattern 1, memory-bank/VIE_PATTERN_ACTION_LIST.md).
+# VIE evaluation is execute-tier (Sonnet); plan/classify exposed for callers
+# that need a different tier without re-hardcoding.
+MODEL_TIERS = {
+    "plan":     "claude-opus-4-7",
+    "execute":  "claude-sonnet-4-6",
+    "classify": "claude-haiku-4-5-20251001",
+}
+
+CLAUDE_MODEL = MODEL_TIERS["execute"]
 CLAUDE_MAX_TOKENS = 1500
 
 
