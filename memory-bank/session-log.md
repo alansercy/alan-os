@@ -648,7 +648,7 @@
 - What was done
   - **REJECT score override** (alan-os `4c9eae4`) — `_derive_v1_fields()` now forces `relevance_score=1` when `stack_evaluation.recommendation == "REJECT"`, overriding the HIGH/MEDIUM/LOW confidence mapping. Three lines added (rec extraction + ternary). Without this, REJECT/HIGH landed at score 8 — surfacing rejected content at the top of the dashboard digest sort
   - **Moved `VIE_PATTERN_ACTION_LIST.md`** from `C:/Veritas/repos/memory-bank/` (orphan parent directory, not in any git repo) to `C:/Veritas/repos/alan-os/memory-bank/` — matches the file's own frontmatter "Canonical Location" claim and keeps Veritas planning docs inside the alan-os repo. Updated PROJECTS.md `VIE-impl-A` row to use the relative path `memory-bank/VIE_PATTERN_ACTION_LIST.md`. Parent memory-bank still holds `VIE_PROMPT_PATCH.md` and `VIE_YOUTUBE_INTELLIGENCE_ENGINE.md` (Alan didn't request those moved)
-  - **`push_handoff.py` ran cleanly** — see hash + char count in the session close block below
+  - **`push_handoff.py` ran cleanly** — `SUCCESS` written to handoff_doc (`1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ`) on Drive, 7,111 chars. Step 4 of the §4 session-close checklist satisfied
   - Final alan-os commits this session (newest → oldest):
     - `4c9eae4` fix: REJECT score override
     - `e91be8e` chore: v2 live re-run artifacts + VIE-impl queue + session-log
