@@ -255,6 +255,49 @@ def clean_vtt(vtt_text: str) -> str:
 # Claude evaluation (cached system prompt)
 # ─────────────────────────────────────────────────────────────────────────────
 
+# v2 back-compat: confidence -> relevance_score mapping (HIGH=8, MEDIUM=5, LOW=3)
+_CONFIDENCE_TO_SCORE = {"HIGH": 8, "MEDIUM": 5, "LOW": 3}
+
+# v2 stack_layer -> v1 fit_pipeline mapping. v2 layers:
+#   orchestration|intelligence|memory|interface|communication|data|pattern|signal|none
+# v1 pipelines: ai_stack|veritas|agentos|personalos|loretta|mmm|none
+# All non-"none" v2 layers map to "ai_stack" — the alan_os context evaluates AI
+# stack content. Vertical pipelines (loretta/mmm/etc.) would need a vertical
+# domain context to derive correctly; not yet plumbed.
+_LAYER_TO_PIPELINE = {
+    "orchestration": "ai_stack",
+    "intelligence":  "ai_stack",
+    "memory":        "ai_stack",
+    "interface":     "ai_stack",
+    "communication": "ai_stack",
+    "data":          "ai_stack",
+    "pattern":       "ai_stack",
+    "signal":        "ai_stack",
+    "none":          "none",
+}
+
+
+def _derive_v1_fields(eval_result: dict) -> None:
+    """
+    Mutate eval_result in place to add v1-compat top-level fields
+    (relevance_score, fit_pipeline, fit_rationale) derived from the v2
+    stack_evaluation block. No-op if a v1 field is already present, so this is
+    forward-safe if a future schema brings them back.
+
+    Placed in the evaluate() pipeline so process_url() and post_to_ai_stack()
+    both read the same enriched dict — single derivation point, no duplication.
+    """
+    se = eval_result.get("stack_evaluation", {}) or {}
+    if "relevance_score" not in eval_result:
+        confidence = (se.get("confidence") or "").upper()
+        eval_result["relevance_score"] = _CONFIDENCE_TO_SCORE.get(confidence, 0)
+    if "fit_pipeline" not in eval_result:
+        layer = (se.get("stack_layer") or "none").lower()
+        eval_result["fit_pipeline"] = _LAYER_TO_PIPELINE.get(layer, "none")
+    if "fit_rationale" not in eval_result:
+        eval_result["fit_rationale"] = se.get("reasoning", "") or ""
+
+
 def evaluate(client: anthropic.Anthropic, title: str, channel: str, transcript: str, fallback_note: str = "") -> dict:
     """Send transcript+metadata to Claude. System prompt is cached (ephemeral)."""
     user_content = f"Video title: {title}\nChannel: {channel}\n"
@@ -277,6 +320,9 @@ def evaluate(client: anthropic.Anthropic, title: str, channel: str, transcript: 
     raw = re.sub(r"^```(?:json)?\s*", "", raw)
     raw = re.sub(r"\s*```$", "", raw)
     parsed = json.loads(raw)
+
+    # v2 back-compat: derive missing v1 top-level fields from v2 stack_evaluation
+    _derive_v1_fields(parsed)
 
     # Token accounting for visibility
     parsed["_usage"] = {
@@ -325,7 +371,12 @@ def post_to_ai_stack(url: str, meta: dict, eval_result: dict) -> tuple[bool, boo
             "sender":     meta.get("channel", ""),
             "date":       meta.get("upload_date", ""),
         },
-        "stack_evaluation": eval_result.get("stack_evaluation", {}),
+        "stack_evaluation":  eval_result.get("stack_evaluation", {}),
+        # v2 three-lens fields. Server-side StackItem accepts these as optional
+        # dicts after the lux-os 2026-05-01 schema extension. Pre-extension
+        # servers silently drop them (pydantic default extra='ignore').
+        "pattern_extraction": eval_result.get("pattern_extraction") or None,
+        "strategic_signal":   eval_result.get("strategic_signal") or None,
     }
     try:
         resp = httpx.post(AI_STACK_API_URL, json=payload, timeout=15.0)
