@@ -497,7 +497,7 @@
   - **Schema extension was backward compatible.** `nlm_feed_builder.py`'s existing email-context POSTs simply have `stack_evaluation = null` and continue working. No coordinated migration needed.
 - Blockers / caveats
   - **Caching anomaly — open for next session.** SDK 0.94.0 reported `cache_creation_input_tokens=0` and `cache_read_input_tokens=0` across Groups 2-4 despite `cache_control: ephemeral` set on the system prompt. Group 1 showed `cache_write=2316` correctly but `cache_read=0` (parallel race-write). Per-URL token cost in G2-G4 was lower than fully uncached, so something happened on Anthropic side, but the SDK is not surfacing it via `msg.usage`. Hypothesis: SDK attribute name mismatch on the usage object. Not blocking — functional output unaffected.
-  - **`docs/veritas-company-narrative.md` had pre-existing uncommitted modifications** at session start; I did not touch them. They remain uncommitted in working tree — Alan to handle separately.
+  - **`docs/veritas-company-narrative.md` had pre-existing uncommitted modifications** at session start (Workflow 4.1 status line — spec'd → built, syncing narrative to commit `9b99cf3` from 2026-04-30). I did not author this change but committed it during close-out as `d304ec5` to leave the working tree clean per Alan's directive.
   - **AlanOS_Server task** appears to NOT auto-start at host login despite HANDOFF saying it does — port 8000 was empty when I tested at session start, task was in "Ready" state (registered but not running). Started it manually with `Start-ScheduledTask`. Investigate auto-start trigger next session if Alan cares.
   - **Two smoke-test items in `ai_stack_feed.json` were dismissed (status=dismissed) via PATCH** (Apr 29 vie-step2-smoke + new May 1 schema-smoke). Real Group 1-4 items are status=new. Counts in dashboard AI Stack tab will show 14 new items + 2 dismissed.
   - **Parallel session caveat.** The Digest/Dashboard reconcile session above ran during this session's close-out and committed lux-os `0d14134` + alan-os `6d9ff5a` while I was attempting to Edit session-log.md. My Edit was rejected (file modified since read), so I re-Read and re-Edited cleanly. No conflicts — different scopes, different files.
@@ -514,3 +514,7 @@
     - Charlie Automates channel — deprioritize unless titles indicate technical depth
   - **Do NOT schedule recurring agents yet** per Alan — that decision needs his input on cadence and digest integration first.
   - **AlanOS_Server is currently running** (started this session via Start-ScheduledTask). Restart-on-login behavior unverified.
+- Session close
+  - `push_handoff.py` ran cleanly — 7,111 chars written to handoff_doc (`1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ`) on Drive.
+  - Final session commits (this session's work): `fcce3f3` `711a3be` `02df41a` `f3f1a58` `8e5ddc7` `d1b46f9` `3682317` `7760f9e` `d304ec5` (9 commits across alan-os + lux-os). Plus parallel session: `0d14134` (lux-os) + `6d9ff5a` (alan-os).
+  - Working tree clean across both repos at session exit.
