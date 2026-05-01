@@ -3,3 +3,4 @@ RESULTS.md
 agents/results/
 .claude/
 .env
+ADD: __pycache__/
