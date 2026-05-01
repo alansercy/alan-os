@@ -1,0 +1,18 @@
+# VIE YouTube Engine — Groups 5-7 REMAINDER (16 URLs, parallel)
+# Run after 4 HIGH PRIORITY synced (cache pre-warm). max-workers=4.
+https://youtube.com/shorts/4nXxY_AaXuY
+https://youtube.com/shorts/AQ_ca27ftQs
+https://youtube.com/shorts/DKg_fMLKpd4
+https://youtube.com/shorts/1F-Bww76qB0
+https://youtube.com/shorts/2bvuLxj6nT4
+https://youtube.com/shorts/-CO3ohQqloA
+https://youtube.com/shorts/iUV5LJqHXeY
+https://youtube.com/shorts/M9qgd_KJkWc
+https://youtube.com/shorts/LXB_dBvDSOE
+https://youtube.com/shorts/FtBezgCu0vo
+https://youtube.com/shorts/2chpu6Ma1MY
+https://youtube.com/shorts/UmRw3BlANK0
+https://youtube.com/shorts/yRHPmrVeC24
+https://youtube.com/shorts/O92SF2TYidQ
+https://youtube.com/shorts/VXtAXAhY8uw
+https://youtube.com/shorts/9JrU0tXo_yg
