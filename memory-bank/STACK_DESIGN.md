@@ -241,6 +241,85 @@ For each REJECT, failing principles cited so we don't re-evaluate without new te
 
 ---
 
+## 2.D VIE v2 Three-Lens Re-Evaluation — 2026-05-01 PM
+
+**Run shape:** Patched `yt_transcribe.py` `PRINCIPLES_RUBRIC` with the v2 three-lens prompt per `memory-bank/VIE_PROMPT_PATCH.md` (canonical at `C:/Veritas/repos/memory-bank/VIE_PROMPT_PATCH.md`). Dry-run test on Group 1 ADOPT URL (`3E59wf8RA8Y`) confirmed `pattern_extraction` and `strategic_signal` blocks present and the summary tracked actual transcript content. Then re-evaluated all 33 previously-processed URLs (1 sync pre-warm + 32 parallel max-workers=4, all `--dry-run` so `/ai_stack` was NOT touched). Skipped `4nXxY_AaXuY` (yt-dlp JS-runtime ERROR, deferred until deno install).
+
+**The headline number:** **22 of the original 30 REJECT verdicts flipped to ADOPT or EVALUATE under the new prompt** — 14 to ADOPT, 8 to EVALUATE. Two more REJECTs flipped to MONITOR. Six REJECTs held. Both original MONITORs upgraded (one to ADOPT, one to EVALUATE). The single original ADOPT held.
+
+**Old vs new totals (across the same 33 URLs):**
+
+| Verdict | v1 | v2 | Change |
+|---|---:|---:|---:|
+| ADOPT | 1 | 16 | +15 |
+| EVALUATE | 0 | 9 | +9 |
+| MONITOR | 2 | 2 | 0 |
+| REJECT | 30 | 6 | −24 |
+
+**Token cost (33 URLs + 1 dry-run validation):** input ~52,600 · output ~31,800 · cache_write 0 · cache_read 0. ≈ $0.66 at Sonnet 4.6 base-context rates.
+
+### What the v1 rubric missed — sample patterns extracted by v2
+
+Each entry below is a pattern Claude flagged as `priority: immediate` from a video the v1 rubric REJECTed. Cited verbatim from `pattern_extraction.patterns[].description`.
+
+1. **`xM99M7aLFhQ` (GSD plugin, REJECT→ADOPT)** — "Three-stage project protocol: discovery (deep questions) → phase planning → phase execution, enforced as distinct commands rather than a single agent loop." Plus: "Phase-gated execution: generate full phased roadmap first, then require explicit phase selection before any code runs." *Note: the GSD repo was independently installed and is now in production per VIE_PROMPT_PATCH.md preamble — v2 correctly catches what v1 missed.*
+
+2. **`8BZupIIVhjs` (Nick Automates, REJECT→ADOPT)** — "Route planning to stronger model (Opus), execution to faster/cheaper model (Sonnet) via explicit model-tier switching." Plus the `ultra think` prefix as an extended-reasoning trigger.
+
+3. **`M9lAIBQerUI` (Sabrina Ramonov "marketing dept", REJECT→ADOPT)** — "Slash command shortcuts (/post, /script, etc.) as a user-facing interface layer on top of Claude — reducing prompt friction to a single trigger." Plus "Teach Claude platform-specific voice and format rules as persistent instructions rather than re-prompting each session."
+
+4. **`yaBDLroG0Lo` (Chase AI "Agentic OS", REJECT→ADOPT)** — "Skill packs as named, modular capability bundles (research pack, content pack, custom pack) — discrete deployable units rather than monolithic prompts." Plus "Frame agentic OS as a client deliverable from day one — productization mindset baked into architecture decisions, not retrofitted."
+
+5. **`337Qc9vOxwY` (Jake Van Clief, REJECT→ADOPT)** — "Use a markdown file (CLAUDE.md) as the primary orchestration layer, with scripts routed through it rather than building explicit agent graphs." Plus "Folder structure as the organizing framework for agent capabilities — folders ARE the architecture, not a convenience."
+
+6. **`AQ_ca27ftQs` (Zack the AI Guy "marketing irrelevant", REJECT→ADOPT)** — "Public GitHub repo of 29 marketing skill files provides a ready-made library of prompt engineering patterns." Plus "Skill-as-file convention: each capability gets its own versioned .md file with a defined name."
+
+7. **`2bvuLxj6nT4` (Don't Sleep On AI "second brain", REJECT→ADOPT)** — "End-of-session write protocol: instruct Claude to write a detailed structured log to a designated persistent location before session ends." Plus "Vault pointer in agent bootstrap: CLAUDE.md or agent system prompt explicitly names where the memory store lives so the agent self-orients on resume."
+
+8. **`-CO3ohQqloA` (Nick Puru "5 secret hacks", REJECT→ADOPT)** — "Use 'OODA' as a prompt prefix or instruction to invoke Observe-Orient-Decide-Act decision framework analysis." Plus the `scaffold` prefix as a task decomposition trigger.
+
+9. **`UfYP7t903Pc` (Duncan Rogoff "stop building start posting", REJECT→ADOPT)** — "Post about what you're building while building it — the build log itself is marketing content, not just internal documentation." *Adjacent to LinkedIn Authority Track planning in `PROJECTS.md`.*
+
+10. **`LXB_dBvDSOE` (Jake Van Clief "Redesign Claude Design", MONITOR→ADOPT)** — same skill-file ordering pattern that drove the original MONITOR, now scored ADOPT/HIGH because v2's pattern lens treats the pattern itself as adoptable even without a full benchmark.
+
+### Held REJECTs (6 URLs)
+
+These cleared the new "all three lenses produce zero value" bar — the v2 rubric is bias-correctly preserving genuine rejection grounds. URLs: `251Xs-sIy8U` (Robote multi-LLM follower-farm), `DKg_fMLKpd4` (App ideation hack, no actionable depth), `1F-Bww76qB0` (Recall Chrome ext multi-LLM), `2chpu6Ma1MY` (Bolt no-code clone), `O92SF2TYidQ` (Dan Martell book recommendations — fully off-topic), `9JrU0tXo_yg` (AI avatar DM funnel, no tools named).
+
+### Schema break — known degradation in dry-run results
+
+The v2 schema dropped `relevance_score`, `fit_pipeline`, and `fit_rationale` from the top-level output (these were v1-only). `process_url()` and `post_to_ai_stack()` in `yt_transcribe.py` still read those keys via `.get()` defaults, so:
+- `result["score"]` is **always 0** in v2 stdout/JSON
+- `result["fit_pipeline"]` is **always "none"** in v2 stdout/JSON
+- The `pattern_extraction` and `strategic_signal` blocks ARE captured (under `result["eval"]`)
+- Real POST to `/ai_stack` (non-dry-run) would post degraded fields
+
+**Action:** before running v2 in non-dry-run mode, patch `process_url()` to extract `relevance_score` from a derived metric (e.g. `len(pattern_extraction.patterns)` × `confidence_weight`) and either keep `fit_pipeline` in the prompt schema OR derive from `stack_layer`. Out of scope for this prompt-replacement patch.
+
+### Caveat — these results are a hot rubric run, not the final story
+
+- **`/ai_stack` was NOT updated** — all 33 calls used `--dry-run`. The store still holds v1 verdicts. To replace them, PATCH each existing record to `status=dismissed` and re-run without `--dry-run` (after the schema-break patch above).
+- **22 flips to ADOPT/EVALUATE in one prompt change** is a strong signal that v1 was over-rejecting — but it also means the ADOPT-bar moved. Some of the 16 new ADOPTs are pattern-only (Lens 1 drove the verdict) where the original tool would still REJECT under Lens 2. Action items in those entries should be evaluated for "extend-in-place" feasibility before any `BUILD_OR_EXTEND.md` work.
+- **Cache observation:** all 33 v2 calls reported `cache_read=0` AND `cache_write=0`. New system prompt; per the per-node-routing hypothesis from §2.C, cache may form across calls but never re-hit in this batching pattern.
+
+### Action items (sorted by quick-win priority)
+
+These are the patterns the v1 rubric would have left on the table indefinitely. Treat as candidates, not commitments — vet against `BUILD_OR_EXTEND.md` (still missing — see §4.1) before any new file > 50 lines.
+
+- **Immediate (low effort, extend-in-place):**
+  1. End-of-session write protocol — extend the §4 session-close checklist in `CLAUDE.md` so Claude writes a structured `session-log` entry as a hard rule, not a soft expectation. (`2bvuLxj6nT4`)
+  2. Vault pointer in agent bootstrap — confirm `CLAUDE.md` already names the canonical memory stores; if any agent prompt doesn't, add the pointer. (`2bvuLxj6nT4`)
+  3. Slash command interface for high-frequency ops (`/post`, `/script`, `/triage`, etc.) on top of `alan_os_server.py` — already partially implemented in Lux Command Center; consider a `~/.claude/commands/` shortcut layer. (`M9lAIBQerUI`)
+  4. Model tier routing (Opus plan / Sonnet execute) — already standard in Claude Code; document the convention in `CLAUDE.md` so it's explicit. (`8BZupIIVhjs`)
+- **Next-session (medium effort, requires design call):**
+  5. Skill packs as modular capability bundles — formalize a `skill-pack/` convention sitting on top of the existing folder-as-skill structure (CLAUDE.md §8). Bundles get their own README and inter-pack contracts. (`yaBDLroG0Lo`)
+  6. Phase-gated execution protocol — if GSD's three-stage discovery → phase plan → phase execute pattern isn't fully wired into the current Claude Code session flow, add it as a discipline doc. (`xM99M7aLFhQ`)
+  7. Build-log-as-marketing — ties to the LinkedIn Authority Track in `PROJECTS.md`. Lightweight first step: each significant `alan-os` commit gets a one-paragraph LinkedIn-draft entry that can later be collated. (`UfYP7t903Pc`)
+- **Backlog (defer, low signal-to-effort):**
+  8. `OODA` / `scaffold` / `ultra think` prefixes — informal prompt prefixes with no documented Anthropic behavior; tag and try in next prompt iteration only if a measurable lift is testable. (`-CO3ohQqloA`)
+
+---
+
 ## 3. Pending Evaluations
 
 **Spec batch complete + Groups 5-7 ad-hoc batch complete (34/34 URLs across 7 groups, 2026-05-01).** Queue empty.
@@ -271,15 +350,22 @@ The batch surfaced two real architectural gaps that `yt_transcribe.py` itself ca
 
 ## 5. Principles in Practice — what 34 URLs across 7 groups taught us
 
-**Aggregate verdicts (all 7 groups, 34 URLs):**
-- **1 ADOPT (3%)** — a *pattern* (skill-file authoring from Group 1), not a tool
-- **0 EVALUATE**
-- **2 MONITOR (6%)** — `notebookmation` (subsequently REJECTED in §3 follow-up — no documented Google API exists) + `LXB_dBvDSOE` Jake Van Clief ordered-skill-file pattern (unmeasured P3 claim)
-- **30 REJECT (88%)** — all HIGH confidence
-- **1 ERROR (3%)** — `4nXxY_AaXuY` yt-dlp JS-runtime deprecation
+**v1 aggregate verdicts (kept here for delta context — superseded by v2 totals below):**
+- 1 ADOPT (3%) — a *pattern* (skill-file authoring from Group 1), not a tool
+- 0 EVALUATE
+- 2 MONITOR (6%) — `notebookmation` (subsequently REJECTED in §3) + `LXB_dBvDSOE` Jake Van Clief
+- 30 REJECT (88%)
+- 1 ERROR (3%) — `4nXxY_AaXuY` yt-dlp JS-runtime
 
-**Pattern-level findings:**
-- **The rubric is BIAS-CORRECTLY harsh.** 30/34 REJECT with HIGH confidence is not over-rejection — it reflects that 60-second YouTube Shorts rarely contain enough technical signal to ADOPT. P3 ("Token Efficiency, Measured" — ADOPT requires ≥30% reduction with eval rubric ≥90% baseline) eliminates anything without a number. **Without a benchmark, there's no ADOPT-grade signal.** Effectively: there is one ADOPT-grade pattern in 34 URLs.
+**v2 aggregate verdicts (after three-lens prompt re-eval, dry-run only — see §2.D):**
+- **16 ADOPT (47%)** — most are pattern-only (Lens 1 drove the verdict); the original ADOPT held
+- **9 EVALUATE (26%)** — pattern + tool combinations needing one test session
+- **2 MONITOR (6%)** — `RmT2H4J-5A0`, `VXtAXAhY8uw`
+- **6 REJECT (18%)** — held the line on multi-LLM, off-topic, or zero-actionable-content
+- **1 ERROR (3%)** — `4nXxY_AaXuY` (unchanged, deno install pending)
+
+**Pattern-level findings (revised after v2 rerun):**
+- **The v1 rubric was over-rejecting.** v2's three-lens design lifted REJECT from 88% to 18% on the same 33 URLs by adding pattern extraction (Lens 1) and strategic signal (Lens 3) as primary evaluation surfaces alongside tool fit (Lens 2). 22 URLs flipped REJECT → ADOPT/EVALUATE under v2. The cost of a wrong v1 REJECT was real: patterns like "GSD three-stage protocol", "model tier routing", "skill packs as bundles", "build-log-as-marketing" were all left on the table by v1 and surfaced cleanly by v2. v1's bias toward measurable token-efficiency benchmarks made every short look like noise; v2 treats actionable patterns and strategic signals as first-class outcomes.
 - **P7 remains the most-cited principle.** "Already exists in the stack" or "would require BUILD_OR_EXTEND analysis" was the killer in the vast majority of REJECTs across all 7 groups. Confirms `PRINCIPLES_REVIEW_v1.md` §5 ranking — P7 is the most-load-bearing principle long-term, and `BUILD_OR_EXTEND.md` (still missing — see §4.1) is increasingly the load-bearing template.
 - **The one ADOPT was a *pattern*, not a tool.** All three skill-building patterns (gotchas, folder-as-skill, context+constraints) are extend-in-place changes to files Veritas already owns. Zero new files, zero new dependencies. Now landed in `CLAUDE.md` §7 + §8 (commit `053b256`).
 - **Memory-pattern over-saturation.** Across 34 URLs, ≥6 different "second brain" / "Claude memory" / "Obsidian-as-memory" tools were pitched. All REJECTED on P7 + P8 grounds (overlap with existing CLAUDE.md + session-log + auto-memory + JSON stores). Strong signal that the AI-content economy is creating tools for problems already solved by the existing memory architecture; the stack should remain stable here, not chase the next plugin.
