@@ -60,16 +60,15 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 AI_STACK_API_URL  = os.environ.get("AI_STACK_API_URL", "http://127.0.0.1:8000/ai_stack")
 ADMIN_TOKEN       = os.environ.get("ALAN_OS_ADMIN_TOKEN", "")  # /ai_stack itself isn't admin-gated
 
-# Model tier routing (Pattern 1, memory-bank/VIE_PATTERN_ACTION_LIST.md).
-# VIE evaluation is execute-tier (Sonnet); plan/classify exposed for callers
-# that need a different tier without re-hardcoding.
-MODEL_TIERS = {
-    "plan":     "claude-opus-4-7",
-    "execute":  "claude-sonnet-4-6",
-    "classify": "claude-haiku-4-5-20251001",
-}
+# Model selection routes through utils.model_router. VIE evaluation is
+# stack_eval (Sonnet); the per-stage routing for URL fetch / opus escalation
+# is wired in the patch task that follows.
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))
+from utils.model_router import get_model
 
-CLAUDE_MODEL = MODEL_TIERS["execute"]
+CLAUDE_MODEL = get_model("stack_eval")
 CLAUDE_MAX_TOKENS = 1500
 
 
