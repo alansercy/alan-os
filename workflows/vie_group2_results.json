@@ -1,0 +1,143 @@
+[
+  {
+    "url": "https://youtube.com/shorts/NCzV-CerZuI",
+    "status": "ok",
+    "started": "2026-05-01T15:04:30.082080",
+    "title": "Claude Just Replaced My Bookkeeper, Here’s How",
+    "channel": "Nick Puru | AI Automation",
+    "duration": 41,
+    "video_id": "NCzV-CerZuI",
+    "transcript_chars": 903,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 2,
+    "usage": {
+      "input_tokens": 2122,
+      "output_tokens": 517,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A 60-second promotional short in which a creator claims to have replaced their bookkeeper using Claude's Chrome extension inside accounting software (QuickBooks, Xero, etc.) for daily transaction reconciliation and anomaly flagging. No technical depth is provided — no API calls, no workflow architecture, no prompt engineering, no code. The 'system' is a human manually running a Chrome extension each morning, not an automated pipeline. The offer at the end ('comment bookkeeper') is a lead-gen hook, not a deliverable. This is surface-level AI hype with zero actionable signal for the Veritas stack. FinanceOS is already on the backburner; the actual reconciliation pattern (Claude + accounting API) is worth noting but not demonstrated here. P3 fails immediately — no token efficiency data. P1 fails — Chrome extension GUI dependency with no API/export path described. P4 fails — no declared human gates, workflow hangs on manual daily execution. P7 is irrelevant because there is nothing to build.",
+      "tools_mentioned": [
+        "Claude Chrome Extension",
+        "QuickBooks",
+        "Xero"
+      ],
+      "techniques_mentioned": [
+        "Transaction reconciliation",
+        "Anomaly flagging",
+        "Daily financial review via LLM"
+      ],
+      "relevance_score": 2,
+      "fit_pipeline": "none",
+      "fit_rationale": "FinanceOS is backburner and this video provides no technical architecture, API path, or workflow design worth extracting.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — no actionable integration",
+        "confidence": "HIGH",
+        "reasoning": "Fails P1 (Chrome extension GUI with no documented API or export path), P3 (zero token efficiency measurement or task reduction evidence), and P4 (human manually triggers each morning — no declared gate, no cold-start runability). The content is a lead-gen hook, not a technical demonstration. The underlying concept — Claude querying an accounting API for daily reconciliation — is directionally interesting for FinanceOS but requires a real API-first implementation, not a browser extension wrapper.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:04:46.206822"
+  },
+  {
+    "url": "https://youtube.com/shorts/M9lAIBQerUI",
+    "status": "ok",
+    "started": "2026-05-01T15:04:46.206862",
+    "title": "I Turned Claude Into My Entire Marketing Department",
+    "channel": "Sabrina Ramonov 🍄",
+    "duration": 27,
+    "video_id": "M9lAIBQerUI",
+    "transcript_chars": 572,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2055,
+      "output_tokens": 375,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Short-form promotional video where creator claims to use Claude for end-to-end social media content creation and scheduling — writing posts, scripts, carousels, infographics, and managing a content calendar via slash commands inside Claude. No technical depth, no tool names beyond Claude itself, no architecture shown. Pure engagement-bait ('comment co-work and I'll DM you'). Zero actionable implementation detail. The stack already has Buffer integration for scheduling and Claude API for content generation; any legitimate workflow here would be a thin config layer on top of existing components.",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "techniques_mentioned": [
+        "slash commands in Claude",
+        "content calendar automation",
+        "multi-platform post scheduling"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "No architecture, no exportable implementation, no token efficiency data — pure social proof content with no integration value for the Veritas stack.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — stack already has Claude API + Buffer for this domain",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 — no token efficiency data or eval rubric whatsoever. Fails P7 — Claude API and Buffer already cover this domain with documented overlap; a new file here would require an ADR justifying >60% overlap. Fails P1 — no API, no export path, no documented call surface described anywhere in the video.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:04:58.942360"
+  },
+  {
+    "url": "https://youtube.com/shorts/Wl6ns0uvXxo",
+    "status": "ok",
+    "started": "2026-05-01T15:04:58.942392",
+    "title": "Claude Code + Notebook LM is AWESOME",
+    "channel": "Eric Michaud",
+    "duration": 38,
+    "video_id": "Wl6ns0uvXxo",
+    "transcript_chars": 660,
+    "used_caption_fallback": false,
+    "recommendation": "MONITOR",
+    "confidence": "LOW",
+    "fit_pipeline": "ai_stack",
+    "score": 4,
+    "usage": {
+      "input_tokens": 2080,
+      "output_tokens": 598,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Short video demonstrating a CLI tool called 'notebookmation' that bridges Claude Code and NotebookLM, allowing Claude Code to create and manage NotebookLM notebooks via terminal. The presenter runs it inside Obsidian's terminal plugin to give it access to vault context (daily notes, SOPs, templates). The core claim is that this unlocks NotebookLM's asset-generation capabilities (audio overviews, study guides, etc.) from within a Claude Code session. No architecture details, no API docs, no token efficiency data, and no discussion of export/portability. The tool appears to be a thin CLI wrapper — possibly scraping or using an unofficial NotebookLM API. NotebookLM is already a named exception in P8 (Long-term memory surface), but this video does not address how state is exported, how it integrates with n8n or FastAPI, or whether the CLI is documented and stable. The overlap with existing VIE/nlm_feed_builder.py work is high and unquantified.",
+      "tools_mentioned": [
+        "notebookmation",
+        "Claude Code",
+        "NotebookLM",
+        "Obsidian",
+        "Obsidian Terminal Plugin"
+      ],
+      "techniques_mentioned": [
+        "CLI-driven notebook creation",
+        "vault context injection",
+        "NotebookLM asset generation from terminal"
+      ],
+      "relevance_score": 4,
+      "fit_pipeline": "ai_stack",
+      "fit_rationale": "NotebookLM is already a named memory surface in the stack and nlm_feed_builder.py exists — this CLI wrapper is directly adjacent but surface-level and underevaluated.",
+      "stack_evaluation": {
+        "recommendation": "MONITOR",
+        "stack_layer": "intelligence",
+        "replaces_or_complements": "Complements nlm_feed_builder.py and the existing NotebookLM memory surface, potentially offering a CLI automation path that nlm_feed_builder.py may already cover or could extend",
+        "confidence": "LOW",
+        "reasoning": "P7 flags high overlap with nlm_feed_builder.py — no BUILD_OR_EXTEND analysis is possible from this video alone, and the % overlap is unquantified. P1 is unresolved: it is unknown whether notebookmation uses an official or unofficial NotebookLM API, making data exportability and long-term stability uncertain. P3 is completely unaddressed — no token efficiency comparison is offered, so ADOPT is not justified.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:05:16.559751"
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "url": "https://youtube.com/shorts/UfYP7t903Pc",
+    "status": "ok",
+    "started": "2026-05-01T15:05:18.083865",
+    "title": "Stop Building. Start Posting. (How I Signed 2 Multi-Billion Dollar Clients)",
+    "channel": "Duncan Rogoff | AI Automation",
+    "duration": 108,
+    "video_id": "UfYP7t903Pc",
+    "transcript_chars": 1950,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2366,
+      "output_tokens": 320,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Generic GTM advice for AI agency owners: stop building, start posting on LinkedIn to generate inbound leads. Speaker claims two multi-billion dollar clients sourced from content. No tools, techniques, frameworks, or integrations discussed. Pure motivational/sales advice with zero technical content. No relevance to stack architecture, automation pipelines, or any Veritas system layer.",
+      "tools_mentioned": [
+        "LinkedIn",
+        "Claude"
+      ],
+      "techniques_mentioned": [
+        "content marketing",
+        "inbound lead generation",
+        "social proof"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "Content is a motivational marketing pitch with no technical, architectural, or integration signal relevant to any Veritas pipeline or stack layer.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 entirely — no measurable token efficiency signal or tooling to evaluate. Fails P7 — no component, pattern, or technique that could overlap with or extend any existing stack component. Zero actionable technical content; the Claude mention is anecdotal ('clients Google you or type you into Claude'), not an integration point.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:05:30.272596"
+  }
+]

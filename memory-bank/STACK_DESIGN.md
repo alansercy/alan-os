@@ -115,14 +115,70 @@ For each REJECT below: principles failed are cited so we don't re-evaluate the s
 
 ---
 
+## 2.B Groups 2-4 Batches — 2026-05-01 (sequential, max-workers=1)
+
+**Run:** three back-to-back batches, `--max-workers 1` per batch (Alan's directive: pre-warm cache, run sequentially not in parallel).
+**Result:** 8 URLs / 8 transcripts pulled / 8 evaluated / 8 posted to `/ai_stack`.
+**Verdict distribution:** **0 ADOPT · 0 EVALUATE · 1 MONITOR · 7 REJECT.**
+**Caching anomaly:** SDK 0.94.0 reported `cache_write=0` and `cache_read=0` across all three batches despite `cache_control: ephemeral` being set. Tokens consumed appear lower than fully uncached (G2: 6.3K input for 3 URLs; G3: 2.4K for 1; G4: 8.7K for 4) but the cache fields aren't surfacing. Investigate next session — likely an SDK attribute-name mismatch on the usage object, since the request itself is well-formed (Anthropic's API would reject a malformed cache_control). Functional behavior unaffected.
+
+### MONITOR × 1 (Group 2)
+
+#### `youtube.com/shorts/Wl6ns0uvXxo` — "Claude Code + Notebook LM is AWESOME" (Eric Michaud, 38s) — score 4, layer **intelligence**, confidence **LOW**
+- **Tool surfaced:** `notebookmation` — a CLI bridge between Claude Code and NotebookLM, demonstrated running inside Obsidian's Terminal Plugin to give it vault-context access (daily notes, SOPs, templates).
+- **Why MONITOR (not ADOPT, not REJECT):** NotebookLM is already a named exception in P8 (Long-term memory surface, manual). The CLI wrapper is *directly adjacent* to `nlm_feed_builder.py`'s VIE V1 work — but the video gives zero technical depth on whether it uses official or unofficial NotebookLM APIs, what state is exportable, or how it would integrate with n8n / FastAPI. P7 overlap with `nlm_feed_builder.py` is high but unquantified; P1 unresolved (API surface unknown); P3 unaddressed.
+- **Re-eval gate:** examine the `notebookmation` repo (find URL via channel description or follow-up search) to assess whether it's official Anthropic, third-party, or a screen-scraper. If it has a documented API → promote to EVALUATE. If it's GUI-scrape → REJECT.
+
+### REJECT × 7
+
+For each: failing principles cited so we don't re-evaluate without new technical information.
+
+#### `youtube.com/shorts/NCzV-CerZuI` (Group 2) — "Claude Just Replaced My Bookkeeper" (Nick Puru, 41s) — score 2, layer none
+- **Tool:** Claude Chrome extension running inside QuickBooks/Xero, manually triggered each morning.
+- **Why REJECT:** Fails **P1** (Chrome extension GUI, no API). Fails **P3** (no token data). Fails **P4** (manual daily trigger, no cold-start runability). FinanceOS is backburner anyway; the underlying pattern (Claude + accounting API) is directionally interesting but not what's demonstrated here.
+- **Re-eval gate:** revisit only when a real Anthropic SDK + accounting-API implementation surfaces.
+
+#### `youtube.com/shorts/M9lAIBQerUI` (Group 2) — "I Turned Claude Into My Entire Marketing Department" (Sabrina Ramonov, 27s) — score 1, layer none
+- **What it is:** Promo for using Claude slash-commands for content calendar / multi-platform scheduling.
+- **Why REJECT:** Fails **P3** (no eval rubric). Fails **P7** (Claude API + Buffer already cover this domain in the live stack — Workflow 2.4 + Loretta content engine). Fails **P1** (no API surface described). Engagement-bait with no implementation detail.
+- **Re-eval gate:** none — domain already owned by AgentOS / Loretta.
+
+#### `youtube.com/shorts/UfYP7t903Pc` (Group 3) — "Stop Building. Start Posting." (Duncan Rogoff, 1m48s) — score 1, layer none
+- **What it is:** Pure GTM advice — post on LinkedIn instead of building. Author claims 2 multi-billion dollar clients from content.
+- **Why REJECT:** Zero technical content. The Claude mention is anecdotal ("clients Google you or type you into Claude"), not an integration point. Fails **P3** by default (no measurable signal) and **P7** (no component to overlap with).
+- **Re-eval gate:** none — strategic content, not stack content. Topic belongs in LinkedIn Authority Track planning, not VIE.
+
+#### `youtube.com/shorts/LXSxrLIxoaA` (Group 4) — "AI Tools Tier List (2026)" (Dan Martell, 51s) — score 2, layer none
+- **What it is:** Opinion ranking of 10 consumer AI tools (ChatGPT, Claude, NotebookLM, Grok, Gemini, Perplexity, Whisper Flow, Claude Code, OpenClaude, Claude CLI).
+- **Why REJECT:** Fails **P3** (no benchmarks). Fails **P7** (Claude Code + Claude CLI already in stack; no overlap analysis). One mildly-novel mention: **Whisper Flow** (voice-to-structured-text) — could matter for PersonalOS dictation — but the mention is one sentence with no API or integration detail.
+- **Re-eval gate:** if a PersonalOS dictation use case becomes active, evaluate Whisper Flow separately.
+
+#### `youtube.com/shorts/RmT2H4J-5A0` (Group 4) — "This Open-Source AI Is Breaking Paid Tools" (John Lee, 49s) — score 0, layer none
+- **What it is:** AI video generation with cinematic camera controls — open-source clone of Higgs Field AI. No tool name given, no GitHub URL.
+- **Why REJECT:** Fails everything: no tool name, no repo, no API, no integration. AI video generation isn't in any current or planned Veritas vertical. Lead-gen for the creator's event.
+- **Re-eval gate:** none — outside scope.
+
+#### `youtube.com/shorts/sbTqBo0SZRc` (Group 4) — "The AI Mirror: What ChatGPT Knows About You" (John Lee, 57s) — score 0, layer none
+- **What it is:** Motivational ChatGPT prompt-chain for self-reflection.
+- **Why REJECT:** ChatGPT is not in the Veritas stack (Anthropic-only — locked decision per company narrative §10). Fails **P1**, **P3**, **P9**. Pure engagement-bait.
+- **Re-eval gate:** none — wrong LLM family.
+
+#### `youtube.com/shorts/kfUOSckgMjQ` (Group 4) — "April 29, 2026" (Alex Tavi, 46s) — score 2, layer none
+- **What it is:** List of 4 Claude Code plugins: `superpowers`, a front-end design plugin (Anthropic), `Claude Mem`, and `awesome-claude-code`.
+- **Why REJECT:** Fails **P3** (no benchmarks). Fails **P1** (no API/export format for any plugin). Fails **P7** — `Claude Mem` overlaps unknowable amount with existing P8 memory surfaces (CLAUDE.md, session-log, `.lux/data/*.json`); zero BUILD_OR_EXTEND analysis possible from this video.
+- **Re-eval gate:** **`Claude Mem` is the only mention worth a follow-up search outside the VIE pipeline** — if it has a documented API and a token-efficiency benchmark, promote to EVALUATE. The `superpowers` plugin's plan-before-code + sub-agent-review patterns are already partially handled by CLAUDE.md discipline.
+
+---
+
 ## 3. Pending Evaluations
 
-(none yet — Groups 2, 3, 4 not yet processed)
+**Spec batch complete (14/14 URLs across 4 groups, 2026-05-01).** Queue empty.
 
-Queued URLs from spec for the next batch run:
-- **Group 2 (Use Cases):** `NCzV-CerZuI`, `M9lAIBQerUI`, `Wl6ns0uvXxo` (Bookkeeper / Marketing / NotebookLM workflows)
-- **Group 3 (Strategy):** `UfYP7t903Pc` ("Stop Building. Start Posting.")
-- **Group 4 (General AI Intel):** `LXSxrLIxoaA`, `RmT2H4J-5A0`, `sbTqBo0SZRc`, `kfUOSckgMjQ` (AI Tools Tier List 2026, open-source AI, etc.)
+Standing follow-up watch list (from MONITOR + flagged REJECT re-eval gates):
+- **`notebookmation`** — locate repo, assess API surface vs. screen-scrape. Promote to EVALUATE if documented API; REJECT if scrape.
+- **`Whisper Flow`** — re-evaluate when a PersonalOS dictation use case becomes active.
+- **`Claude Mem`** — find repo + benchmarks; promote to EVALUATE if documented API.
+- **Channel deprioritization:** Charlie Automates surfaced 2× in Group 1 with promotional content for the same tool (Graphify). Future content from this channel: deprioritize unless title indicates technical depth.
 
 ---
 
@@ -136,12 +192,20 @@ The batch surfaced two real architectural gaps that `yt_transcribe.py` itself ca
 
 ---
 
-## 5. Principles in Practice — what this batch taught us
+## 5. Principles in Practice — what 14 URLs across 4 groups taught us
 
-- **The rubric is BIAS-CORRECTLY harsh.** 5/6 REJECT with HIGH confidence is not a calibration problem — it reflects that 60-second YouTube Shorts about token-saving tricks rarely contain enough technical signal to ADOPT. The principle that drove this is P3 ("Token Efficiency, Measured" — ADOPT requires ≥30% reduction with eval rubric ≥90% baseline). Without a number, there's no ADOPT-grade signal.
-- **P7 was the most-cited principle.** "Already exists in the stack" was the killer for 4 of 5 REJECTs. This validates §1 of `PRINCIPLES_REVIEW_v1.md` (the build-or-extend gate is the highest-leverage principle long-term).
-- **The one ADOPT was a *pattern*, not a tool.** All three skill-building patterns (gotchas section, folder-as-skill, context+constraints) are extend-in-place changes to files Veritas already owns. Zero new files, zero new dependencies. This is exactly what P7 wants.
-- **Caching needs a sequential pre-warm pass.** Cache_read = 0 across 6 parallel calls means the 4-worker ThreadPool race-wrote the cache and didn't wait for any one to finish. Fix in next batch: send the first URL synchronously to warm the cache, then parallel-process the remainder. Single-line change.
+**Aggregate verdicts (all 4 groups, 14 URLs):**
+- 1 ADOPT (7%) — a *pattern* (skill-file authoring), not a tool
+- 0 EVALUATE
+- 1 MONITOR (7%) — `notebookmation`, NotebookLM CLI bridge with high-but-unquantified overlap
+- 12 REJECT (86%) — all HIGH confidence
+
+**Pattern-level findings:**
+- **The rubric is BIAS-CORRECTLY harsh.** 12/14 REJECT with HIGH confidence is not over-rejection — it reflects that 60-second YouTube Shorts rarely contain enough technical signal to ADOPT. P3 ("Token Efficiency, Measured" — ADOPT requires ≥30% reduction with eval rubric ≥90% baseline) eliminates anything without a number. **Without a benchmark, there's no ADOPT-grade signal.**
+- **P7 was the most-cited principle (12/14 evaluations).** "Already exists in the stack" or "would require BUILD_OR_EXTEND analysis" was the killer for the majority of REJECTs. This validates `PRINCIPLES_REVIEW_v1.md` §5 ranking — P7 is the most-load-bearing principle long-term.
+- **The one ADOPT was a *pattern*, not a tool.** All three skill-building patterns (gotchas, folder-as-skill, context+constraints) are extend-in-place changes to files Veritas already owns. Zero new files, zero new dependencies.
+- **No video on FinanceOS, real estate, or trucking surfaced** — Groups 1-4 were Claude/AI-stack focused per the spec's batch grouping, not vertical-focused. Future batches sourced from MMM-relevant or AgentOS-relevant content streams (rather than `extract_ai_links.py`'s general feed) would test the engine's verticality.
+- **Caching investigation deferred.** Group 1 (parallel, max-workers=4): cache_write=2316, cache_read=0 (race-write). Groups 2-4 (sequential, max-workers=1): cache_write=0 AND cache_read=0 — the cache fields aren't surfacing in SDK 0.94.0's usage object despite `cache_control: ephemeral` being correctly set on the request. Per-URL token cost roughly matches uncached behavior. Functional output unaffected, but the cost-saving rationale for caching isn't visible. **Open item for next session.**
 
 ---
 

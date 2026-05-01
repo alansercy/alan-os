@@ -1,0 +1,194 @@
+[
+  {
+    "url": "https://youtube.com/shorts/LXSxrLIxoaA",
+    "status": "ok",
+    "started": "2026-05-01T15:05:31.711368",
+    "title": "AI TOOLS TIER LIST (2026)",
+    "channel": "Dan Martell",
+    "duration": 51,
+    "video_id": "LXSxrLIxoaA",
+    "transcript_chars": 1178,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 2,
+    "usage": {
+      "input_tokens": 2269,
+      "output_tokens": 487,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Dan Martell's AI tools tier list video is a rapid-fire opinion ranking of consumer AI tools (ChatGPT, Claude, NotebookLM, Grok, Gemini, Perplexity, Whisper Flow, Claude Code, OpenClaude/Claude CLI). No technical depth, no benchmarks, no integration patterns discussed. The only signal of mild interest is his enthusiasm for Claude Code and Claude CLI as an agentic coding layer — which aligns with the existing stack — but this is already in use. Whisper Flow (voice-to-structured-text) is mentioned as a daily driver and could be relevant to PersonalOS dictation workflows, but the mention is surface-level. No new tooling, architecture patterns, API integrations, or token-efficiency techniques are introduced. The content is purely a personal opinion tier list with zero implementation guidance.",
+      "tools_mentioned": [
+        "ChatGPT",
+        "Claude",
+        "NotebookLM",
+        "Grok",
+        "Gemini",
+        "Perplexity",
+        "Whisper Flow",
+        "Claude Code",
+        "OpenClaude",
+        "Claude CLI"
+      ],
+      "techniques_mentioned": [
+        "agentic coding",
+        "voice-to-text transcription"
+      ],
+      "relevance_score": 2,
+      "fit_pipeline": "none",
+      "fit_rationale": "No actionable architecture, integration pattern, or new tooling surfaces — purely opinion content with no implementation depth.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — no new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 — no token efficiency data or eval rubric, just personal opinions with no measurable lift. Fails P7 — Claude Code and Claude CLI are already in the stack, and no overlap analysis or extension case is made. The one mildly novel mention (Whisper Flow) is a single sentence with no API, export, or integration detail, failing P1.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:05:46.264044"
+  },
+  {
+    "url": "https://youtube.com/shorts/RmT2H4J-5A0",
+    "status": "ok",
+    "started": "2026-05-01T15:05:46.264088",
+    "title": "This Open-Source AI Is Breaking Paid Tools 🚀",
+    "channel": "John Lee",
+    "duration": 49,
+    "video_id": "RmT2H4J-5A0",
+    "transcript_chars": 951,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 0,
+    "usage": {
+      "input_tokens": 2134,
+      "output_tokens": 482,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A short-form promotional video describing an open-source GitHub project that replicates Higgs Field AI's cinematic camera-control features for AI video generation. The tool converts camera lens/aperture settings into prompts and calls paid video generation APIs (bring-your-own-key). No tool name is given, no GitHub URL, no API specifics, no architecture detail. The video is primarily a lead-generation hook for the creator's virtual event. There is zero technical depth, no integration path, and no relevance to Veritas stack domains (CRO/BD, real estate, trucking, personal OS). AI video generation is not in any current or planned vertical. The BYOK model passing through to undisclosed paid APIs does not address P1 (no documented API/export path described), and the content doesn't touch P3, P5, or any other principle with enough specificity to evaluate. Generic AI hype with a comment-bait CTA.",
+      "tools_mentioned": [
+        "Higgs Field AI",
+        "unnamed open-source Higgs Field clone"
+      ],
+      "techniques_mentioned": [
+        "camera-prompt translation",
+        "bring-your-own-key API model",
+        "cinematic AI video generation"
+      ],
+      "relevance_score": 0,
+      "fit_pipeline": "none",
+      "fit_rationale": "AI video generation with cinematic controls has no overlap with any Veritas vertical or stack layer.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — new capability outside all current verticals",
+        "confidence": "HIGH",
+        "reasoning": "Content is generic AI hype with no named tool, no repo URL, and no technical depth sufficient to evaluate against any principle. P3 fails immediately — no token efficiency claim or task domain exists. P7 is moot because there is zero overlap with any existing stack component, meaning there is also zero business case to integrate. The video's sole purpose is lead generation for the creator's event.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:06:02.284813"
+  },
+  {
+    "url": "https://youtube.com/shorts/sbTqBo0SZRc",
+    "status": "ok",
+    "started": "2026-05-01T15:06:02.284852",
+    "title": "The AI Mirror: What ChatGPT Knows About You ⚠️",
+    "channel": "John Lee",
+    "duration": 57,
+    "video_id": "sbTqBo0SZRc",
+    "transcript_chars": 1155,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 0,
+    "usage": {
+      "input_tokens": 2189,
+      "output_tokens": 440,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A short-form motivational/clickbait video about using ChatGPT as a self-reflection mirror by prompting it to surface personality insights, blind spots, and life predictions from conversation history. No technical content, no tools, no APIs, no architecture. Pure engagement-bait with a lead-gen CTA ('comment AI for my free training'). Uses ChatGPT, which is outside the Veritas stack (Anthropic-only). The 'technique' is basic prompt chaining for self-reflection — no novelty, no implementation detail, no eval rubric. Fails P3 (no token efficiency data or methodology), P9 (no revenue/capability/family bucket applicability), and contributes zero to any live Veritas vertical. The only tangentially relevant observation is that long conversation histories leak user intent — which is already understood and not actionable here.",
+      "tools_mentioned": [
+        "ChatGPT"
+      ],
+      "techniques_mentioned": [
+        "reflective prompting",
+        "prompt chaining for self-analysis"
+      ],
+      "relevance_score": 0,
+      "fit_pipeline": "none",
+      "fit_rationale": "Zero technical content, ChatGPT-only, and purely motivational — no integration path into any Veritas stack layer or vertical.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 (no efficiency data, no eval rubric), fails P1 (no API, no exportable data, ChatGPT is not in the stack), and fails P9 (no mappable revenue, capability, or family workflow). Content is engagement-bait with a lead-gen funnel, not a technical signal worth monitoring.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:06:16.320011"
+  },
+  {
+    "url": "https://youtube.com/shorts/kfUOSckgMjQ",
+    "status": "ok",
+    "started": "2026-05-01T15:06:16.320052",
+    "title": "April 29, 2026",
+    "channel": "Alex Tavi",
+    "duration": 46,
+    "video_id": "kfUOSckgMjQ",
+    "transcript_chars": 904,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "ai_stack",
+    "score": 2,
+    "usage": {
+      "input_tokens": 2106,
+      "output_tokens": 557,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Short-form content listing four Claude Code plugins: 'superpowers' (brainstorm/plan/test forcing + sub-agent review), a front-end design plugin by Anthropic, 'Claude Mem' (persistent cross-session memory), and 'awesome-claude-code' (curated plugin bundle). No technical depth, no API details, no benchmarks, no integration guidance. The video is essentially a GitHub stars list with marketing framing. 'Claude Mem' is the only item with any relevance to the Veritas stack (P8 memory surfaces), but the transcript gives zero implementation detail — no API, no data format, no export path. The 'superpowers' plugin touches orchestration patterns (plan-before-code, sub-agent review) that are interesting in principle but already partially addressed by CLAUDE.md discipline and structured prompting in the VIE pipeline. No acceptance test data, no token efficiency claims (P3 fails by default), and no evidence of exportable state (P1 unverifiable). Generic AI influencer content with no actionable integration path.",
+      "tools_mentioned": [
+        "superpowers",
+        "Claude Code front-end design plugin",
+        "Claude Mem",
+        "awesome-claude-code"
+      ],
+      "techniques_mentioned": [
+        "plan-before-code",
+        "sub-agent review loops",
+        "persistent cross-session memory",
+        "curated plugin bundles"
+      ],
+      "relevance_score": 2,
+      "fit_pipeline": "ai_stack",
+      "fit_rationale": "Claude Code is in the stack, but this content provides no implementation depth or integration path for any of the four plugins.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — no actionable integration path established",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 outright — no token efficiency data or eval rubric provided. Fails P1 — no API, export format, or data contract described for any plugin. Fails P7 — 'Claude Mem' overlaps with the existing P8 memory surface architecture (CLAUDE.md, session-log, .lux/data/*.json) at unknown but potentially high overlap with zero justification or BUILD_OR_EXTEND analysis. Short-form influencer content with no engineering substance.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:06:32.299910"
+  }
+]
