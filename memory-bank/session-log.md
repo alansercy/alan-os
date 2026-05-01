@@ -541,3 +541,9 @@
   - Alan: load `localhost:8081`, click Tasks tab, scroll to the New Task panel above the task list. Fill in a real task and submit — confirm (a) the row appears in the table immediately with the right priority badge color, (b) the project name renders correctly in the Project column, (c) the green confirmation message shows the new id. If anything breaks at render time, ping with browser console output
   - Once visual test passes, delete `task-011` (`curl -X DELETE http://localhost:8000/tasks/task-011`) or leave it as evidence the wire works
   - Adopt the session-close checklist from this point forward — every session close should leave tasks.json + projects.json in a state that reflects what actually happened in the session
+- Session close (2026-05-01)
+  - **Visual test PASSED** — Alan loaded `localhost:8081` → Tasks tab, filled the form, submitted; row rendered correctly with priority badge + project name + green confirmation. Form working end-to-end.
+  - **Smoke task `task-011` deleted** via `curl -X DELETE http://localhost:8000/tasks/task-011` → `{"ok":true}` HTTP 200. tasks.json state confirmed: task-011 absent.
+  - **Real form-test task `task-012` remains** in tasks.json — Alan's manual form submission during the visual test. Living evidence of the wire.
+  - **`push_handoff.py` fired cleanly** — 7,111 chars written to handoff_doc (`1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ`) on Drive. Step 4 of the new §4 session-close checklist satisfied first time it was used.
+  - **Final commits this session.** lux-os: `0d14134` (digest reconcile) + `5bf8958` (New Task form). alan-os: `6d9ff5a` (digest reconcile session log) + `0d4d150` (CLAUDE.md §4 + form session log) + this closeout commit.
