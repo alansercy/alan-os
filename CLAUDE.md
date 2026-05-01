@@ -85,6 +85,36 @@ See `SESSION_PROTOCOL.md` for the full canonical protocol. Always:
 - **Never delete files without a confirmed copy elsewhere.**
 - **Ask before any action that touches credentials or `C:\Users\aserc\.lux\`.**
 
+### Session-close checklist (mandatory before declaring session over)
+
+The dashboard treats `~/.lux/Data/tasks.json` and `~/.lux/Data/projects.json` as
+the single source of truth — the digest now reads from these files (lux-os
+commit `0d14134`), and the dashboard Tasks tab now writes back via the
+in-tab task form (POST `/tasks`). Closing a session without updating these
+files leaves both surfaces stale.
+
+Every session before closing must:
+
+1. **Mark completed tasks `done` in `tasks.json`** — anything actually finished
+   this session. Either via the dashboard's Complete button (PATCH `/tasks/{id}`
+   sets `status="done"` + stamps `completed_at`) or by direct JSON edit if the
+   server isn't running. Do not let "done in conversation" leave open rows
+   behind.
+2. **Add any new tasks surfaced during the session** to `tasks.json` — via the
+   dashboard's New Task form (preferred) or direct edit. Capture the work
+   before context is lost. New `id` is `task-{N:03d}` where `N = len(tasks)+1`.
+3. **Update affected `projects.json` status fields** — `status` (`green` /
+   `yellow` / `red` / `idle`) and `status_note` should reflect reality at
+   close. The digest renders these directly into the morning email.
+4. **Confirm `push_handoff.py` fired** — at `C:\Users\aserc\.lux\workflows\`.
+   Pushes the handoff doc to Drive (asset `1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ`
+   per `PROJECTS.md` Drive Asset Registry). Without this, claude.ai and Claude
+   Code sessions cannot resume from the same breadcrumb.
+
+If `:8000` (alan_os_server) is up, the dashboard `Tasks` tab is the fastest
+path for #1 and #2. If it's down, read/write `tasks.json` directly with the
+same shape backend `POST /tasks` produces.
+
 ---
 
 ## 5. Active Projects (top 5)
