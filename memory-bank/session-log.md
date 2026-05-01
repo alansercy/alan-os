@@ -571,3 +571,16 @@
   - **Reported plan in-channel before executing** — flagged the `orchestrator_v2.py` → `yt_transcribe.py` substitution and the dedup discovery early so Alan could redirect if needed
   - **STACK_DESIGN.md §2.C cache paragraph + §5 caching bullet corrected** — fresh observed data (`cache_write` non-zero on 2/4 HIGH and 11,791 in remainder batch) replaces the prior "SDK not surfacing" conclusion with the per-node-routing hypothesis
   - Commits this session: see HEAD on alan-os after this entry lands
+
+## 2026-05-01 Cache investigation — open item logged
+- What was done
+  - Logged the prompt-caching anomaly as a discrete open item for next session, after the Groups 5-7 rerun produced enough data to refine the diagnosis. STACK_DESIGN.md §2.C (caching paragraph) and §5 (caching bullet) already capture the analytical detail; this entry is the persistent breadcrumb that says "still open, do this next."
+- What worked
+  - Treating the SDK-attribute-mismatch hypothesis as a *seed* observation (the user's initial verbal framing) and checking it against fresh data BEFORE writing this entry. The Groups 5-7 rerun showed `cache_write` non-zero on 2/4 HIGH calls and 11,791 tokens written across the parallel batch — disproving the "SDK doesn't surface cache fields at all" reading. The fact that `cache_write > 0` but `cache_read = 0` consistently is the actual signal, and it points to per-node routing, not attribute paths.
+- Blockers / caveats
+  - **Refined diagnosis (live in STACK_DESIGN §5):** SDK 0.94.0 *does* surface `cache_write`. The persistent `cache_read=0` likely reflects Anthropic's per-node prompt cache + TTL: each call lands on a node where either no cache exists yet (write fires) or the cache is on a different node (no read possible). We pay write costs (~$3.75/MTok) without amortization. Functional impact: zero. Cost impact: ~80% potential savings unrealized. Defer until cache costs become material.
+  - **Original verbal framing** — Alan's directive at session close was "investigate attribute name mismatch on beta cache-control field next session." Keeping that as the seed concern; the refined per-node-routing diagnosis is the better current model and supersedes it for the actual investigation.
+- Next step
+  - In a single long-lived process (one Anthropic client across many calls in one Python session), do 5-10 sequential calls and inspect `msg.usage` on each. If cache_read fires on call 2+ in that shape, the per-node hypothesis is confirmed (parallel/separate-process invocations split across nodes, sequential same-process invocations stay on one node).
+  - If cache_read remains 0 even in sequential same-process, dump the raw HTTP response body (httpx middleware or `client._client.send` interception) and compare actual JSON keys against SDK attribute names — that would resurface the attribute-mismatch hypothesis with evidence.
+  - Either outcome unlocks ~80% input-token savings on multi-URL VIE batches.
