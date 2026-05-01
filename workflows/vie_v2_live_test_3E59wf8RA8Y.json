@@ -1,0 +1,80 @@
+[
+  {
+    "url": "https://youtube.com/shorts/3E59wf8RA8Y",
+    "status": "ok",
+    "started": "2026-05-01T16:14:37.587014",
+    "title": "Claude Code skill-building tips shift #claudecode #skillbuilding #aiworkflows",
+    "channel": "AI Honeycove",
+    "duration": 48,
+    "video_id": "3E59wf8RA8Y",
+    "transcript_chars": 944,
+    "used_caption_fallback": false,
+    "recommendation": "ADOPT",
+    "confidence": "HIGH",
+    "fit_pipeline": "ai_stack",
+    "score": 8,
+    "usage": {
+      "input_tokens": 1536,
+      "output_tokens": 877,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A Claude Code engineer shares three skill-building tips: (1) Add a 'gotchas' section to each skill file — a list of mistakes Claude has made that you don't want repeated, which acts as iterative improvement over time. (2) Structure skills as folders, not single markdown files — include scripts, references, examples, and templates alongside the prompt; Claude pulls these in only when needed, keeping context window clean. (3) Avoid over-rigid instructions — give context and constraints but allow Claude to adapt when invoking the skill. All three tips center on how to structure Claude Code skill files for better, more autonomous performance.",
+      "tools_mentioned": [
+        "Claude Code"
+      ],
+      "techniques_mentioned": [
+        "gotchas section in skill files",
+        "folder-as-skill structure",
+        "progressive disclosure via file system",
+        "avoiding instruction railroading",
+        "iterative skill improvement from mistakes"
+      ],
+      "pattern_extraction": {
+        "has_extractable_value": true,
+        "patterns": [
+          {
+            "description": "Add a GOTCHAS section to each skill/CLAUDE.md file listing specific mistakes Claude has made that should not be repeated — updated incrementally as errors occur",
+            "apply_to": "CLAUDE.md and any skill-specific markdown files in .lux or skills directory; treat gotchas as a living error log per skill domain",
+            "effort": "low",
+            "priority": "immediate"
+          },
+          {
+            "description": "Structure skills as folders rather than single markdown files — folder contains prompt.md, plus scripts/, examples/, templates/, and references/ subdirectories that Claude pulls in only when needed",
+            "apply_to": "Skill organization in .lux or a dedicated /skills directory; prevents context bloat while keeping rich supporting material available on demand",
+            "effort": "low",
+            "priority": "immediate"
+          },
+          {
+            "description": "Write skill instructions with context and constraints rather than rigid step-by-step procedures — allow Claude to adapt execution path at invocation time",
+            "apply_to": "All skill prompt files and CLAUDE.md sections; audit existing rigid instruction blocks and rewrite as context+constraint framing",
+            "effort": "medium",
+            "priority": "next-session"
+          }
+        ]
+      },
+      "stack_evaluation": {
+        "recommendation": "ADOPT",
+        "stack_layer": "pattern",
+        "replaces_or_complements": "pattern only — no tool; directly extends current CLAUDE.md + .lux/Data memory architecture",
+        "confidence": "HIGH",
+        "reasoning": "Lens 1 drives this verdict entirely. All three patterns are immediately applicable to our existing CLAUDE.md and session architecture with zero new tooling required. The gotchas pattern in particular is a high-leverage addition — it turns Claude's mistakes into durable institutional memory rather than repeated friction. Folder-as-skill structure aligns directly with how we could organize skills in .lux without polluting the context window.",
+        "action_items": [
+          "Add a ## GOTCHAS section to CLAUDE.md immediately, seeded with known failure patterns already observed",
+          "Create a /skills directory with folder-per-skill structure: each folder gets prompt.md, examples/, and templates/ subdirs",
+          "Audit existing CLAUDE.md instruction blocks for over-rigid step sequences and rewrite as context+constraints format"
+        ]
+      },
+      "strategic_signal": {
+        "has_signal": true,
+        "signal": "The emerging convention of skill-as-folder with gotchas-as-memory suggests the broader Claude Code community is independently converging on structured agent memory patterns — validating Veritas's .lux architecture direction and suggesting these conventions may become de facto standards worth leading on publicly."
+      },
+      "relevance_score": 8,
+      "fit_pipeline": "ai_stack",
+      "fit_rationale": "Lens 1 drives this verdict entirely. All three patterns are immediately applicable to our existing CLAUDE.md and session architecture with zero new tooling required. The gotchas pattern in particular is a high-leverage addition — it turns Claude's mistakes into durable institutional memory rather than repeated friction. Folder-as-skill structure aligns directly with how we could organize skills in .lux without polluting the context window."
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T16:14:59.309111"
+  }
+]

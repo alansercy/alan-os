@@ -1,0 +1,88 @@
+[
+  {
+    "url": "https://youtube.com/shorts/FPv_E2cMt_k",
+    "status": "ok",
+    "started": "2026-05-01T16:15:54.706671",
+    "title": "Save 70x Tokens On Claude With This Plugin",
+    "channel": "Charlie Automates",
+    "duration": 89,
+    "video_id": "FPv_E2cMt_k",
+    "transcript_chars": 1728,
+    "used_caption_fallback": false,
+    "recommendation": "EVALUATE",
+    "confidence": "MEDIUM",
+    "fit_pipeline": "ai_stack",
+    "score": 5,
+    "usage": {
+      "input_tokens": 1721,
+      "output_tokens": 1137,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Charlie Automates promotes a Claude Code plugin called Graphify, inspired by Andrej Karpathy's 'raw folder' strategy where all files are dropped into one directory for Claude to search. Graphify builds a knowledge graph of files and preemptively creates semantic relationships between them, so instead of Claude reading all files on every search, a 'Graphify query' command returns enriched, relationship-aware results. Claims 70x token reduction per search vs. naive full-file scanning. 39k GitHub stars after a few weeks. Output can be visualized in Obsidian. No deep technical implementation shown — primarily a promotional short teasing a fuller breakdown.",
+      "tools_mentioned": [
+        "Graphify",
+        "Claude Code",
+        "Obsidian"
+      ],
+      "techniques_mentioned": [
+        "knowledge graph over codebase",
+        "semantic relationship pre-computation",
+        "raw folder strategy",
+        "graph-query vs full-file scan",
+        "Obsidian for knowledge graph visualization"
+      ],
+      "pattern_extraction": {
+        "has_extractable_value": true,
+        "patterns": [
+          {
+            "description": "Pre-compute a knowledge graph with semantic relationships between files so agents query the graph rather than scanning all files — 'index once, query cheap' pattern",
+            "apply_to": "How orchestrator.py and Claude access .lux/Data/ JSON files and session/working memory — instead of passing all files as context, build a lightweight index or manifest with relationship metadata that Claude queries first",
+            "effort": "medium",
+            "priority": "next-session"
+          },
+          {
+            "description": "Karpathy's raw folder strategy: designate one drop zone for all unstructured inputs; let the agent index and structure them rather than pre-organizing manually",
+            "apply_to": "Inbound data handling in PersonalOS and TradeOS — intake folder pattern before processing into structured memory layers",
+            "effort": "low",
+            "priority": "next-session"
+          },
+          {
+            "description": "Add a graph-query tool or manifest file to CLAUDE.md that tells Claude 'query the index first, then fetch specific files' rather than reading all context files upfront",
+            "apply_to": "CLAUDE.md conventions — add an explicit instruction pattern: 'before reading files, check the index manifest at .lux/index.json to find relevant files and relationships'",
+            "effort": "low",
+            "priority": "immediate"
+          },
+          {
+            "description": "Pre-compute file relationship metadata (which files depend on or reference which) and store as structured JSON so agents can navigate the codebase semantically",
+            "apply_to": "CLAUDE.md or repo-level index file — a dependency/relationship map for alan_os_server.py, orchestrator.py, and supporting modules so Claude doesn't re-read unchanged files",
+            "effort": "medium",
+            "priority": "next-session"
+          }
+        ]
+      },
+      "stack_evaluation": {
+        "recommendation": "EVALUATE",
+        "stack_layer": "memory",
+        "replaces_or_complements": "Complements existing .lux/Data/*.json memory architecture — Graphify or its pattern could replace naive full-context file reads with graph-indexed lookups, sitting between orchestrator.py and Claude's context window",
+        "confidence": "MEDIUM",
+        "reasoning": "Lens 1 drives this verdict: the 70x token reduction claim is unverified but the underlying pattern — precompute a relationship index, query it instead of scanning all files — is immediately applicable to how we manage memory file access in the current stack. Lens 2 is uncertain because Graphify is Claude Code specific (MCP/plugin layer) and may not integrate cleanly with our FastAPI+orchestrator architecture. Worth one test session to verify token savings and check if the graph-build step can run headlessly.",
+        "action_items": [
+          "Check Graphify GitHub repo (search 'Graphify Claude Code knowledge graph') to verify API-first / headless operation before Claude Code dependency assessment",
+          "Immediately implement a lightweight version: create .lux/index.json manifest that maps each memory file to its purpose, related files, and last-modified — add CLAUDE.md instruction to check index before reading files",
+          "Benchmark current token usage on a representative orchestrator.py session with and without full .lux/Data context loading to establish baseline before evaluating any graph solution"
+        ]
+      },
+      "strategic_signal": {
+        "has_signal": true,
+        "signal": "Token cost at context-window scale is becoming a primary pain point for power Claude users — tools that reduce context load via pre-indexed relationships are gaining rapid traction (39k stars in weeks), signaling that 'smart context retrieval' is a near-term differentiator for any AgentOS product competing on efficiency."
+      },
+      "relevance_score": 5,
+      "fit_pipeline": "ai_stack",
+      "fit_rationale": "Lens 1 drives this verdict: the 70x token reduction claim is unverified but the underlying pattern — precompute a relationship index, query it instead of scanning all files — is immediately applicable to how we manage memory file access in the current stack. Lens 2 is uncertain because Graphify is Claude Code specific (MCP/plugin layer) and may not integrate cleanly with our FastAPI+orchestrator architecture. Worth one test session to verify token savings and check if the graph-build step can run headlessly."
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T16:16:22.763206"
+  }
+]
