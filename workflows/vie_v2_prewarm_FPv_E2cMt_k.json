@@ -1,0 +1,91 @@
+[
+  {
+    "url": "https://youtube.com/shorts/FPv_E2cMt_k",
+    "status": "ok",
+    "started": "2026-05-01T15:56:27.791354",
+    "title": "Save 70x Tokens On Claude With This Plugin",
+    "channel": "Charlie Automates",
+    "duration": 89,
+    "video_id": "FPv_E2cMt_k",
+    "transcript_chars": 1728,
+    "used_caption_fallback": false,
+    "recommendation": "EVALUATE",
+    "confidence": "MEDIUM",
+    "fit_pipeline": "none",
+    "score": 0,
+    "usage": {
+      "input_tokens": 1721,
+      "output_tokens": 1206,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Charlie Automates demos 'Graphify', a Claude Code plugin that builds a knowledge graph from a raw file/codebase folder, inspired by Andrej Karpathy's raw folder strategy. Instead of Claude reading all files on every query, Graphify pre-indexes files into a semantic knowledge graph with pre-computed relationships between files. Users append 'graphify query' to searches and get enriched results at claimed 70x token reduction vs full-file scanning. The graph can be visualized in Obsidian. Plugin has 39k GitHub stars within weeks of launch. Transcript is promotional/short format — no deep implementation detail provided.",
+      "tools_mentioned": [
+        "Graphify",
+        "Claude Code",
+        "Obsidian"
+      ],
+      "techniques_mentioned": [
+        "knowledge graph indexing",
+        "semantic relationship pre-computation",
+        "raw folder strategy",
+        "pre-indexed query routing",
+        "token-efficient search via graph traversal"
+      ],
+      "pattern_extraction": {
+        "has_extractable_value": true,
+        "patterns": [
+          {
+            "description": "Pre-index a raw file corpus into a knowledge graph with semantic relationships before Claude queries it, rather than having Claude scan files at query time",
+            "apply_to": "Our .lux/Data/*.json memory architecture and any long-term memory layer where Claude traverses multiple files — pre-compute relationships at write time, not read time",
+            "effort": "medium",
+            "priority": "next-session"
+          },
+          {
+            "description": "Karpathy's raw folder strategy: maintain a single drop-zone folder of raw files and let an indexer (not Claude) build structure, so Claude only reads the index",
+            "apply_to": "Knowledge ingestion pipeline — raw inputs land in an unstructured folder, a background process (n8n or orchestrator.py) indexes them into structured memory before Claude ever touches them",
+            "effort": "medium",
+            "priority": "next-session"
+          },
+          {
+            "description": "Append a query-mode modifier to prompts (e.g. 'graphify query' or a stack-equivalent prefix) that routes Claude to the index/graph rather than raw files",
+            "apply_to": "CLAUDE.md conventions or system prompt preamble — define a query prefix that signals Claude to consult the pre-built index in working memory rather than traversing raw context",
+            "effort": "low",
+            "priority": "immediate"
+          },
+          {
+            "description": "Pre-compute file-to-file semantic relationships at index time so Claude receives relationship metadata alongside content, reducing the need for Claude to infer connections",
+            "apply_to": "Long-term memory layer — when writing to .lux/Data/*.json, add a 'related_to' or 'semantic_neighbors' field computed at write time by a lightweight embedding pass",
+            "effort": "high",
+            "priority": "backlog"
+          },
+          {
+            "description": "Visualize agent memory/knowledge graph in Obsidian by piping structured JSON output to an Obsidian vault — provides human-readable audit layer over opaque JSON memory",
+            "apply_to": "Memory architecture observability — pipe .lux/Data/*.json into an Obsidian vault for graph visualization without changing the underlying data format",
+            "effort": "low",
+            "priority": "next-session"
+          }
+        ]
+      },
+      "stack_evaluation": {
+        "recommendation": "EVALUATE",
+        "stack_layer": "memory",
+        "replaces_or_complements": "Complements existing .lux/Data/*.json memory architecture — Graphify or its pattern would sit as a pre-indexing layer upstream of how Claude consumes long-term memory",
+        "confidence": "MEDIUM",
+        "reasoning": "Lens 1 (pattern extraction) drives this verdict — the raw folder + pre-indexed knowledge graph pattern is directly applicable to our memory architecture. The 70x token claim is unverified marketing but the underlying mechanism (index at write time, query the index not the files) is sound and solves a real problem we face with growing .lux/Data context. Graphify itself is Claude Code specific and may not integrate with our FastAPI/n8n stack, but the pattern is tool-agnostic.",
+        "action_items": [
+          "Check Graphify GitHub repo (39k stars) to assess if it exposes an API or CLI usable outside Claude Code IDE context",
+          "Prototype a write-time indexer in orchestrator.py that appends a 'related_to' field to new .lux/Data/*.json entries using a lightweight embedding similarity check",
+          "Add a CLAUDE.md convention defining a query prefix that instructs Claude to read the memory index manifest first before traversing individual memory files"
+        ]
+      },
+      "strategic_signal": {
+        "has_signal": true,
+        "signal": "Token cost at the memory retrieval layer is becoming a first-class concern for power Claude users — teams building AgentOS should treat memory indexing as infrastructure, not afterthought, as context window costs will penalize any architecture that scans raw files at query time."
+      }
+    },
+    "posted": "skipped (dry-run)",
+    "finished": "2026-05-01T15:56:54.540125"
+  }
+]

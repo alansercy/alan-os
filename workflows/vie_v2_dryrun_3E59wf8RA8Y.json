@@ -1,0 +1,77 @@
+[
+  {
+    "url": "https://youtube.com/shorts/3E59wf8RA8Y",
+    "status": "ok",
+    "started": "2026-05-01T15:54:51.240412",
+    "title": "Claude Code skill-building tips shift #claudecode #skillbuilding #aiworkflows",
+    "channel": "AI Honeycove",
+    "duration": 48,
+    "video_id": "3E59wf8RA8Y",
+    "transcript_chars": 944,
+    "used_caption_fallback": false,
+    "recommendation": "ADOPT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 0,
+    "usage": {
+      "input_tokens": 1536,
+      "output_tokens": 902,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A Claude Code engineer shares three skill-building tips: (1) Add a 'gotchas' section to each skill file — a living list of mistakes Claude has made that you don't want repeated, updated over time as errors occur. (2) Structure skills as folders, not single markdown files — include scripts, references, examples, and templates alongside the prompt; Claude pulls these in only as needed, avoiding context window bloat. (3) Avoid over-constraining Claude — give context and constraints but leave room for adaptation at invocation time. The video is a distillation of practical patterns for improving Claude's skill execution quality over time.",
+      "tools_mentioned": [
+        "Claude Code"
+      ],
+      "techniques_mentioned": [
+        "gotchas section in skill files",
+        "folder-as-skill structure",
+        "progressive disclosure via file system",
+        "constraint loosening / anti-railroading",
+        "living error log per skill"
+      ],
+      "pattern_extraction": {
+        "has_extractable_value": true,
+        "patterns": [
+          {
+            "description": "Add a 'Gotchas' section to every skill file (and CLAUDE.md) — a continuously updated list of past mistakes Claude made that should not recur",
+            "apply_to": "CLAUDE.md top-level and every .lux/skills/*.md or equivalent skill file — append gotchas after each session where an error or unwanted behavior occurred",
+            "effort": "low",
+            "priority": "immediate"
+          },
+          {
+            "description": "Restructure skills as folders: one folder per skill containing the prompt .md, plus subfiles for scripts, references, examples, and templates — Claude pulls subfiles in only when needed",
+            "apply_to": ".lux/skills/ directory structure — replace flat .md files with named folders; orchestrator.py skill loader should reference folder root and let Claude lazily load subfiles",
+            "effort": "medium",
+            "priority": "immediate"
+          },
+          {
+            "description": "Write skill instructions with context and constraints but not rigid step sequences — leave invocation-time adaptation room so Claude isn't railroaded into brittle paths",
+            "apply_to": "All skill prompt authoring going forward; audit existing CLAUDE.md instructions for over-specification and soften imperative step lists into outcome-oriented guidance",
+            "effort": "low",
+            "priority": "next-session"
+          }
+        ]
+      },
+      "stack_evaluation": {
+        "recommendation": "ADOPT",
+        "stack_layer": "pattern",
+        "replaces_or_complements": "pattern only — no tool; complements existing CLAUDE.md + .lux/Data memory architecture",
+        "confidence": "HIGH",
+        "reasoning": "Lens 1 drives this verdict entirely. All three patterns are immediately applicable to our existing stack with zero new tooling required. The gotchas pattern in particular is a direct behavioral improvement loop for any skill file we ship. Folder-as-skill structure directly extends our .lux/ architecture.",
+        "action_items": [
+          "Add a '## Gotchas' section to CLAUDE.md today — seed with known past errors",
+          "Create .lux/skills/ folder structure: mkdir per skill, move existing .md prompts inside, add examples/ and templates/ subdirs",
+          "Audit top 3 most-used skill prompts for over-rigid step sequences and rewrite as outcome-oriented with constraints"
+        ]
+      },
+      "strategic_signal": {
+        "has_signal": true,
+        "signal": "The 'folder-as-skill with progressive disclosure' pattern is emerging as a community-level standard for Claude Code skill authoring — Veritas should codify this as the canonical skill structure before it becomes an external framework we'd have to adopt on someone else's terms."
+      }
+    },
+    "posted": "skipped (dry-run)",
+    "finished": "2026-05-01T15:55:12.972732"
+  }
+]
