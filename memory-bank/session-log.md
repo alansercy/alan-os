@@ -643,3 +643,28 @@
   - **Vertical-context refactor** — the `CONTEXTS` dict referenced in `VIE_PROMPT_PATCH.md` would let yt_transcribe.py evaluate Loretta/MMM-relevant content with vertical-aware verdicts. Needs a separate session
 - Session close
   - Commits this session: see HEAD on alan-os and lux-os after this entry lands
+
+## 2026-05-01 PM-late REJECT score override + file move + handoff
+- What was done
+  - **REJECT score override** (alan-os `4c9eae4`) — `_derive_v1_fields()` now forces `relevance_score=1` when `stack_evaluation.recommendation == "REJECT"`, overriding the HIGH/MEDIUM/LOW confidence mapping. Three lines added (rec extraction + ternary). Without this, REJECT/HIGH landed at score 8 — surfacing rejected content at the top of the dashboard digest sort
+  - **Moved `VIE_PATTERN_ACTION_LIST.md`** from `C:/Veritas/repos/memory-bank/` (orphan parent directory, not in any git repo) to `C:/Veritas/repos/alan-os/memory-bank/` — matches the file's own frontmatter "Canonical Location" claim and keeps Veritas planning docs inside the alan-os repo. Updated PROJECTS.md `VIE-impl-A` row to use the relative path `memory-bank/VIE_PATTERN_ACTION_LIST.md`. Parent memory-bank still holds `VIE_PROMPT_PATCH.md` and `VIE_YOUTUBE_INTELLIGENCE_ENGINE.md` (Alan didn't request those moved)
+  - **`push_handoff.py` ran cleanly** — see hash + char count in the session close block below
+  - Final alan-os commits this session (newest → oldest):
+    - `4c9eae4` fix: REJECT score override
+    - `e91be8e` chore: v2 live re-run artifacts + VIE-impl queue + session-log
+    - `8e6f604` feat: v2 back-compat (derive v1 fields + send pattern_extraction/strategic_signal)
+    - `0e0d948` chore: v2 dry-run rerun artifacts
+    - `efde2d2` docs: §2.D v2 three-lens re-evaluation
+    - `a5ad003` feat: replace single-lens rubric with v2 three-lens prompt
+    - `91ca03f` docs: cache anomaly per-node-routing diagnosis
+    - `a31614e` chore: Groups 5-7 PM rerun artifacts
+  - Final lux-os commit this session:
+    - `fe2621f` feat: NewStackItem accepts pattern_extraction + strategic_signal; dedup skips dismissed
+- What worked
+  - **Two-line REJECT override** kept the back-compat helper readable. Pulled `rec` extraction onto its own line so the conditional reads naturally: `1 if rec == "REJECT" else _CONFIDENCE_TO_SCORE.get(confidence, 0)`. No nested ternaries
+  - **File-move-then-PROJECTS.md-update** — caught the queue's parent-path reference before commit so the row in PROJECTS.md matches reality after the move
+- Blockers / caveats
+  - **3 existing REJECT records in `ai_stack_feed.json` still sit at `relevance_score=8`** because the override only runs at evaluate-time. The script fix prevents future REJECTs from landing high; existing records are stale. To backfill: PATCH each to dismissed + re-run those 3 URLs (would create 3 new records at score 1), OR direct-edit the JSON to flip score from 8 → 1 in place. Not blocking — only 3 records, dashboard digest mostly reads top-N which the new ADOPT/EVALUATE entries dominate
+- Next step
+  - **VIE-impl-A** queued in PROJECTS.md — 6 immediate patterns from `memory-bank/VIE_PATTERN_ACTION_LIST.md`. Mandatory pre-build audit per Principle 7 (Build Only What Doesn't Exist) before touching anything
+  - **REJECT backfill** (optional) — direct-edit the 3 stale REJECT records in `ai_stack_feed.json` to `relevance_score=1` if the digest UX needs it before VIE-impl-A
