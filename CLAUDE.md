@@ -105,6 +105,50 @@ Pulled from `PROJECTS.md` Session Queue + TIER 1. Read `PROJECTS.md` for full co
 - Use `/clear` when context is heavy — files are saved to disk, not memory.
 - **Never hold full file contents in memory** when a path reference works. Cite file paths instead of pasting.
 
+---
+
+## 7. Gotchas (negative-example log)
+
+Lessons earned through session failures and Alan-corrections. Distinct from §2 ("non-negotiable rules") — these are the *stories* behind the rules and the gotchas that don't reduce cleanly to a one-liner. Seed-and-grow list; append on every new lesson.
+
+1. **n8n PUT — strip metadata fields before sending.** Sending `active`, `createdAt`, `updatedAt`, `versionId`, `tags`, or `id` to `PUT /api/v1/workflows/{id}` causes the API to *silently* accept the request with HTTP 200 but reject the actual update. The workflow appears unchanged. Always strip these six fields before PUT. (See §2 for the canonical rule.)
+
+2. **n8n Anthropic — never use the built-in node.** The HTTP Request node at `typeVersion 4.2` with `x-api-key` header, `anthropic-version: 2023-06-01`, `contentType: raw`, body `={{ $json.apiBody }}` is the only path that survives edge cases (long prompts, tool use, prompt caching). The built-in Anthropic node breaks on multi-turn or large bodies and gives no useful error. (See §2.)
+
+3. **Google Sheets — `__rl` resource locator wrapper is mandatory.** Both `documentId` and `sheetName` parameters require the resource locator object (`{__rl: true, value, mode: "list", cachedResultName, cachedResultUrl}`), not raw strings. Raw IDs validate but fail at runtime with cryptic "resource not found" errors. (See §2.)
+
+4. **MMM Prospect Tracker — header row is row 3, not row 1.** Banner content occupies rows 1–2. Sheet has 6 tabs; the `(n8n)` tab (19 cols, no Email-1/2/3 sent dates) is the integration target — separate from the human `WA Prospect Tracker` tab so writes don't trample manual edits. The `#` column (col B) is the de-facto lead key since there's no native `Lead ID` column — fragile if rows get inserted mid-table.
+
+5. **Windows bash + curl POST — use heredoc + `--data-binary @file.json`.** Standard `curl -d '{...}'` quoting is mangled by Windows bash even with single quotes, returning HTTP 422. Pattern that works: `cat > /tmp/req.json <<'EOF' ... EOF` then `curl --data-binary @/tmp/req.json`. Applies to any non-trivial JSON POST from this shell.
+
+6. **Headless-Chrome `--dump-dom` on Windows — convert tempfile paths via `cygpath -w`.** Bash `/tmp/...` paths confuse Chrome on Windows; `cygpath -w /tmp/foo.html` returns a Windows-form path Chrome accepts. Required pattern any time you want DOM-after-JS verification from a CLI.
+
+7. **Desktop OAuth flow — `flow.run_local_server(port=0)` is the clean pattern.** For Google Workspace API access from local scripts: `InstalledAppFlow.from_client_secrets_file(...).run_local_server(port=0)` opens one browser pop, no manual code paste, persists refresh token via `to_json()`. Future runs reload silently via `from_authorized_user_file`. Used for `post_closeout_to_drive.py` against the Veritas Session Log Doc. Same pattern works for Sheets, Drive, Calendar with adjusted scopes.
+
+8. **Verify existing code actually does what you think before recommending "extend, don't build new."** Build-or-extend (P7 in `PRINCIPLES_REVIEW_v1.md`) is only honest if the "extend" recommendation rests on verified code behavior, not assumed behavior. VIE session 2026-05-01: I recommended extending `shorts_researcher.py` for transcript work; Alan's verification challenge forced a re-read which proved the file is metadata-only (regex on YouTube page HTML, no yt-dlp, no transcripts anywhere in codebase). Corrected recommendation: build the new transcript layer, integrate via existing `/ai_stack`. Rule: when proposing extend-not-build, cite line numbers and confirm the function does what you're claiming it does — don't infer from filename or one-line summary.
+
+---
+
+## 8. Skill File Convention (folder-as-skill)
+
+When authoring Claude Code skills (system-level, at `C:\Users\aserc\.claude\skills\`), prefer **folder structure** over single-file:
+
+```
+my-skill/
+  prompt.md          # the canonical instructions Claude reads
+  scripts/           # any scripts the skill references
+  examples/          # worked examples / negative examples
+  templates/         # boilerplate the skill instantiates
+```
+
+**Why:** progressive disclosure (Claude reads `prompt.md` first, pulls in `scripts/` or `examples/` only when relevant), single canonical store per skill (no scattered assets), explicit asset coupling (everything the skill needs lives in one folder).
+
+**Scope note:** This repo (`alan-os`) does not host Claude Code skills — those live in `~/.claude/skills/`. Convention documented here so any future skill creation (this repo or a global skill referencing repo assets) follows the pattern. Existing single-file skills referencing external assets should be migrated to folder structure when next touched.
+
+**Source:** STACK_DESIGN.md §2 ADOPT verdict on `youtube.com/shorts/3E59wf8RA8Y` (AI Honeycove, 2026-05-01).
+
+---
+
 ## MEMORY BANK PROTOCOL
 - Before starting any task: read memory-bank/session-log.md
 - After completing any task: append a dated summary to memory-bank/session-log.md

@@ -70,9 +70,9 @@ Per layer. **One** canonical store / component per data class (P8). Closed-API t
 - **Why ADOPT:** All three are *extend-in-place* improvements to existing CLAUDE.md and skill-file conventions. P3 win (token efficiency via negative-example encoding reduces correction round-trips), P8 alignment (folder-as-skill = single canonical store per skill), P2 alignment (declared coupling between skill assets). P7 overlap is 100% with existing Working Memory — no new file > 50 lines needed; only amendments.
 - **Replaces/complements:** Complements CLAUDE.md and existing skill files. No replacement.
 - **Action items:**
-  1. Add `## Gotchas` section to `CLAUDE.md` and any existing skill markdown files; seed with known repeat mistakes from recent sessions.
-  2. Audit current skill/prompt files: convert single-file skills referencing external assets into folder-based skills (`prompt.md` + `/scripts` + `/examples` + `/templates`).
-  3. Document folder-as-skill convention in a short ADR or `CLAUDE.md` note so future skill creation follows the pattern without a new `BUILD_OR_EXTEND.md` trigger.
+  1. ✅ **DONE 2026-05-01.** Added `## 7. Gotchas (negative-example log)` to `CLAUDE.md` with 8 entries seeded from session-log: n8n PUT metadata-strip, n8n Anthropic HTTP-node typeVersion 4.2, Sheets `__rl` wrapper, MMM tracker row-3 header, Windows bash curl heredoc, headless-Chrome `cygpath -w`, Desktop OAuth `run_local_server(port=0)`, and "verify before recommending extend-not-build" (Alan-corrected from VIE session — `shorts_researcher.py` was metadata-only, not transcript extraction).
+  2. ⛔ **Out-of-scope-for-this-repo.** This action targets Claude Code skill files at the system level (`~/.claude/skills/`), not files in `alan-os`. The repo has no `.claude/skills/` directory and no single-file skills to convert. Convention is documented in §8 of CLAUDE.md so future skill authoring follows the pattern; a global skill audit is deferred until that work is on the queue.
+  3. ✅ **DONE 2026-05-01.** Added `## 8. Skill File Convention (folder-as-skill)` to `CLAUDE.md`. Documents the `prompt.md + /scripts + /examples + /templates` structure, the why (progressive disclosure, single canonical store, explicit asset coupling), and the scope note that this repo doesn't host skills.
 
 ### EVALUATE × 0
 
