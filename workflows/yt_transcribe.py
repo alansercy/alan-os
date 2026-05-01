@@ -290,7 +290,10 @@ def _derive_v1_fields(eval_result: dict) -> None:
     se = eval_result.get("stack_evaluation", {}) or {}
     if "relevance_score" not in eval_result:
         confidence = (se.get("confidence") or "").upper()
-        eval_result["relevance_score"] = _CONFIDENCE_TO_SCORE.get(confidence, 0)
+        rec        = (se.get("recommendation") or "").upper()
+        # REJECT = not relevant — force to 1 regardless of confidence so the
+        # digest's relevance_score-desc sort doesn't surface rejections at top.
+        eval_result["relevance_score"] = 1 if rec == "REJECT" else _CONFIDENCE_TO_SCORE.get(confidence, 0)
     if "fit_pipeline" not in eval_result:
         layer = (se.get("stack_layer") or "none").lower()
         eval_result["fit_pipeline"] = _LAYER_TO_PIPELINE.get(layer, "none")
