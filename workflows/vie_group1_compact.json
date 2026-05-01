@@ -1,0 +1,177 @@
+[
+  {
+    "url": "https://youtube.com/shorts/FPv_E2cMt_k",
+    "title": "Save 70x Tokens On Claude With This Plugin",
+    "channel": "Charlie Automates",
+    "duration": 89,
+    "transcript_chars": 1728,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "stack_layer": "intelligence",
+    "fit_pipeline": "ai_stack",
+    "fit_rationale": "The underlying problem — token-efficient retrieval from a large file corpus — is directly relevant to VIE and the AI Research Feed, but the tool targets Claude Code (IDE agent), not the Claude API stack Veritas actually runs.",
+    "relevance_score": 3,
+    "replaces_or_complements": "would theoretically complement VIE's context retrieval, but Veritas runs Claude API + n8n, not Claude Code",
+    "reasoning": "P3 fails immediately: the 70x token claim is a single anecdotal assertion with no eval rubric, no baseline methodology, and no fixed task sample — it cannot be verified against the required ≥30% reduction test on representative Veritas tasks. P1 is unassessable from this content: no API surface, no export format, no webhook is described. P7 would require a BUILD_OR_EXTEND review against nlm_feed_builder.py and the VIE pipeline before any adoption, and this video provides zero technical detail to run that overlap analysis. The content is promotional/teaser with no actionable integration signal.",
+    "tools_mentioned": [
+      "Graphify",
+      "Claude Code",
+      "Obsidian"
+    ],
+    "techniques_mentioned": [
+      "knowledge graph construction",
+      "semantic relationship mapping",
+      "raw folder strategy",
+      "graph-based retrieval",
+      "token-efficient context retrieval"
+    ],
+    "action_items": [],
+    "summary": "The video promotes 'Graphify,' a Claude Code plugin that builds a knowledge graph of a codebase to enable semantic search, claiming 70x token reduction versus naive full-file reads. The workflow: drop files into a raw folder, Graphify parses them into a knowledge graph with semantic relationships, then a 'Graphify query' prefix routes searches through the graph rather than brute-forcing all files. Obsidian is used for visualization. The channel is explicitly pitching an interview with the creator, making this promotional content for a ~2-week-old tool with 39k GitHub stars. No technical depth on the graph structure, indexing method, API surface, or integration path is provided. The 70x claim is unvalidated and based on anecdote. The tool is tightly coupled to Claude Code (Anthropic's IDE agent), not the Claude API, which is the actual stack component. Veritas uses FastAPI + n8n + Claude API directly — not Claude Code as an orchestrator. The memory/retrieval problem this addresses is real and relevant to VIE and the AI Research Feed, but this video provides zero actionable technical signal to evaluate the tool against P1, P2, P6, or P7."
+  },
+  {
+    "url": "https://youtube.com/shorts/xM99M7aLFhQ",
+    "title": "The plugin that fixed my Claude Code workflow",
+    "channel": "TheIgnitingStudio",
+    "duration": 46,
+    "transcript_chars": 897,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "stack_layer": "orchestration",
+    "fit_pipeline": "ai_stack",
+    "fit_rationale": "GSD is a Claude Code workflow layer that duplicates functions already handled by CLAUDE.md, session-log, and VIE pipeline structure in Alan OS.",
+    "relevance_score": 2,
+    "replaces_or_complements": "Duplicates CLAUDE.md + Claude Code session workflow already in place; no meaningful capability delta over existing Alan OS orchestration patterns",
+    "reasoning": "Fails P7 — CLAUDE.md plus existing session-log and VIE pipeline already cover phased planning, project scoping, and structured execution in Claude Code; overlap is well above 60% with no documented differentiation. Fails P3 — zero token efficiency data provided; no baseline, no rubric, no measurement. Fails P1 — no API surface, no export path described; the plugin is GUI/CLI workflow scaffolding with no declared integration hooks for n8n or FastAPI.",
+    "tools_mentioned": [
+      "GSD (Claude Code plugin)",
+      "Claude Code"
+    ],
+    "techniques_mentioned": [
+      "parallel research agents",
+      "phased roadmap generation",
+      "structured project planning",
+      "multi-agent spawning"
+    ],
+    "action_items": [],
+    "summary": "Short promotional video for a Claude Code plugin called GSD (Get Shit Done) that structures project workflows into three commands: new project (deep questions + optional parallel research agents + roadmap), plan phase (detailed execution plan), and execute phase (runs it). The workflow is designed to prevent Claude Code from missing steps in complex builds. No technical depth, no API documentation, no benchmark data, no token efficiency metrics. Pure workflow UX layer on top of Claude Code — which Veritas already orchestrates via Claude Code directly, CLAUDE.md, and structured session workflows. No meaningful differentiation from existing VIE/Alan OS patterns."
+  },
+  {
+    "url": "https://youtube.com/shorts/8BZupIIVhjs",
+    "title": "Use these 3 tricks to reduce your Claude code token usage.",
+    "channel": "Nick Automates",
+    "duration": 47,
+    "transcript_chars": 1064,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "stack_layer": "none",
+    "fit_pipeline": "none",
+    "fit_rationale": "Covers Claude Code UI shortcuts irrelevant to the programmatic Claude API usage pattern in Alan OS and VIE; no actionable integration path.",
+    "relevance_score": 2,
+    "replaces_or_complements": "nothing — no new capability",
+    "reasoning": "Fails P3: no measured token reduction, no eval rubric, purely anecdotal claims. Fails P7: /compact and model-routing are already handled at the API level in alan_os_server.py via direct Anthropic SDK calls with explicit model selection; overlap is near 100% with existing patterns. The 'ultra think' tip is unverified UI folklore with no reproducible test.",
+    "tools_mentioned": [
+      "Claude Code"
+    ],
+    "techniques_mentioned": [
+      "model routing (Opus plan / Sonnet execute)",
+      "context compaction (/compact)",
+      "extended thinking prompt prefix ('ultra think')"
+    ],
+    "action_items": [],
+    "summary": "Short-form tip video covering three Claude Code token-reduction tricks: (1) use /model opus plan to route planning to Opus 4 and execution to Sonnet, (2) use /compact to compress long context windows, (3) prepend 'ultra think' to force extended reasoning before code generation. Content is surface-level and aimed at casual Claude Code users. No tooling, repos, APIs, or architectural patterns introduced. The 'ultra think' tip is anecdotal and unverified. The /compact and model-routing tips are already standard Claude Code UX behaviors documented in Anthropic's own docs. No integration path, no measurable token-efficiency data (P3 fails — no eval rubric, no baseline comparison), and no novel capability beyond what the existing stack already uses via direct Claude API calls with system prompts. The video is essentially a lead magnet for a course."
+  },
+  {
+    "url": "https://youtube.com/shorts/3E59wf8RA8Y",
+    "title": "Claude Code skill-building tips shift #claudecode #skillbuilding #aiworkflows",
+    "channel": "AI Honeycove",
+    "duration": 48,
+    "transcript_chars": 944,
+    "used_caption_fallback": false,
+    "recommendation": "ADOPT",
+    "confidence": "HIGH",
+    "stack_layer": "memory",
+    "fit_pipeline": "ai_stack",
+    "fit_rationale": "All three patterns apply directly to how Alan OS skill files and CLAUDE.md are authored and maintained, with the gotcha-section pattern offering a measurable reduction in repeated correction tokens.",
+    "relevance_score": 6,
+    "replaces_or_complements": "Complements CLAUDE.md and any existing skill/prompt files in the VIE pipeline; no replacement of existing components",
+    "reasoning": "The gotcha-section pattern directly addresses P3 (token efficiency) by encoding past mistakes as negative examples, reducing correction round-trips across tasks. The folder-as-skill structure supports P8 (single canonical store per data class) and P2 (declared coupling) by separating prompt, scripts, references, and templates into addressable files. These are extend-in-place changes to existing CLAUDE.md and skill file conventions — P7 overlap is 100% with existing Working Memory surfaces, so no new file > 50 lines is warranted, only amendments to existing files.",
+    "tools_mentioned": [
+      "Claude Code"
+    ],
+    "techniques_mentioned": [
+      "gotcha section / negative-example logging in skill files",
+      "folder-based skill structure with progressive disclosure",
+      "context+constraints prompting (anti-railroading)",
+      "progressive file inclusion to manage context window"
+    ],
+    "action_items": [
+      "Add a '## Gotchas' section to CLAUDE.md and any existing skill markdown files; seed with known repeat mistakes from recent sessions",
+      "Audit current skill/prompt files: convert any single-file skills that reference external assets into folder-based skills (prompt.md + /scripts + /examples + /templates subdirs)",
+      "Document folder-as-skill convention in a short ADR or CLAUDE.md note so future skill creation follows the pattern without a new BUILD_OR_EXTEND.md trigger"
+    ],
+    "summary": "Short-form tip video covering three Claude Code skill-building patterns: (1) a 'gotcha' section in skill files that logs past mistakes to prevent recurrence, (2) using a folder structure rather than a single markdown file to enable progressive disclosure of scripts/references/templates without bloating context, and (3) avoiding over-rigid instructions in favor of context+constraints that let Claude adapt. These are prompt-engineering and skill-file architecture patterns, not new tools. All three patterns are directly applicable to Alan OS / VIE skill definitions and CLAUDE.md maintenance. The 'gotcha' section pattern is the highest-signal idea — it's a lightweight, structured memory technique that lives in Working Memory (CLAUDE.md or skill files) and could reduce repeated correction cycles. The folder-as-skill pattern aligns with P8 (named memory surfaces) and P2 (declared coupling). Nothing here is novel enough to warrant a new file or workflow; these are extend-in-place improvements to existing skill/prompt architecture."
+  },
+  {
+    "url": "https://youtube.com/shorts/93qRVasYmQs",
+    "title": "5 Free Claude Skills Every Beginner Must Install Right Now (Game-Changer)",
+    "channel": "Dubibubii",
+    "duration": 50,
+    "transcript_chars": 934,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "stack_layer": "none",
+    "fit_pipeline": "none",
+    "fit_rationale": "All five features are GUI-only, undocumented, and duplicate existing stack capabilities; no API, no export path, no token efficiency data.",
+    "relevance_score": 1,
+    "replaces_or_complements": "nothing — duplicates existing Claude API + n8n + MCP roadmap items with zero technical depth",
+    "reasoning": "Fails P1 (GUI-only, no documented API or export path for any of the five 'skills'), fails P3 (zero token efficiency data or measurable baseline), and fails P7 (all five items overlap ≥60% with existing stack components — Claude API direct calls, n8n multi-agent workflows, and the already-planned MCP integrations). Content is a beginner funnel ad, not an architectural signal.",
+    "tools_mentioned": [
+      "Claude (unspecified wrapper/platform)",
+      "MCP builder (unidentified tool)"
+    ],
+    "techniques_mentioned": [
+      "slash-command plugin installation",
+      "multi-agent code review",
+      "prompt eval scaffolding",
+      "MCP API integration"
+    ],
+    "action_items": [],
+    "summary": "A 60-second promotional video listing five 'Claude skills' (plugins/slash-commands) available inside what appears to be a proprietary Claude-adjacent platform or wrapper — not Claude.ai or the Anthropic API directly. The five items (front-end design, simplify, skill creator, web app testing, MCP builder) are UI-level features of an unidentified GUI tool. No API references, no exports, no documented integrations, no token efficiency data. The channel appears to be driving viewers toward a paid course funnel. Content is surface-level beginner material with zero architectural depth. Nothing here is relevant to the Veritas stack — all five 'skills' duplicate or are superseded by existing stack components (Claude API, n8n workflows, MCP already on roadmap). The MCP builder mention is the only signal worth noting, but there is no technical substance to evaluate."
+  },
+  {
+    "url": "https://youtube.com/shorts/U8PkKqegN9A",
+    "title": "3 Claude Repos That You Need Like, Yesterday",
+    "channel": "Charlie Automates",
+    "duration": 84,
+    "transcript_chars": 1605,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "stack_layer": "none",
+    "fit_pipeline": "none",
+    "fit_rationale": "These are Claude Code IDE session tools; the Veritas stack runs Claude API via FastAPI and has existing working-memory surfaces (CLAUDE.md, session-log) that already address the problems these repos target.",
+    "relevance_score": 2,
+    "replaces_or_complements": "nothing — partial overlap with CLAUDE.md working memory and VIE session context patterns, but wrong runtime layer",
+    "reasoning": "Fails P1 — repos are gated behind a social-media comment wall with no documented API or export path. Fails P3 — zero token-efficiency benchmarks provided, and the 'context rot' problem is already handled by CLAUDE.md + session-log in the existing stack, meaning overlap is high enough to trigger P7 scrutiny with no BUILD_OR_EXTEND.md. Fails P7 implicitly — Graphify's Obsidian coupling is GUI-only with no programmatic interface, and all three tools target Claude Code IDE sessions rather than the Claude API runtime the stack actually uses.",
+    "tools_mentioned": [
+      "Paul",
+      "Graphify",
+      "Seed",
+      "Claude Code",
+      "Obsidian"
+    ],
+    "techniques_mentioned": [
+      "context rot mitigation",
+      "project state management",
+      "knowledge graph for codebase",
+      "guided ideation pipeline",
+      "structured execution planning"
+    ],
+    "action_items": [],
+    "summary": "Short-form YouTube video promoting three GitHub repos designed as Claude Code workflow enhancers: (1) 'Paul' — a project/roadmap/state manager that fights context rot in long Claude sessions; (2) 'Graphify' — a relationship-mapping tool that connects codebase assets and visualizes them via Obsidian; (3) 'Seed' — a guided ideation-to-build pipeline that feeds into Paul. The video is creator-promotional (comment to get repos, follow for access), meaning the repos may not be publicly indexed or well-documented. No API surface, no token benchmarks, no integration specs, no export schema, and no evidence these tools expose any programmatic interface. All three are Claude Code session-layer tools, not Claude API tools — the stack runs Claude API (Sonnet/Haiku) via FastAPI, not Claude Code IDE. The overlap with existing VIE pipeline, CLAUDE.md working memory, and session-log patterns is high. The 'context rot' problem Paul claims to solve is already addressed in the stack via CLAUDE.md + session-log. Graphify's knowledge-graph angle is interesting but Obsidian coupling is GUI-only with no declared export path."
+  }
+]
