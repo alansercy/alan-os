@@ -109,7 +109,7 @@ Personal AI operating system for executives and family stewards. Email triage ac
 - Drive integration across 6 canonical assets
 
 ### SalesAgentOS — BD / Outbound AI OS
-**Status:** V1 dashboard tab live (Lux Command Center, 2026-04-29); Workflow 4.1 (lead enrichment) spec'd, pending build.
+**Status:** V1 dashboard tab live (Lux Command Center, 2026-04-29); Workflow 4.1 (lead enrichment) **built + committed 2026-04-30** (`workflows/workflow_4_1_lead_enrichment.json`, hybrid C — Sheet-in/Sheet-out + POST /leads). Not yet deployed — pending `ALAN_OS_PUBLIC_URL` ngrok setup on n8n VM and web-UI import (n8n REST 401 carry-forward).
 
 Outbound business-development infrastructure for fractional executives, B2B founders, and SMB owners. Lead intake, enrichment via Claude, stage tracking, competitor intel. Trigger for Workflow 4.1 = **n8n webhook direct** (`POST https://n8n.lorettasercy.com/webhook/salesos-enrich`, decision captured 2026-04-29).
 
