@@ -170,15 +170,91 @@ For each: failing principles cited so we don't re-evaluate without new technical
 
 ---
 
+## 2.C Groups 5-7 Batch — 2026-05-01 (pre-warm + parallel, 20 URLs)
+
+**Run shape:** 1 sync pre-warm URL (max-workers=1) followed by a 19-URL parallel batch (max-workers=4). User directive: "Pre-warm cache with one synchronous call first." Goal: test whether pre-warming resolves the cache_read=0 anomaly seen in Groups 2-4.
+
+**Result:** 20 URLs / 19 transcripts pulled / 1 yt-dlp metadata error / 19 evaluated / 19 posted to `/ai_stack`.
+**Verdict distribution:** **0 ADOPT · 0 EVALUATE · 1 MONITOR · 18 REJECT · 1 ERROR.**
+
+**Caching anomaly — DEFINITIVELY NOT a parallel race-write issue.** Pre-warm sync call: `cache_write=0, cache_read=0`. Parallel batch (after pre-warm): `cache_write=0, cache_read=0`. Per-URL input tokens ≈ 2,094 — same level as Groups 2-4's "lower-than-uncached" pattern. **Conclusion: SDK 0.94.0 simply isn't surfacing cache fields in `msg.usage`, regardless of call shape.** Server-side caching is happening (token math confirms it), but visibility through SDK is broken. Hypothesis from Group 1 close-out ("parallel race-write was the cause") is now disproven. **Likely root cause:** SDK attribute-name mismatch on the usage object — the new beta cache-control field set may use different attribute paths than the v1 `cache_creation_input_tokens` / `cache_read_input_tokens` the script reads. Open item — investigate via raw HTTP response inspection next session.
+
+**yt-dlp ERROR — `4nXxY_AaXuY`:** `WARNING: [youtube] No supported JavaScript runtime could be found. Only deno is enabled by default; to use another runtime add --js-runtimes RUNTIME[:PATH] to your command/config. YouTube extraction without a JS runtime has been deprecated.` This is a yt-dlp upstream change requiring a JS runtime (Deno default) for some YouTube format extraction. Not a `yt_transcribe.py` bug. Fix options: (a) install Deno on host, (b) pin yt-dlp to a pre-deprecation version, (c) handle the error gracefully and continue the batch (current behavior — 1 URL skipped, 19 succeeded). Logged as new stack gap §4.4.
+
+### MONITOR × 1
+
+#### `youtube.com/shorts/LXB_dBvDSOE` — "Redesign Claude Design?" (Jake Van Clief, ~60s) — score 4, layer **orchestration**, confidence **LOW**
+- **Pattern surfaced:** Ordered-markdown skill files read in sequence by Claude Code. Creator claims materially lower token usage than Anthropic's own "Claude Design" plugin.
+- **Why MONITOR (not ADOPT, not REJECT):** This is a **testable P3 claim** (the creator names a specific token-efficiency advantage over a named competitor) — exactly the kind of measurable lift the rubric rewards. **But zero benchmarks, no code, no methodology** in the 60s short, so P3 cannot be scored. P7 also flags risk: directly adjacent to the §2 Group 1 ADOPT (folder-as-skill from AI Honeycove) — the same pattern from a different creator. The Group 1 ADOPT was based on the *pattern* being extend-in-place (no file > 50 lines needed); this MONITOR mentions the same pattern with an unverified efficiency claim attached.
+- **Re-eval gate:** if a code repo or methodology surfaces (creator's GitHub, a follow-up technical post, or an independent benchmark on the ordered-skill-file pattern vs Claude Design), promote to EVALUATE. Until then, the pattern is already partially covered by §8 of CLAUDE.md (folder-as-skill convention) — no new action needed.
+
+### REJECT × 18
+
+For each REJECT, failing principles cited so we don't re-evaluate without new technical information.
+
+#### HIGH PRIORITY block (4 URLs, all REJECT)
+
+**`youtube.com/shorts/251Xs-sIy8U` (pre-warm)** — "Free Tool / Claude Cowork" (Hasan Toor) — score 2, layer none. Fails **P1** (gated behind DM, no documented API), **P3** (zero token data), **P7** (≥60% overlap with Alan OS + VIE pipeline), and **Anthropic-only constraint** (multi-LLM pitch — Ollama, GPT). *Re-eval gate:* none — multi-LLM is architecturally incompatible.
+
+**`youtube.com/shorts/f_o-_LZyldo`** — "Claude Can Now Control Your Computer" (Nick Puru) — score 2, layer orchestration. Fails **P3** (no token data, no comparison vs existing Outlook COM + n8n workflows), **P7** (computer use overlaps existing automation layer; needs BUILD_OR_EXTEND that this video can't seed). Engagement-bait. *Re-eval gate:* none — underlying Anthropic capability already known; ADD if Anthropic ships a stable computer-use SDK with token-efficiency data.
+
+**`youtube.com/shorts/yaBDLroG0Lo`** — "Claude Code Agentic OS Is The Future" (Chase AI) — score 1, layer none. Fails **P3** (zero data), **P7** (≥90% conceptual overlap with Alan OS + AgentOS + Lux Command Center), **P8** (Obsidian as memory store conflicts with declared canonical stores). *Re-eval gate:* none — no new capability.
+
+**`youtube.com/shorts/337Qc9vOxwY`** — "Stop building Agents and start building something that lasts" (Jake Van Clief) — score 2, layer none. Fails **P3** (no rubric), **P7** (markdown-as-orchestration ≥90% overlap with CLAUDE.md + alan_os_server.py). Motivational framing of a pattern Veritas already ships. *Re-eval gate:* none.
+
+#### REMAINDER block (14 REJECTs from the parallel batch)
+
+**`youtube.com/shorts/AQ_ca27ftQs`** — "Claude Just Made Marketing Agencies IRRELEVANT" (Zack the AI Guy) — score 1. GUI-clicks workflow, "skill" concept >60% overlap with CLAUDE.md system prompts. Fails **P1, P3, P7**.
+
+**`youtube.com/shorts/DKg_fMLKpd4`** — "SECRET Million Dollar App Idea" (Jonathan Acuña) — score 1. Pasting App Store screenshots into Claude — no integration work. Fails **P3, P7, P9**.
+
+**`youtube.com/shorts/1F-Bww76qB0`** — "This is the one tool that actually gets smarter" (Maverick) — score 2. Closed SaaS Chrome extension, multi-LLM (GPT, Gemini), RAG ≥60% overlap with existing VIE pipeline. Fails **P1, P6 (data residency), P7, Anthropic-only constraint**.
+
+**`youtube.com/shorts/2bvuLxj6nT4`** — "How to build a Second Brain (prompt)" (Don't Sleep On AI) — score 2, layer memory. Paid black-box prompt; Obsidian GUI-only; replicates existing CLAUDE.md + session-log. Fails **P1, P3, P7**.
+
+**`youtube.com/shorts/-CO3ohQqloA`** — "5 Secret Claude Hacks" (Nick Puru) — score 1. Undocumented prompt "codes" with no eval. Fails **P1, P3, P7**.
+
+**`youtube.com/shorts/iUV5LJqHXeY`** — "Top Claude Code Plugins to 10X" (Prajwal Tomar) — score 2, layer orchestration. Mentions `claude mem` again (already REJECTED in §3). No benchmarks, lead-gen teaser. Fails **P3, P7, P10**.
+
+**`youtube.com/shorts/M9qgd_KJkWc`** — "Claude Code Just Killed $10,000 Websites" (Duncan Rogoff) — score 1. UI kit wrapper around already-stack-resident Claude Code. Fails **P3, P7, P9**.
+
+**`youtube.com/shorts/FtBezgCu0vo`** — "I have never hit a usage limit and still make over 30 grand" (Jake Van Clief) — score 1. Community-acquisition funnel, structured-folder pattern ≥60% overlap with CLAUDE.md. Fails **P3, P7**.
+
+**`youtube.com/shorts/2chpu6Ma1MY`** — "How to Clone Applications with AI in SECONDS" (Brennan Wells) — score 1. CopyCod GUI-only, redundant with Lux Command Center. Fails **P1, P3, P7**.
+
+**`youtube.com/shorts/UmRw3BlANK0`** — "Free AI second brain" (Alex Tavi) — score 1, layer memory. Obsidian GUI-only; concept already covered by CLAUDE.md + session-log + Drive long-term. Prompt withheld behind comment-farming gate. Fails **P1, P3, P7**.
+
+**`youtube.com/shorts/yRHPmrVeC24`** — "Clone any app with AI in 30 sec" (Nate Gold) — score 1. Bolt.new + Copy Coder AI thin-wrapper >60% overlap with direct Claude vision prompting. Fails **P1, P3, P7**.
+
+**`youtube.com/shorts/O92SF2TYidQ`** — "If you want to become a millionaire" (Dan Martell) — score 0. Motivational book recommendations, zero technical signal. Fails everything by default. Not even MONITOR-grade. *Channel pattern:* Dan Martell now 2× REJECT (Group 4 + here) — deprioritize.
+
+**`youtube.com/shorts/VXtAXAhY8uw`** — "Get AI to Recommend Your Business!" (JakeOnGrowth) — score 2. 99-cent book ad disguised as insight. GEO concept worth monitoring through better sources. Fails **P3, P7**.
+
+**`youtube.com/shorts/9JrU0tXo_yg`** — "PROVEN AI Avatar System" (Jonathan Acuña) — score 1. Closed SaaS GUI workflow; Buffer + Claude API already cover scheduling. Fails **P1, P3, P7**.
+
+#### Channel-level recurrence (Groups 5-7)
+
+- **Jake Van Clief — 2× (337Qc9vOxwY REJECT + LXB_dBvDSOE MONITOR).** Mixed signal: technical patterns surface but without measurement. Keep monitoring; do not deprioritize.
+- **Nick Puru | AI Automation — 2× (f_o-_LZyldo + -CO3ohQqloA, both REJECT).** Plus prior NCzV-CerZuI (Group 2). Now 3× REJECT total. **Deprioritize** unless title indicates benchmark or API spec.
+- **Jonathan Acuña - Doctor AI — 2× (DKg_fMLKpd4 + 9JrU0tXo_yg, both REJECT).** Lead-gen pattern. **Deprioritize.**
+- **Dan Martell — now 2× total (LXSxrLIxoaA Group 4 + O92SF2TYidQ here, both REJECT).** Motivational/strategy content, no technical depth. **Deprioritize.**
+
+---
+
 ## 3. Pending Evaluations
 
-**Spec batch complete (14/14 URLs across 4 groups, 2026-05-01).** Queue empty.
+**Spec batch complete + Groups 5-7 ad-hoc batch complete (34/34 URLs across 7 groups, 2026-05-01).** Queue empty.
 
 Standing follow-up watch list (from MONITOR + flagged REJECT re-eval gates):
 - ⛔ **`notebookmation` — REJECTED 2026-05-01.** No GitHub repo exists under that exact name (likely the video misnamed the tool, or it's an obscure fork). Investigated the broader category of NotebookLM↔Claude-Code bridges as a stand-in. **Finding: Google does not publish an official NotebookLM API.** Every tool in this space falls into one of two categories, both fragile: (a) undocumented-internal-API reverse engineering — e.g. `teng-lin/notebooklm-py` README explicitly discloses "undocumented Google APIs that can change without notice"; (b) browser automation — e.g. `PleasePrompto/notebooklm-mcp` runs Patchright Chrome automation (`"via": "chrome-automation"`). Fails **P1** (no documented API surface), **P3** (no token/benchmark data anywhere in the category), **P4** (cold-start runability not guaranteed — internal endpoints break, UI redesigns break). No impact on existing stack: `nlm_feed_builder.py` does not use NotebookLM API at all (writes to local JSON + `/ai_stack`); NotebookLM stays on the manual-surface list per `STACK_DESIGN.md` §1 MEMORY exceptions. **Re-eval gate:** revisit only if Google ships a published, supported NotebookLM API.
 - **`Whisper Flow`** — re-evaluate when a PersonalOS dictation use case becomes active.
+- **Jake Van Clief ordered-skill-file pattern (`LXB_dBvDSOE`)** — promote to EVALUATE if a code repo, methodology, or independent benchmark surfaces showing measurable token reduction vs Anthropic's Claude Design plugin. Until then, the underlying pattern is already partially captured by §8 of CLAUDE.md (folder-as-skill convention) so no immediate action.
 - ⛔ **`Claude Mem` — REJECTED 2026-05-01.** Repo: [`thedotmack/claude-mem`](https://github.com/thedotmack/claude-mem) (46.1K stars). Claude-Code-IDE plugin: 5 lifecycle hooks (SessionStart, UserPromptSubmit, PostToolUse, Stop, SessionEnd) + Worker Service on port 37777 with 10 REST endpoints + 3 MCP tools (`search`, `timeline`, `get_observations`) + Web Viewer UI. Storage: SQLite + Chroma vector DB. **README claims "~10x token savings by filtering before fetching details" but provides ZERO supporting data — no benchmark, no eval rubric, no measured comparison.** Fails **P3** decisively (P3 ADOPT requires ≥30% reduction with eval rubric ≥90% baseline; "10x with no rubric" is anecdotal). Fails **P8** — would create a SECOND parallel memory surface alongside the existing `~/.claude/projects/.../memory/MEMORY.md` auto-memory index + `memory-bank/session-log.md` + `~/.lux/Data/*.json`. Same Principle 8 violation that the 2026-05-01 digest-dashboard reconcile session just fixed. Fails **P7** — high overlap with existing memory architecture: Claude Code already has progressive-disclosure auto-memory (typed feedback/user/project/reference files indexed by `MEMORY.md`), and `session-log.md` provides the hand-curated "What worked / Blockers / Next step" record. Migrating to SQLite + Chroma would lose git-versionability of memory and drop the hand-curated readability that makes `session-log.md` useful for human session-resume. Also fails **P4** subsidy: adds 4 new dependencies (Bun runtime, Worker Service, SQLite, Chroma) to cold-start. **46.1K stars is social proof, not technical proof — the rubric requires technical proof.** **Re-eval gate:** revisit only if (a) a third-party benchmark publishes a measured token-reduction number against a defined task corpus, AND (b) Alan independently decides the existing manual session-log + auto-memory pattern has become a bottleneck rather than an asset.
-- **Channel deprioritization:** Charlie Automates surfaced 2× in Group 1 with promotional content for the same tool (Graphify). Future content from this channel: deprioritize unless title indicates technical depth.
+- **Channel deprioritization (cumulative across all 7 groups):**
+  - **Charlie Automates** (2× Group 1, Graphify promo) — deprioritize unless title indicates technical depth.
+  - **Nick Puru | AI Automation** (3× total: G2 + G5-7 ×2, all REJECT) — deprioritize unless title indicates benchmark or API spec.
+  - **Jonathan Acuña - Doctor AI** (2× G5-7, lead-gen pattern) — deprioritize.
+  - **Dan Martell** (2× G4 + G5-7, motivational/strategy) — deprioritize unless title indicates technical depth.
 
 ---
 
@@ -188,24 +264,28 @@ The batch surfaced two real architectural gaps that `yt_transcribe.py` itself ca
 
 1. **No `BUILD_OR_EXTEND.md` template exists** — P7 cited 5/6 times in REJECT reasonings. Without a template + worked example, any future "should I build or extend?" decision still requires reasoning from first principles. **Action:** create `templates/BUILD_OR_EXTEND.md` with the overlap-math format the principle requires.
 2. **`closed_dependencies.md` is referenced but not written** — P1's exception clause (closed APIs accepted at ≥90% feature parity) names Buffer/Twilio/Lofty but no file documents the exceptions. **Action:** write the doc, naming each closed dependency, the open alternative it was weighed against, and the decision rationale.
-3. **No "channel-level" signal layer in `/ai_stack`** — Charlie Automates appeared 2× in Group 1 with promotional content. The rubric evaluates URLs in isolation; channel-level patterns (this creator does X% promotional / Y% technical) would let the engine deprioritize entire creators. **Future enhancement, not blocking.**
+3. **No "channel-level" signal layer in `/ai_stack`** — multiple creators have now surfaced 2-3× across batches (Charlie Automates, Nick Puru, Jonathan Acuña, Dan Martell). The rubric evaluates URLs in isolation; channel-level patterns (this creator does X% promotional / Y% technical) would let the engine deprioritize entire creators. **Future enhancement, not blocking.**
+4. **yt-dlp JS-runtime dependency** (added Groups 5-7) — recent yt-dlp versions warn that "YouTube extraction without a JS runtime has been deprecated" and require Deno (or another runtime) for full format extraction. One URL in Groups 5-7 (`4nXxY_AaXuY`) failed at the metadata step with this exact warning. **Action options:** (a) install Deno on host (recommended path per yt-dlp), (b) pin yt-dlp to a pre-deprecation version, (c) catch the metadata error gracefully so the batch continues (already happens — batch processed 19/20). Mid-priority since the batch survives, but adoption rate of the deprecation will increase failure rates on future batches.
 
 ---
 
-## 5. Principles in Practice — what 14 URLs across 4 groups taught us
+## 5. Principles in Practice — what 34 URLs across 7 groups taught us
 
-**Aggregate verdicts (all 4 groups, 14 URLs):**
-- 1 ADOPT (7%) — a *pattern* (skill-file authoring), not a tool
-- 0 EVALUATE
-- 1 MONITOR (7%) — `notebookmation`, NotebookLM CLI bridge with high-but-unquantified overlap
-- 12 REJECT (86%) — all HIGH confidence
+**Aggregate verdicts (all 7 groups, 34 URLs):**
+- **1 ADOPT (3%)** — a *pattern* (skill-file authoring from Group 1), not a tool
+- **0 EVALUATE**
+- **2 MONITOR (6%)** — `notebookmation` (subsequently REJECTED in §3 follow-up — no documented Google API exists) + `LXB_dBvDSOE` Jake Van Clief ordered-skill-file pattern (unmeasured P3 claim)
+- **30 REJECT (88%)** — all HIGH confidence
+- **1 ERROR (3%)** — `4nXxY_AaXuY` yt-dlp JS-runtime deprecation
 
 **Pattern-level findings:**
-- **The rubric is BIAS-CORRECTLY harsh.** 12/14 REJECT with HIGH confidence is not over-rejection — it reflects that 60-second YouTube Shorts rarely contain enough technical signal to ADOPT. P3 ("Token Efficiency, Measured" — ADOPT requires ≥30% reduction with eval rubric ≥90% baseline) eliminates anything without a number. **Without a benchmark, there's no ADOPT-grade signal.**
-- **P7 was the most-cited principle (12/14 evaluations).** "Already exists in the stack" or "would require BUILD_OR_EXTEND analysis" was the killer for the majority of REJECTs. This validates `PRINCIPLES_REVIEW_v1.md` §5 ranking — P7 is the most-load-bearing principle long-term.
-- **The one ADOPT was a *pattern*, not a tool.** All three skill-building patterns (gotchas, folder-as-skill, context+constraints) are extend-in-place changes to files Veritas already owns. Zero new files, zero new dependencies.
-- **No video on FinanceOS, real estate, or trucking surfaced** — Groups 1-4 were Claude/AI-stack focused per the spec's batch grouping, not vertical-focused. Future batches sourced from MMM-relevant or AgentOS-relevant content streams (rather than `extract_ai_links.py`'s general feed) would test the engine's verticality.
-- **Caching investigation deferred.** Group 1 (parallel, max-workers=4): cache_write=2316, cache_read=0 (race-write). Groups 2-4 (sequential, max-workers=1): cache_write=0 AND cache_read=0 — the cache fields aren't surfacing in SDK 0.94.0's usage object despite `cache_control: ephemeral` being correctly set on the request. Per-URL token cost roughly matches uncached behavior. Functional output unaffected, but the cost-saving rationale for caching isn't visible. **Open item for next session.**
+- **The rubric is BIAS-CORRECTLY harsh.** 30/34 REJECT with HIGH confidence is not over-rejection — it reflects that 60-second YouTube Shorts rarely contain enough technical signal to ADOPT. P3 ("Token Efficiency, Measured" — ADOPT requires ≥30% reduction with eval rubric ≥90% baseline) eliminates anything without a number. **Without a benchmark, there's no ADOPT-grade signal.** Effectively: there is one ADOPT-grade pattern in 34 URLs.
+- **P7 remains the most-cited principle.** "Already exists in the stack" or "would require BUILD_OR_EXTEND analysis" was the killer in the vast majority of REJECTs across all 7 groups. Confirms `PRINCIPLES_REVIEW_v1.md` §5 ranking — P7 is the most-load-bearing principle long-term, and `BUILD_OR_EXTEND.md` (still missing — see §4.1) is increasingly the load-bearing template.
+- **The one ADOPT was a *pattern*, not a tool.** All three skill-building patterns (gotchas, folder-as-skill, context+constraints) are extend-in-place changes to files Veritas already owns. Zero new files, zero new dependencies. Now landed in `CLAUDE.md` §7 + §8 (commit `053b256`).
+- **Memory-pattern over-saturation.** Across 34 URLs, ≥6 different "second brain" / "Claude memory" / "Obsidian-as-memory" tools were pitched. All REJECTED on P7 + P8 grounds (overlap with existing CLAUDE.md + session-log + auto-memory + JSON stores). Strong signal that the AI-content economy is creating tools for problems already solved by the existing memory architecture; the stack should remain stable here, not chase the next plugin.
+- **Anthropic-only constraint repeatedly violated by surfaced tools.** At least 4 of 34 URLs pitched multi-LLM systems (Ollama / GPT / Gemini integrations). All auto-REJECTED. Confirms the constraint is doing real filtering work.
+- **Caching anomaly DEFINITIVELY isolated** (Groups 5-7 disproved the parallel-race-write hypothesis). Pre-warm sync call at max-workers=1: `cache_write=0, cache_read=0`. Parallel batch immediately after at max-workers=4: same. Per-URL input tokens (~2,094) match cached pattern, so server-side caching IS happening — only SDK 0.94.0's `msg.usage` view is broken. **Open item:** inspect raw HTTP response for the actual usage shape vs SDK attribute names; likely an attribute-path mismatch on the new beta cache-control field set. Functional impact: zero. Visibility impact: cost-savings rationale invisible from telemetry.
+- **No vertical-domain content surfaced.** Groups 1-7 were Claude / AI-stack focused per the spec's batch grouping, not vertical-focused. Zero videos relevant to FinanceOS, MMM Trucking workflows, or AgentOS real-estate operations. Future batches sourced from MMM-relevant or AgentOS-relevant content streams (rather than the general AI-influencer feed) would test the engine's verticality and probably surface the first ADOPT in many batches.
 
 ---
 

@@ -1,0 +1,846 @@
+[
+  {
+    "url": "https://youtube.com/shorts/f_o-_LZyldo",
+    "status": "ok",
+    "started": "2026-05-01T15:34:53.646612",
+    "title": "Claude Can Now Control Your Computer (This Changes Everything)",
+    "channel": "Nick Puru | AI Automation",
+    "duration": 67,
+    "video_id": "f_o-_LZyldo",
+    "transcript_chars": 1432,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "ai_stack",
+    "score": 2,
+    "usage": {
+      "input_tokens": 2250,
+      "output_tokens": 528,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A short-form promotional video (likely a social media reel) covering Claude's computer use feature and a 'dispatch' capability for remote computer control via mobile. The content is surface-level: no code, no architecture, no integration patterns. It accurately describes Claude computer use (real Anthropic feature) but frames it as consumer magic rather than engineering. The 'dispatch' framing may refer to Claude's desktop app or a third-party wrapper — no technical specificity is given. Zero actionable integration detail. The video exists to drive comment engagement ('comment WTF') for a lead magnet funnel. For the Veritas stack, Claude computer use is already a known Anthropic capability on the radar; the question of integrating it into Alan OS or AgentOS workflows is non-trivial and requires explicit P4 human gate design, P6 auth hardening, and P3 token efficiency measurement. This video contributes nothing to that analysis.",
+      "tools_mentioned": [
+        "Claude computer use",
+        "Claude desktop app",
+        "dispatch (unverified feature name)"
+      ],
+      "techniques_mentioned": [
+        "computer use / GUI automation",
+        "remote desktop control via mobile",
+        "parallel task execution"
+      ],
+      "relevance_score": 2,
+      "fit_pipeline": "ai_stack",
+      "fit_rationale": "Claude computer use is Anthropic-native and theoretically relevant to Alan OS automation, but this video provides zero engineering depth to inform an integration decision.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "orchestration",
+        "replaces_or_complements": "would theoretically complement n8n + Outlook COM automation in Alan OS, but no actionable signal here",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3: no token efficiency data, no eval rubric, no comparison against existing Outlook COM + n8n workflows already handling follow-ups and file ops. Fails P7: computer use overlaps heavily with existing automation layer and would require a full BUILD_OR_EXTEND.md before any implementation — this video cannot seed that doc. Content is engagement-bait with no technical substance; re-evaluating in 30 days adds no value since the underlying Anthropic capability is already known.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:12.024025"
+  },
+  {
+    "url": "https://youtube.com/shorts/yaBDLroG0Lo",
+    "status": "ok",
+    "started": "2026-05-01T15:34:53.647013",
+    "title": "Claude Code Agentic OS Is The Future",
+    "channel": "Chase AI",
+    "duration": 48,
+    "video_id": "yaBDLroG0Lo",
+    "transcript_chars": 795,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2095,
+      "output_tokens": 496,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Generic YouTube pitch for a 'Claude Code Agentic OS' concept: Claude Code as engine, Obsidian for memory, Google Suite integration, skill packs for research/content, bundled into a sellable dashboard. No technical depth, no code, no architecture decisions, no benchmarks. This is a surface-level concept video describing what Veritas has already built (Alan OS, AgentOS, VIE, Lux Command Center). The Obsidian memory suggestion conflicts with P8 (named canonical stores — we use CLAUDE.md, .lux/data/*.json, Google Drive, not Obsidian). No API details, no token efficiency data, no integration path. The 'sell to clients' framing roughly matches the AgentOS/TradeOS model but adds nothing new. This is AI agency content marketing, not actionable architecture signal.",
+      "tools_mentioned": [
+        "Claude Code",
+        "Obsidian",
+        "Google Suite"
+      ],
+      "techniques_mentioned": [
+        "agentic OS",
+        "skill packs",
+        "memory system",
+        "dashboard packaging",
+        "client bundling"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "Describes a conceptual architecture Veritas has already implemented at higher fidelity across Alan OS, AgentOS, VIE, and Lux Command Center.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — fully duplicated by existing stack at lower abstraction",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3: zero token efficiency data, no measurable improvement over current setup. Fails P7: 90%+ conceptual overlap with Alan OS + AgentOS + Lux Command Center — no BUILD_OR_EXTEND justification possible because there is nothing to build. Fails P8: Obsidian as memory store conflicts with declared canonical stores and would introduce an uncontrolled memory surface without a reconciliation path.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:08.852582"
+  },
+  {
+    "url": "https://youtube.com/shorts/337Qc9vOxwY",
+    "status": "ok",
+    "started": "2026-05-01T15:34:53.647295",
+    "title": "stop building Agents and start building something that lasts.",
+    "channel": "Jake Van Clief",
+    "duration": 94,
+    "video_id": "337Qc9vOxwY",
+    "transcript_chars": 1665,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 2,
+    "usage": {
+      "input_tokens": 2300,
+      "output_tokens": 522,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Jake Van Clief argues that AI agents are overbuilt and that the best 'agent' is a markdown file plus scripts routed through that markdown file, organized via folder structures. He cites Anthropic's Claude Code as evidence that the industry's best practitioners are moving away from complex agent frameworks toward simpler, file-based orchestration. The argument is directionally aligned with how Alan OS is already built (CLAUDE.md, .lux/ folder structure, FastAPI scripts), but the video offers no new tooling, no measurable technique, no API surface, no token-efficiency data, and no integration path. It is essentially a contrarian opinion piece dressed as technical insight. The 'best agent is a markdown file' thesis is already operationalized in the Veritas stack — CLAUDE.md IS the agent OS. Van Clief provides zero acceptance-test-passing evidence for P3 (token efficiency lift), no specific tooling for P7 evaluation, and no exportable artifact. The content validates existing architectural decisions without adding anything actionable.",
+      "tools_mentioned": [
+        "Claude Code",
+        "LangChain",
+        "OpenAI Agents"
+      ],
+      "techniques_mentioned": [
+        "markdown-as-agent-orchestration",
+        "folder-based workflow organization",
+        "script routing via markdown"
+      ],
+      "relevance_score": 2,
+      "fit_pipeline": "none",
+      "fit_rationale": "The thesis is already implemented in Alan OS via CLAUDE.md and .lux/ structure; no new capability, tooling, or integration path is offered.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — validates existing architecture without adding capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 — no token efficiency data or eval rubric presented, making ADOPT/EVALUATE impossible by acceptance test. Fails P7 — the 'markdown-as-orchestration' pattern has ≥90% overlap with CLAUDE.md and alan_os_server.py already in the stack, so no new file or component is justified. The content is motivational framing of a pattern Veritas already ships.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:10.649226"
+  },
+  {
+    "url": "https://youtube.com/shorts/4nXxY_AaXuY",
+    "status": "error",
+    "started": "2026-05-01T15:34:53.647795",
+    "error": "yt-dlp metadata failed: WARNING: [youtube] No supported JavaScript runtime could be found. Only deno is enabled by default; to use another runtime add  --js-runtimes RUNTIME[:PATH]  to your command/config. YouTube extraction without a JS runtime has been deprecated, and some formats may be missing. See  https://github.com/",
+    "finished": "2026-05-01T15:34:55.533974"
+  },
+  {
+    "url": "https://youtube.com/shorts/AQ_ca27ftQs",
+    "status": "ok",
+    "started": "2026-05-01T15:34:55.534042",
+    "title": "Claude Just Made Marketing Agencies IRRELEVANT…",
+    "channel": "Zack the AI Guy",
+    "duration": 70,
+    "video_id": "AQ_ca27ftQs",
+    "transcript_chars": 1533,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2261,
+      "output_tokens": 482,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Generic YouTube ad content promoting Claude's 'Skills' feature (pre-built prompt/instruction files from a GitHub repo) and a Chrome extension called My Prompt Buddy. The video shows a manual GUI workflow: download a .md file, upload it to Claude's web UI via the Customize panel. No API, no automation, no webhook, no export path. The 'skill' is a static prompt template installed via clicks. My Prompt Buddy is a Chrome extension for prompt enhancement — GUI-only, closed, no API mentioned. Neither tool integrates with Alan OS, n8n, FastAPI, or any Veritas stack layer. The content is surface-level tutorial hype with an embedded sponsor ad. Zero architectural value for the stack.",
+      "tools_mentioned": [
+        "Claude Skills (claude.ai web UI)",
+        "My Prompt Buddy (mypromptbuddy.ai)",
+        "Chrome extension"
+      ],
+      "techniques_mentioned": [
+        "prompt templating",
+        "skill file injection via GUI",
+        "prompt optimization"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "Demonstrates GUI-only Claude web UI features with no API surface, no automation path, and no integration hook relevant to any Veritas pipeline.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — the stack already uses Claude API with system prompts and per-vertical config dicts (P5), which is a superior programmatic version of what this video calls 'skills'",
+        "confidence": "HIGH",
+        "reasoning": "Fails P1 outright — the entire workflow is GUI clicks with no API or export path. Fails P7 — the 'skill' concept is already covered by CLAUDE.md system prompts and vertical config dicts in the existing stack with >60% overlap. Fails P3 — no token efficiency measurement, no baseline, no eval rubric; this is prompt pasting dressed as a workflow.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:12.457413"
+  },
+  {
+    "url": "https://youtube.com/shorts/DKg_fMLKpd4",
+    "status": "ok",
+    "started": "2026-05-01T15:35:08.852630",
+    "title": "SECRET Million Dollar App Idea in 60 Secs (AI Hack)",
+    "channel": "Jonathan Acuña - Doctor AI",
+    "duration": 83,
+    "video_id": "DKg_fMLKpd4",
+    "transcript_chars": 1469,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2272,
+      "output_tokens": 468,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A 60-second short-form video pitching a 'million-dollar app idea' framework: screenshot a popular App Store app, paste images into Claude to extract customer problems and market gaps, then ask Claude to suggest AI automation improvements. The example given is adding voice logging to a meal tracker. The video is pure engagement-bait — vague, surface-level, no actionable technique beyond 'paste screenshots into Claude and ask questions.' No code, no architecture, no API pattern, no workflow design. The 'dangerous git permissions' mention is unexplained and alarming. Zero signal on token efficiency, memory design, orchestration, or any principle in the Veritas stack. The content is oriented at consumer app vibe-coders, not practitioners building agentic infrastructure. The channel name 'Doctor AI' and the comment-baiting CTA ('comment the word Claude') confirm this is optimized for YouTube algorithm, not technical depth.",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "techniques_mentioned": [
+        "screenshot-to-prompt",
+        "market gap analysis via LLM",
+        "voice logging UX pattern"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "Content targets consumer app ideation with no overlap to Veritas agentic infrastructure, orchestration patterns, or any named vertical.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 (zero token efficiency analysis or measurable technique), P7 (no buildable component to evaluate for overlap), and P9 (no declared revenue, capability, or family bucket — pure speculative consumer ideation). The 'technique' of pasting App Store screenshots into Claude is already available to any Claude user in 30 seconds with no integration work required; there is no stack artifact to adopt.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:24.164965"
+  },
+  {
+    "url": "https://youtube.com/shorts/1F-Bww76qB0",
+    "status": "ok",
+    "started": "2026-05-01T15:35:10.649287",
+    "title": "This is the one tool that actually gets smarter every single time you use it. #ai #aitools #recall",
+    "channel": "Maverick | AI & ChatGPT",
+    "duration": 55,
+    "video_id": "1F-Bww76qB0",
+    "transcript_chars": 1452,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 2,
+    "usage": {
+      "input_tokens": 2264,
+      "output_tokens": 546,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Short-form promotional video for 'Recall,' a Chrome extension that saves web content (YouTube, PDFs, podcasts, websites) to a personal knowledge base and enables RAG-style chat over saved content. The tool supports multiple LLM backends including Claude, GPT, and Gemini. No technical depth is provided — this is a 60-second influencer ad with no API documentation, data export discussion, or architectural detail. The core capability (personal knowledge base + RAG over saved content) overlaps significantly with the VIE pipeline and the AI Research Feed already built on Google Drive. The multi-LLM backend approach violates the Anthropic-only constraint. The Chrome extension delivery model raises P6 concerns (sensitive data routing through a third-party cloud with no declared auth model). No token efficiency data, no export API, no webhook surface mentioned.",
+      "tools_mentioned": [
+        "Recall"
+      ],
+      "techniques_mentioned": [
+        "personal knowledge base",
+        "RAG over saved content",
+        "content summarization",
+        "timestamp-linked retrieval",
+        "Chrome extension content capture"
+      ],
+      "relevance_score": 2,
+      "fit_pipeline": "none",
+      "fit_rationale": "Recall is a closed third-party SaaS Chrome extension with multi-LLM backends (including non-Anthropic) that duplicates VIE/AI Research Feed functionality without an exportable API surface.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "Overlaps with VIE pipeline and AI Research Feed (Drive); no complementary capability that isn't already owned or buildable within existing stack",
+        "confidence": "HIGH",
+        "reasoning": "Fails P1 — no documented export API or webhook surface mentioned, Chrome extension delivery implies closed SaaS data silo. Fails P6 — sensitive research data routed through third-party cloud with no declared auth model or data residency. Fails P7 — RAG over saved content is ≥60% overlap with the existing VIE pipeline and nlm_feed_builder.py, requiring an ADR that would not survive the overlap threshold. Multi-LLM backend (GPT, Gemini) is architecturally incompatible with the Anthropic-only constraint.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:26.377853"
+  },
+  {
+    "url": "https://youtube.com/shorts/2bvuLxj6nT4",
+    "status": "ok",
+    "started": "2026-05-01T15:35:12.024081",
+    "title": "How to build a Second Brain (prompt) #claude #claudecode #openclaw",
+    "channel": "Don't Sleep On AI",
+    "duration": 148,
+    "video_id": "2bvuLxj6nT4",
+    "transcript_chars": 2475,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 2,
+    "usage": {
+      "input_tokens": 2486,
+      "output_tokens": 632,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A 30-minute YouTube pitch selling a $15 'second brain' prompt package that instructs Claude Code to set up an Obsidian vault with auto-logging and semantic file linking. The core concept — session-end memory dumps to a local folder, loaded at session start via agent config files — is a pattern Veritas already implements via CLAUDE.md, session-log, and .lux/data/*.json (P8). The 'semantic linking' claim is vague and unverified. The $15 purchase is a black-box prompt; no API, no export path, no documented schema (P1 fail). There is no token-efficiency measurement (P3 fail). The 'Andre Karpathy uses this system' claim is unverifiable marketing. The Obsidian dependency adds a GUI-only local store with no documented write API in the described workflow. Nothing here extends VIE, improves orchestration, or adds a capability the stack lacks. The concept is valid but already solved in the Veritas stack. Buying a prompt to do what CLAUDE.md + session-log already does violates P7 (overlap ≥ 60% with existing memory surfaces).",
+      "tools_mentioned": [
+        "Obsidian",
+        "Claude Code",
+        "OpenClaw"
+      ],
+      "techniques_mentioned": [
+        "session-end memory logging",
+        "agent CLAUDE.md / system prompt injection",
+        "semantic file linking",
+        "vault-based long-term memory",
+        "second brain methodology"
+      ],
+      "relevance_score": 2,
+      "fit_pipeline": "none",
+      "fit_rationale": "The described pattern is already implemented via CLAUDE.md, session-log, and .lux/data/*.json; no new capability is introduced.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "memory",
+        "replaces_or_complements": "Attempts to replicate existing Working + Long-term memory surfaces (CLAUDE.md, session-log, GitHub, Drive) — fully redundant",
+        "confidence": "HIGH",
+        "reasoning": "P7 (overlap ≥ 60%): session-end logging and context injection at startup are already live in the Veritas stack via CLAUDE.md and session-log; a paid black-box prompt adds nothing. P1 fail: Obsidian in this workflow is GUI-operated with no documented programmatic write path meeting the one-hour full-export test. P3 fail: zero token-efficiency measurement is provided; the '30% reduction' threshold cannot be evaluated. The $15 cost is irrelevant — integration time and schema lock-in are the real costs.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:30.249761"
+  },
+  {
+    "url": "https://youtube.com/shorts/-CO3ohQqloA",
+    "status": "ok",
+    "started": "2026-05-01T15:35:12.457544",
+    "title": "5 Secret Claude Hacks You NEED To Know",
+    "channel": "Nick Puru | AI Automation",
+    "duration": 56,
+    "video_id": "-CO3ohQqloA",
+    "transcript_chars": 1226,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2184,
+      "output_tokens": 448,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A 60-second YouTube short claiming five 'secret codes' for Claude (L99, /ghost, OODA, scaffold, ultra think) that allegedly unlock special behaviors. These are not documented Claude API features, system prompt flags, or model directives — they are informal prompt-prefix conventions at best, placebo strings at worst. None are part of Anthropic's API, none produce reproducible or measurable output improvements, and none integrate with any stack layer. The video is pure engagement bait with a comment-funnel CTA. There is no technical substance, no reproducible eval, no API surface, and no architectural relevance to any Veritas vertical.",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "techniques_mentioned": [
+        "prompt prefixes",
+        "OODA loop framing",
+        "chain-of-thought scaffolding",
+        "anti-AI-tone prompting"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "Content is anecdotal prompt folklore with no measurable token efficiency gain, no API integration path, and no architectural relevance to any Veritas stack layer or vertical.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — not a real capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 immediately — no eval rubric, no baseline, no measured token efficiency delta. Fails P1 — no API surface, no exportable state, no documented interface. Fails P7 by implication — any attempt to encode these as stack components would overlap 100% with existing Claude prompt templates already in the VIE pipeline, with zero justification for new files. The 'codes' are undocumented, unverifiable, and likely have no effect beyond standard prompt framing.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:27.858256"
+  },
+  {
+    "url": "https://youtube.com/shorts/iUV5LJqHXeY",
+    "status": "ok",
+    "started": "2026-05-01T15:35:24.165049",
+    "title": "Top Claude Code Plugins to 10X Your AI Workfows",
+    "channel": "Prajwal Tomar",
+    "duration": 47,
+    "video_id": "iUV5LJqHXeY",
+    "transcript_chars": 907,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "ai_stack",
+    "score": 2,
+    "usage": {
+      "input_tokens": 2111,
+      "output_tokens": 475,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Short-form promotional video listing four Claude Code plugins: (1) a 'superpowers' plugin claiming to enforce planning/TDD/sub-agent review, (2) an Anthropic-built front-end design skill, (3) 'claude mem' for persistent cross-session memory, and (4) 'awesome claude code' as a curated plugin bundle. No technical depth, no benchmarks, no integration guidance, no API details. The video is a lead-generation teaser ('comment plugins and I'll send you the full') with unverifiable claims (100k GitHub stars for 'superpowers' cannot be confirmed at this time). The content is surface-level hype with no actionable architecture signal.",
+      "tools_mentioned": [
+        "Claude Code",
+        "superpowers (Claude Code plugin)",
+        "claude mem",
+        "awesome-claude-code"
+      ],
+      "techniques_mentioned": [
+        "sub-agent review loops",
+        "pre-coding planning enforcement",
+        "persistent session memory",
+        "TDD enforcement via plugin"
+      ],
+      "relevance_score": 2,
+      "fit_pipeline": "ai_stack",
+      "fit_rationale": "Claude Code is in active use in the Veritas stack, but this video provides no technical substance to justify any stack change.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "orchestration",
+        "replaces_or_complements": "Claude Code session workflows — but nothing here is actionable",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3: zero evidence of token-efficiency gains, no eval rubric, no baseline comparison — just marketing claims. Fails P7: 'claude mem' overlaps directly with existing CLAUDE.md / session-log / .lux/data memory surfaces with no BUILD_OR_EXTEND analysis. Fails P10: no cost, retention, or observability data for any plugin. The video is a lead-gen teaser with no technical content worth acting on.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:38.605158"
+  },
+  {
+    "url": "https://youtube.com/shorts/M9qgd_KJkWc",
+    "status": "ok",
+    "started": "2026-05-01T15:35:26.377901",
+    "title": "Claude Code Just Killed $10,000 Websites (Here’s Proof)",
+    "channel": "Duncan Rogoff | AI Automation",
+    "duration": 43,
+    "video_id": "M9qgd_KJkWc",
+    "transcript_chars": 709,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2090,
+      "output_tokens": 496,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A short-form tutorial showing how to combine Claude Code, Framer Motion, a UI kit called 'UIUX Pro Max', and a component library from 21first.dev to generate animated websites via a single terminal command. The content is surface-level workflow demo — no architectural depth, no API exposure, no exportable data layer, no orchestration logic. It is essentially a lead magnet for a PDF guide. The core claim ('kill $10K websites') is marketing hyperbole. The techniques shown (Claude Code + component library + animation framework) are already within reach of the existing Alan OS stack and do not introduce new capability beyond what Claude Code already provides. No new tools, patterns, or integrations are surfaced that would meaningfully improve token efficiency, orchestration, or any named Veritas vertical.",
+      "tools_mentioned": [
+        "Claude Code",
+        "Framer Motion",
+        "UIUX Pro Max",
+        "21first.dev"
+      ],
+      "techniques_mentioned": [
+        "AI-assisted frontend code generation",
+        "component library scaffolding",
+        "animation via Framer Motion"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "Frontend website generation is outside every active Veritas vertical's current build scope and the content provides no integrable API, orchestration pattern, or token-efficiency gain.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3: no token-efficiency measurement or comparison baseline is provided — the demo is anecdotal. Fails P7: Claude Code is already a declared stack component; adding a UI kit wrapper around it requires a BUILD_OR_EXTEND.md that would show near-100% overlap with existing Claude Code usage, yielding an automatic 'extend, not new file' ruling. Fails P9: no named revenue client, billable product, or measurable operator KPI is attached to frontend website generation in the current Veritas roadmap.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:42.194616"
+  },
+  {
+    "url": "https://youtube.com/shorts/LXB_dBvDSOE",
+    "status": "ok",
+    "started": "2026-05-01T15:35:27.858289",
+    "title": "Redesign Claude Design?",
+    "channel": "Jake Van Clief",
+    "duration": 80,
+    "video_id": "LXB_dBvDSOE",
+    "transcript_chars": 1321,
+    "used_caption_fallback": false,
+    "recommendation": "MONITOR",
+    "confidence": "LOW",
+    "fit_pipeline": "ai_stack",
+    "score": 4,
+    "usage": {
+      "input_tokens": 2195,
+      "output_tokens": 527,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Short video (~90 seconds) where the creator observes that Claude Design (an Anthropic-hosted product) burns tokens rapidly on his Max plan, then claims he reverse-engineered the same capability — markdown skill files in a structured folder hierarchy that Claude Code reads in sequence — into a personal animation studio that uses far fewer tokens. He references Anthropic's public GitHub skills repo as the source pattern. No tooling, no code, no benchmarks, no methodology depth. Primarily a teaser pointing to his YouTube catalog and a 'free school community.'",
+      "tools_mentioned": [
+        "Claude Design",
+        "Claude Code",
+        "Claude Pro Max"
+      ],
+      "techniques_mentioned": [
+        "skill-file folder architecture",
+        "markdown-driven workflow orchestration",
+        "Claude Code reading ordered markdown files",
+        "animated video generation via skill chaining"
+      ],
+      "relevance_score": 4,
+      "fit_pipeline": "ai_stack",
+      "fit_rationale": "The skill-file / ordered-markdown-folder pattern for orchestrating Claude Code tasks is directly relevant to Alan OS's orchestration layer, but the video provides no actionable depth — it's a teaser for external content.",
+      "stack_evaluation": {
+        "recommendation": "MONITOR",
+        "stack_layer": "orchestration",
+        "replaces_or_complements": "Complements n8n + Claude API orchestration — the ordered-markdown skill-file pattern could extend alan_os_server.py task routing without a new engine file",
+        "confidence": "LOW",
+        "reasoning": "The underlying pattern (markdown skill files read in sequence by Claude Code) is worth evaluating against P3 (token efficiency) since the creator claims materially lower token usage vs. Claude Design — that's a testable P3 claim. However, zero benchmarks, no code, and no methodology are provided in this video, so P3 cannot be scored. P7 also flags risk: the stack already has n8n workflow orchestration and CLAUDE.md as a working-memory surface; adding a parallel skill-file folder architecture requires a BUILD_OR_EXTEND.md to prove it doesn't duplicate existing orchestration logic. Re-evaluate in 30 days if the creator publishes the actual methodology video with measurable token comparisons.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:44.556405"
+  },
+  {
+    "url": "https://youtube.com/shorts/FtBezgCu0vo",
+    "status": "ok",
+    "started": "2026-05-01T15:35:30.249844",
+    "title": "I have never hit a usage limit and still make over 30 grand a month",
+    "channel": "Jake Van Clief",
+    "duration": 60,
+    "video_id": "FtBezgCu0vo",
+    "transcript_chars": 1065,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2172,
+      "output_tokens": 478,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A 60-second promotional short from Jake Van Clief claiming he never hits Claude usage limits and earns $30K/month by following 'fundamentals' — structured folders, selective tool use, and disciplined context management. No technical specifics are provided: no code, no architecture, no measurable technique, no tool names beyond Claude. The content is a top-of-funnel community growth ad pointing to free courses. There is nothing actionable for stack integration. The usage-limit angle is directionally relevant (P3 token efficiency) but zero implementation detail is given. The '7-8% usage' claim is anecdotal with no methodology, no baseline, and no eval rubric — it fails P3's acceptance test outright. 'Structured folders' may reference CLAUDE.md-style working memory patterns already in the Veritas stack. No new capability is introduced. This is generic AI hustle content dressed as a usage-optimization tip.",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "techniques_mentioned": [
+        "structured folder organization",
+        "selective tool use",
+        "context/token management"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "No actionable technique, tool, or architecture is presented that isn't already addressed by existing Veritas stack conventions (CLAUDE.md, working memory, P3 token efficiency discipline).",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — no new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 entirely: no baseline tokens, no post-tool measurement, no eval rubric — just an unverified anecdote. Fails P7: any 'structured folder' pattern has ≥60% overlap with existing CLAUDE.md and working-memory conventions already in the stack, meaning no new file or integration is justified. Content is a community acquisition funnel, not a technical resource.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:45.759256"
+  },
+  {
+    "url": "https://youtube.com/shorts/2chpu6Ma1MY",
+    "status": "ok",
+    "started": "2026-05-01T15:35:38.605212",
+    "title": "How to Clone Applications with AI in SECONDS",
+    "channel": "Brennan Wells | AI Automation",
+    "duration": 42,
+    "video_id": "2chpu6Ma1MY",
+    "transcript_chars": 598,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2052,
+      "output_tokens": 387,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Short-form content demonstrating a screenshot-to-prompt workflow using CopyCod to reverse-engineer UI screenshots into prompts, then feeding those prompts into vibe-coding tools (Bolt, Lovable, Replit) to scaffold app clones. No depth on integration, APIs, data handling, or architecture. Pure surface-level demo with no relevance to Veritas stack principles.",
+      "tools_mentioned": [
+        "CopyCod",
+        "Bolt.new",
+        "Lovable",
+        "Replit (implied)"
+      ],
+      "techniques_mentioned": [
+        "screenshot-to-prompt",
+        "UI cloning",
+        "vibe coding",
+        "prompt scaffolding"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "Screenshot-to-app scaffolding via third-party GUI tools has no integration path into an Anthropic-only, API-first, FastAPI/n8n stack.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P1 immediately: CopyCod and the downstream vibe-coders are GUI-only with no documented API or export path. Fails P3: no evidence of token efficiency improvement over existing Claude Code workflows already in the stack. Fails P7: the Lux Command Center and Alan OS already cover custom UI scaffolding via Claude directly, making this a redundant and lower-fidelity path.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:50.969123"
+  },
+  {
+    "url": "https://youtube.com/shorts/UmRw3BlANK0",
+    "status": "ok",
+    "started": "2026-05-01T15:35:42.194704",
+    "title": "Free AI second brain",
+    "channel": "Alex Tavi",
+    "duration": 37,
+    "video_id": "UmRw3BlANK0",
+    "transcript_chars": 918,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2122,
+      "output_tokens": 460,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Clickbait short describing a prompt-based workflow that pipes Claude Code session notes into an Obsidian vault for a 'second brain.' No technical depth, no API, no export spec, no token benchmarks. The 'secret prompt' is withheld behind a comment-farming CTA. The concept (Claude writing markdown notes to a local folder) has non-zero relevance to VIE/CLAUDE.md memory surfaces, but the video adds nothing actionable — no prompt, no schema, no integration path. Obsidian is already a known option for local markdown storage and has been evaluated before. The channel appears to be engagement-farming AI content, not a technical source.",
+      "tools_mentioned": [
+        "Obsidian",
+        "Claude Code"
+      ],
+      "techniques_mentioned": [
+        "session note capture",
+        "knowledge graph visualization",
+        "prompt-driven memory"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "The concept touches Working/Long-term memory surfaces but provides zero actionable detail and duplicates capabilities already addressed by CLAUDE.md + session-log + Drive in the existing stack.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "memory",
+        "replaces_or_complements": "nothing — concept already covered by CLAUDE.md, session-log, and Drive long-term memory",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 (no token efficiency data or eval rubric), fails P7 (direct overlap with existing CLAUDE.md/session-log memory pattern with no BUILD_OR_EXTEND justification), and fails P1 (Obsidian's knowledge graph is GUI-only with no documented API call path for the described workflow). The video itself withholds the only concrete artifact — the prompt — behind a comment-farming gate, making it unevaluable on any technical principle.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:57.002810"
+  },
+  {
+    "url": "https://youtube.com/shorts/yRHPmrVeC24",
+    "status": "ok",
+    "started": "2026-05-01T15:35:44.556435",
+    "title": "Clone any app with AI in 30 sec #ai #aiautomaionagency #aitools #chatgpt #aiagency #aichatbot #saas",
+    "channel": "Nate Gold | AI App Builder",
+    "duration": 77,
+    "video_id": "yRHPmrVeC24",
+    "transcript_chars": 1195,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2227,
+      "output_tokens": 492,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Short-form demo video showing a no-code workflow: screenshot a UI, feed it to 'Copy Coder AI' to generate a prompt, paste into Bolt.new to scaffold frontend code, deploy. Result is a superficial UI clone with no backend. The technique is a parlor trick — it produces a static shell with no auth, no data layer, no API contracts, and no maintainability story. Nothing here touches the Veritas stack's actual pain points. Bolt.new is already known and evaluated; Copy Coder AI is a thin prompt-generator wrapper around screenshot analysis. No token efficiency data, no integration path, no API surface discussed. The '30 seconds' framing is marketing — the output requires significant real engineering work, which the presenter explicitly admits ('you need to work on it a bit'). This is generic AI hype content targeting non-technical audiences with no actionable signal for a production stack.",
+      "tools_mentioned": [
+        "Copy Coder AI",
+        "Bolt.new"
+      ],
+      "techniques_mentioned": [
+        "screenshot-to-prompt UI cloning",
+        "AI-assisted frontend scaffolding",
+        "no-code app generation"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "Demonstrates a toy UI scaffolding trick with no API, no backend, no token efficiency data, and no connection to any Veritas vertical or infrastructure layer.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P1 (no documented API or exportable data surface from either tool discussed), fails P3 (zero token efficiency measurement — output requires manual rework by the presenter's own admission), and fails P7 (Bolt.new is already known; Copy Coder AI is a thin wrapper with >60% overlap with direct Claude vision prompting already available in the stack). The content is surface-level hype with no production-grade signal.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:59.782779"
+  },
+  {
+    "url": "https://youtube.com/shorts/O92SF2TYidQ",
+    "status": "ok",
+    "started": "2026-05-01T15:35:45.759284",
+    "title": "If you want to become a millionaire, the best place to start is by reading. Here are 3 of the best b",
+    "channel": "Dan Martell",
+    "duration": 34,
+    "video_id": "O92SF2TYidQ",
+    "transcript_chars": 675,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 0,
+    "usage": {
+      "input_tokens": 2096,
+      "output_tokens": 316,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Dan Martell recommends three personal finance/mindset books: 'Secrets of the Millionaire Mind,' 'Think and Grow Rich,' and 'A Happy Pocket Full of Money.' This is motivational content about wealth mindset with zero technical substance. No tools, no techniques, no APIs, no patterns, no AI relevance whatsoever. Entirely outside the Veritas stack domain.",
+      "tools_mentioned": [],
+      "techniques_mentioned": [],
+      "relevance_score": 0,
+      "fit_pipeline": "none",
+      "fit_rationale": "Personal finance book recommendations with no AI, automation, or technical content — zero overlap with any Veritas stack layer or vertical.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails every relevant principle by default: no API surface (P1), no workflow (P4), no token efficiency case (P3). Content is motivational book recommendations with no technical signal, no tooling, and no applicability to Alan OS, AgentOS, TradeOS, or any other Veritas vertical. Not worth a MONITOR slot.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:35:56.421810"
+  },
+  {
+    "url": "https://youtube.com/shorts/VXtAXAhY8uw",
+    "status": "ok",
+    "started": "2026-05-01T15:35:50.969187",
+    "title": "Get AI to Recommend Your Business! Get the book for $0.99 #aiforbusiness #businessgrowth",
+    "channel": "JakeOnGrowth",
+    "duration": 133,
+    "video_id": "VXtAXAhY8uw",
+    "transcript_chars": 2542,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 2,
+    "usage": {
+      "input_tokens": 2523,
+      "output_tokens": 495,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "A YouTube short promoting a $0.99 book called the 'Magnet Recommendation Framework' — a 7-step framework for getting AI systems like ChatGPT to recommend your business. The creator claims to have reverse-engineered AI recommendation systems over 11 months, positioning this as 'GEO' (Generative Engine Optimization) rather than SEO. The content is a book launch ad with no technical substance in the transcript — no methodology, no code, no tooling, no integrations discussed. The stat about 5M daily AI product suggestions and 9% CTR is unverifiable and likely marketing copy. There is zero signal about API behavior, prompt engineering, structured data strategies, or anything technically actionable for the Veritas stack. The underlying concept — optimizing business content so LLMs surface it in recommendations — is legitimately relevant to AgentOS and SalesAgentOS positioning, but this specific video delivers no usable intelligence on how to do it.",
+      "tools_mentioned": [
+        "ChatGPT"
+      ],
+      "techniques_mentioned": [
+        "Generative Engine Optimization",
+        "AI recommendation visibility",
+        "Magnet Recommendation Framework"
+      ],
+      "relevance_score": 2,
+      "fit_pipeline": "none",
+      "fit_rationale": "The underlying GEO concept has surface relevance to Veritas BD positioning, but the video is a book advertisement with zero technical content that could inform stack decisions.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P3 entirely — no measurable token efficiency signal, no tooling, no eval rubric possible from this content. Fails P7 by default — there is no component to extend or overlap to measure because no technical substance exists. The video is a 99-cent book ad disguised as insight; the concept of GEO is worth monitoring through better sources, but this content adds zero architectural or operational value to any Veritas stack layer.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:36:06.085013"
+  },
+  {
+    "url": "https://youtube.com/shorts/9JrU0tXo_yg",
+    "status": "ok",
+    "started": "2026-05-01T15:35:56.421841",
+    "title": "PROVEN AI Avatar System: Post 10x Daily for $2.83!",
+    "channel": "Jonathan Acuña - Doctor AI",
+    "duration": 46,
+    "video_id": "9JrU0tXo_yg",
+    "transcript_chars": 695,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 1,
+    "usage": {
+      "input_tokens": 2098,
+      "output_tokens": 410,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Short-form promotional video demonstrating an AI avatar content pipeline that generates and publishes 10 videos daily across 5 social platforms for $2.83 total. No technical depth: no API details, no tooling names, no architecture discussion. Pure lead-generation content driving viewers to a DM funnel. The 'system' is a black-box SaaS wrapper around an avatar generator plus a social scheduler. No exportable data path, no API transparency, no token efficiency measurement, and no integration surface described.",
+      "tools_mentioned": [
+        "Cam (unspecified AI avatar/content tool)"
+      ],
+      "techniques_mentioned": [
+        "AI avatar video generation",
+        "automated social posting",
+        "bulk content batching"
+      ],
+      "relevance_score": 1,
+      "fit_pipeline": "none",
+      "fit_rationale": "GUI-only black-box SaaS with no API surface described, no data export path, and zero technical depth — fails P1, P3, and P7 immediately.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "nothing — new capability",
+        "confidence": "HIGH",
+        "reasoning": "Fails P1 outright: no documented API or export path is mentioned or implied — it is a closed SaaS GUI workflow. Fails P3: zero token-efficiency data, no eval rubric, no measurable lift. Fails P7: the stack already uses Buffer for social scheduling and Claude API for content generation; no BUILD_OR_EXTEND analysis is possible because no technical overlap can even be assessed from this content. The video is a lead-gen hook with no architectural signal.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:36:10.040004"
+  }
+]

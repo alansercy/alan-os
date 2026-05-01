@@ -1,0 +1,56 @@
+[
+  {
+    "url": "https://youtube.com/shorts/251Xs-sIy8U",
+    "status": "ok",
+    "started": "2026-05-01T15:34:23.298655",
+    "title": "This Free Tool Does Everything Claude Cowork Does And Runs Locally #ai #artificialintelligence",
+    "channel": "Hasan Toor",
+    "duration": 40,
+    "video_id": "251Xs-sIy8U",
+    "transcript_chars": 787,
+    "used_caption_fallback": false,
+    "recommendation": "REJECT",
+    "confidence": "HIGH",
+    "fit_pipeline": "none",
+    "score": 2,
+    "usage": {
+      "input_tokens": 2120,
+      "output_tokens": 656,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "eval": {
+      "summary": "Promo clip for 'Robote,' a local-run personal AI OS that ingests email and meeting notes, builds a knowledge graph, and runs background agents. Claims to be a free alternative to Claude's native tooling. Supports Ollama, Claude, GPT, and other LLMs, plus MCP integrations (Slack, GitHub, Linear), voice, and web search. Content is a 60-second promotional short with no technical depth, no repo link shown, no architecture detail, and a 'DM me for the link' CTA — a classic lead-gen format. The tool's core value prop (email ingestion → knowledge graph → agent prep) directly overlaps with Alan OS + VIE pipeline already in flight. Multi-LLM support is a hard stack violation (Anthropic-only policy). Local-only architecture conflicts with P6 and P1 in a cloud-hybrid stack. No evidence of documented API, export path, or structured run records (P1, P10 fails). Zero token-efficiency evidence (P3 fail). Even if the tool is legitimate, it would require a full BUILD_OR_EXTEND audit against alan_os_server.py, VIE, and nlm_feed_builder.py before consideration.",
+      "tools_mentioned": [
+        "Robote",
+        "Ollama",
+        "Claude",
+        "GPT",
+        "Slack",
+        "GitHub",
+        "Linear"
+      ],
+      "techniques_mentioned": [
+        "knowledge graph construction",
+        "local LLM inference",
+        "MCP tool integration",
+        "background agents",
+        "voice interaction",
+        "web search integration"
+      ],
+      "relevance_score": 2,
+      "fit_pipeline": "none",
+      "fit_rationale": "Overlaps heavily with Alan OS and VIE but violates Anthropic-only LLM policy, has no documented API or export path, and is presented in a zero-substance lead-gen short with no verifiable architecture.",
+      "stack_evaluation": {
+        "recommendation": "REJECT",
+        "stack_layer": "none",
+        "replaces_or_complements": "Partially overlaps Alan OS (email ingestion, agent orchestration) and VIE (knowledge graph, context retrieval) — both already in active development",
+        "confidence": "HIGH",
+        "reasoning": "Fails P1 (no documented API or export path — gated behind a DM), fails P3 (zero token-efficiency evidence provided), and fails P7 (≥60% functional overlap with Alan OS + VIE pipeline already in flight, which would require a BUILD_OR_EXTEND.md justification that cannot pass the ≥60% overlap bar). The multi-LLM pitch (Ollama, GPT) is also a direct violation of the Anthropic-only stack constraint.",
+        "action_items": []
+      }
+    },
+    "posted": "ok",
+    "finished": "2026-05-01T15:34:41.986637"
+  }
+]
