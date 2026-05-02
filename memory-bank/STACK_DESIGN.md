@@ -389,4 +389,62 @@ The batch surfaced two real architectural gaps that `yt_transcribe.py` itself ca
 
 ---
 
-*Living document. Update on every batch. First seeded 2026-05-01 (Group 1).*
+## 7. External Skills — Adopted + Queued (2026-05-02)
+
+Out-of-band scan of two external skill repos against current workstreams. Logged here so future sessions don't re-evaluate from scratch.
+
+### REJECT-overlap
+
+- **`ruvnet/ruflo`** (multi-agent orchestration platform, formerly `claude-flow`) — Direct overlap with `utils/model_router.py` (`0c60c1e`) + `utils/context_manager.py` (`91c4a40`); `init --wizard` CLAUDE.md handling undocumented (overwrite vs merge). Not installed. Re-evaluation gates + pattern-extraction follow-up in `memory-bank/ruflo_pilot_notes.md` (commit `412c07f`).
+
+### Adopted — already installed (`obra/superpowers`, all 14 skills)
+
+The 14 superpowers skills (`brainstorming`, `writing-plans`, `executing-plans`, `dispatching-parallel-agents`, `requesting-code-review`, `receiving-code-review`, `using-git-worktrees`, `finishing-a-development-branch`, `subagent-driven-development`, `systematic-debugging`, `verification-before-completion`, `test-driven-development`, `writing-skills`, `using-superpowers`) are already present in `~/.claude/skills/` under the `superpowers:` namespace as of session start. Net new from this scan: 0.
+
+### Adopted — installed this session (`alirezarezvani/claude-skills`, 6 skills)
+
+Installed as folder-only (SKILL.md + references/ + scripts/), no marketplace metadata, no CLAUDE.md touch. Each verified live in available-skills list post-install.
+
+| Skill | Path | Workstream(s) | Activation trigger |
+|---|---|---|---|
+| `copywriting` | `~/.claude/skills/copywriting/` | veritas, loretta, mmm | Writing/improving page copy (homepage, waitlist, landing) |
+| `cold-email` | `~/.claude/skills/cold-email/` | mmm, veritas | MMM Workflow 3.1 Nimrat-draft flow; Tier-1 outreach (Rocktop/TSI/Mercury) |
+| `email-sequence` | `~/.claude/skills/email-sequence/` | veritas, loretta | Veritas waitlist 3-email nurture; Loretta Phase 2 RELIST nurture |
+| `launch-strategy` | `~/.claude/skills/launch-strategy/` | veritas, loretta | Waitlist page launches (AgentOS/TradeOS/PersonalOS); `/relist-guide` launch |
+| `content-strategy` | `~/.claude/skills/content-strategy/` | loretta, veritas | Roots & Room engine planning; LinkedIn authority track planning |
+| `video-content-strategist` | `~/.claude/skills/video-content-strategist/` | loretta | Workflow 2.4 video repurposing; YouTube channel build |
+
+### Queued — install when workstream activates (`alirezarezvani/claude-skills`, 5 skills)
+
+Deferred per ICE scoring against current workstreams. Re-evaluate on the named trigger and install via the same folder-only path.
+
+| Skill | Trigger to install | Rationale |
+|---|---|---|
+| `marketing-strategy-pmm` | First Veritas BD conversation (Rocktop/TSI/Mercury close) OR LinkedIn authority track launch | Product marketing positioning is needed when there's a real audience to position to |
+| `programmatic-seo` | After `/relist-guide` page ships (Session L2) | SEO at scale requires the foundational page first |
+| `schema-markup` | Same trigger as `programmatic-seo` (Session L2) | Pairs with programmatic-seo; structured data has no use without indexed pages |
+| `x-twitter-growth` | After LinkedIn cadence is established (3 weeks of 3×/wk posting) | Alan/Veritas track only — LinkedIn is the primary surface; X is secondary |
+| `lead-scoring` | Before SalesAgentOS Workflow 4.1 enrichment expands beyond hybrid C | Overlaps with Workflow 4.1's existing enrichment logic — evaluate for replacement vs supplement first |
+
+### Compliance keepers — `alirezarezvani/claude-skills/ra-qm-team/` (2 of 12, deferred)
+
+Most of the `ra-qm-team/` directory is medical-device specific (ISO 13485, MDR 2017/745, FDA 510k, ISO 14971, CAPA, QMS audit). Veritas has zero medical-device exposure. Two skills have non-device application:
+
+| Skill | Trigger to install | Rationale |
+|---|---|---|
+| `gdpr-dsgvo-expert` | First Loretta Buffer/ManyChat data flow OR PersonalOS commercial buildout | EU data protection only matters once we hold subject data with EU nexus |
+| `iso-27001-isms-manager` | First Veritas tier-1 prospect (Mercury/Rocktop/TSI) requests SOC2/ISO27001 evidence | Financial-services prospects expect this conversation; not needed until then |
+
+### Install convention
+
+All external skills installed as **folder-only** to `~/.claude/skills/<name>/`:
+- Copy `SKILL.md` + any `references/`, `scripts/`, `templates/` subfolders
+- Strip `.claude-plugin/` (marketplace metadata) — never adopt the full plugin manifest
+- Never overwrite or merge external CLAUDE.md into project CLAUDE.md
+- Verify post-install by checking Claude's available-skills list refreshes with the new entries
+
+Source: this convention was established 2026-05-02 after the Ruflo CLAUDE.md-overwrite hard-stop. See §8 of `CLAUDE.md` for the related folder-as-skill structure principle.
+
+---
+
+*Living document. Update on every batch. First seeded 2026-05-01 (Group 1). §7 added 2026-05-02 (skills scan).*
