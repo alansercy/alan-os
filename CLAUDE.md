@@ -228,13 +228,13 @@ When authoring Claude Code skills (system-level, at `C:\Users\aserc\.claude\skil
 
 ```
 my-skill/
-  prompt.md          # the canonical instructions Claude reads
+  SKILL.md           # the canonical instructions Claude reads
   scripts/           # any scripts the skill references
   examples/          # worked examples / negative examples
   templates/         # boilerplate the skill instantiates
 ```
 
-**Why:** progressive disclosure (Claude reads `prompt.md` first, pulls in `scripts/` or `examples/` only when relevant), single canonical store per skill (no scattered assets), explicit asset coupling (everything the skill needs lives in one folder).
+**Why:** progressive disclosure (Claude reads `SKILL.md` first, pulls in `scripts/` or `examples/` only when relevant), single canonical store per skill (no scattered assets), explicit asset coupling (everything the skill needs lives in one folder).
 
 **Scope note:** This repo (`alan-os`) does not host Claude Code skills — those live in `~/.claude/skills/`. Convention documented here so any future skill creation (this repo or a global skill referencing repo assets) follows the pattern. Existing single-file skills referencing external assets should be migrated to folder structure when next touched.
 
