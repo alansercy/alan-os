@@ -88,11 +88,16 @@ AUDIT: Read before touching. Report what exists, what's broken, what's missing. 
 COMPRESS: Summarize completed work in 5 bullets. List remaining tasks. Identify the single next action. Then /compact.
 ```
 
+**GRILL** — for pre-spec discovery (Socratic mode):
+```
+GRILL: Don't build yet. Ask one clarifying question at a time. Surface assumptions, unknowns, and constraints. Stop when the problem is fully understood. Then present a one-sentence definition of what to build.
+```
+
 ---
 
 ## 3. Skill Packs
 
-Skills are grouped by Veritas use case in `docs/skill_packs/`. Load the relevant pack file when starting work in that domain rather than scanning all 100+ available skills.
+Skills are grouped by Veritas use case in `docs/skill_packs/`. Load the relevant pack file when starting work in that domain rather than scanning all 100+ available skills. Packs apply *progressive disclosure* — scan the pack summary first, load a specific member skill by name only when the task reaches that domain.
 
 - **`stack_pack`** — VIE evaluation, AI infrastructure, architecture decisions, systematic debug
 - **`content_pack`** — Loretta content engine + Veritas marketing copy + BD outreach (BD uses content_pack with a different lens; the originally-proposed `bd_pack` was a strict subset and was dropped)
@@ -174,6 +179,8 @@ Lessons earned through session failures and Alan-corrections. Distinct from §2 
 7. **Desktop OAuth flow — `flow.run_local_server(port=0)` is the clean pattern.** For Google Workspace API access from local scripts: `InstalledAppFlow.from_client_secrets_file(...).run_local_server(port=0)` opens one browser pop, no manual code paste, persists refresh token via `to_json()`. Future runs reload silently via `from_authorized_user_file`. Used for `post_closeout_to_drive.py` against the Veritas Session Log Doc. Same pattern works for Sheets, Drive, Calendar with adjusted scopes.
 
 8. **Verify existing code actually does what you think before recommending "extend, don't build new."** Build-or-extend (P7 in `PRINCIPLES_REVIEW_v1.md`) is only honest if the "extend" recommendation rests on verified code behavior, not assumed behavior. VIE session 2026-05-01: I recommended extending `shorts_researcher.py` for transcript work; Alan's verification challenge forced a re-read which proved the file is metadata-only (regex on YouTube page HTML, no yt-dlp, no transcripts anywhere in codebase). Corrected recommendation: build the new transcript layer, integrate via existing `/ai_stack`. Rule: when proposing extend-not-build, cite line numbers and confirm the function does what you're claiming it does — don't infer from filename or one-line summary.
+
+9. **Subagents — spawn for isolation, not convenience; one level deep.** Spawn when the task is independent of conversation context, long enough to bloat context, or needs parallelism. Don't spawn for quick lookups or tasks that need session history — subagents start cold with no memory of the current conversation. Never spawn a subagent that itself spawns further subagents (one-level constraint): nested spawns compound cost, break audit trails, and make failure diagnosis impossible.
 
 ---
 
