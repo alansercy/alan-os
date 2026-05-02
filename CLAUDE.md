@@ -110,6 +110,14 @@ Every session before closing must:
    Pushes the handoff doc to Drive (asset `1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ`
    per `PROJECTS.md` Drive Asset Registry). Without this, claude.ai and Claude
    Code sessions cannot resume from the same breadcrumb.
+5. **LinkedIn post candidate** — did anything ship today worth a 3-sentence
+   post? If yes, draft it and append to the Veritas Build Log tab on the
+   Loretta Content Calendar (sheet `1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM`).
+   Run: `python scripts/build_log.py append --repo <repo> --head <hash>
+   --shipped "<1-2 sentences>" --post-candidate Y --draft "<3-sentence post>"
+   --status draft`. If nothing post-worthy shipped, skip — do not append a no-op
+   row. Pattern 7 from `memory-bank/VIE_PATTERN_ACTION_LIST.md` — the build log
+   IS the LinkedIn content calendar; zero extra effort beyond the draft itself.
 
 If `:8000` (alan_os_server) is up, the dashboard `Tasks` tab is the fastest
 path for #1 and #2. If it's down, read/write `tasks.json` directly with the
