@@ -60,16 +60,25 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 AI_STACK_API_URL  = os.environ.get("AI_STACK_API_URL", "http://127.0.0.1:8000/ai_stack")
 ADMIN_TOKEN       = os.environ.get("ALAN_OS_ADMIN_TOKEN", "")  # /ai_stack itself isn't admin-gated
 
-# Model selection routes through utils.model_router. VIE evaluation is
-# stack_eval (Sonnet); the per-stage routing for URL fetch / opus escalation
-# is wired in the patch task that follows.
+# Model selection routes through utils.model_router.
+#  - URL fetch / metadata / transcript extraction is yt-dlp subprocess work,
+#    no LLM, no routing. Spec called for "haiku" here; no call site exists.
+#  - Three-lens evaluation runs on Sonnet via get_model("stack_eval").
+#  - LOW-confidence results (<0.4 numeric) escalate to Opus via
+#    get_model("ambiguous_eval") when VIE_ESCALATE_LOW_CONFIDENCE=1.
 import sys as _sys
 from pathlib import Path as _Path
 _sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))
-from utils.model_router import get_model
+from utils.model_router import get_model, log_usage, estimate_cost
 
 CLAUDE_MODEL = get_model("stack_eval")
 CLAUDE_MAX_TOKENS = 1500
+
+# Opus escalation. HIGH=0.8, MEDIUM=0.5, LOW=0.3 — only LOW falls under 0.4.
+# Gated to avoid surprise spend (Opus is ~5x Sonnet); set the env var to opt in.
+ESCALATE_THRESHOLD = 0.4
+ESCALATE_ENABLED = os.environ.get("VIE_ESCALATE_LOW_CONFIDENCE", "").lower() in ("1", "true", "yes")
+_CONFIDENCE_TO_FRACTION = {"HIGH": 0.8, "MEDIUM": 0.5, "LOW": 0.3}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -309,15 +318,30 @@ def _derive_v1_fields(eval_result: dict) -> None:
         eval_result["fit_rationale"] = se.get("reasoning", "") or ""
 
 
-def evaluate(client: anthropic.Anthropic, title: str, channel: str, transcript: str, fallback_note: str = "") -> dict:
-    """Send transcript+metadata to Claude. System prompt is cached (ephemeral)."""
+def evaluate(
+    client: anthropic.Anthropic,
+    title: str,
+    channel: str,
+    transcript: str,
+    fallback_note: str = "",
+    model: str | None = None,
+    task_type: str = "stack_eval",
+) -> dict:
+    """Send transcript+metadata to Claude. System prompt is cached (ephemeral).
+
+    `task_type` selects the model via utils.model_router and tags the
+    log_usage record. Pass `task_type="ambiguous_eval"` (or override `model`)
+    to escalate to Opus.
+    """
+    chosen_model = model or get_model(task_type)
+
     user_content = f"Video title: {title}\nChannel: {channel}\n"
     if fallback_note:
         user_content += f"Note: {fallback_note}\n"
     user_content += f"\nTranscript:\n{transcript or '[transcript unavailable]'}"
 
     msg = client.messages.create(
-        model=CLAUDE_MODEL,
+        model=chosen_model,
         max_tokens=CLAUDE_MAX_TOKENS,
         system=[{
             "type": "text",
@@ -336,12 +360,22 @@ def evaluate(client: anthropic.Anthropic, title: str, channel: str, transcript: 
     _derive_v1_fields(parsed)
 
     # Token accounting for visibility
+    in_tok  = getattr(msg.usage, "input_tokens", 0)
+    out_tok = getattr(msg.usage, "output_tokens", 0)
     parsed["_usage"] = {
-        "input_tokens":              getattr(msg.usage, "input_tokens", 0),
-        "output_tokens":             getattr(msg.usage, "output_tokens", 0),
+        "input_tokens":              in_tok,
+        "output_tokens":             out_tok,
         "cache_creation_input_tokens": getattr(msg.usage, "cache_creation_input_tokens", 0),
         "cache_read_input_tokens":     getattr(msg.usage, "cache_read_input_tokens", 0),
     }
+    parsed["_model"] = chosen_model
+
+    # Best-effort write to the canonical usage log so /model-usage can sum it.
+    try:
+        cost = estimate_cost(task_type, in_tok, out_tok)["projected_cost_usd"]
+        log_usage(task_type, chosen_model, in_tok, out_tok, cost)
+    except Exception:
+        pass
     return parsed
 
 
@@ -426,10 +460,25 @@ def process_url(url: str, client: anthropic.Anthropic, dry_run: bool) -> dict:
         result["used_caption_fallback"] = bool(fallback_note)
 
         eval_result = evaluate(client, meta["title"], meta["channel"], transcript, fallback_note)
+
+        # Opus escalation for LOW-confidence verdicts (gated by env var).
+        conf_str = (eval_result.get("stack_evaluation", {}).get("confidence") or "").upper()
+        conf_frac = _CONFIDENCE_TO_FRACTION.get(conf_str, 0.0)
+        if ESCALATE_ENABLED and conf_frac < ESCALATE_THRESHOLD:
+            opus_model = get_model("ambiguous_eval")
+            print(f"[escalate] {url}: confidence={conf_str} ({conf_frac}) < {ESCALATE_THRESHOLD} — re-running on {opus_model}")
+            eval_result = evaluate(
+                client, meta["title"], meta["channel"], transcript, fallback_note,
+                task_type="ambiguous_eval",
+            )
+            eval_result["_escalated_from"] = CLAUDE_MODEL
+
         result["recommendation"] = eval_result.get("stack_evaluation", {}).get("recommendation", "?")
         result["confidence"]     = eval_result.get("stack_evaluation", {}).get("confidence", "?")
         result["fit_pipeline"]   = eval_result.get("fit_pipeline", "none")
         result["score"]          = eval_result.get("relevance_score", 0)
+        result["model"]          = eval_result.get("_model", CLAUDE_MODEL)
+        result["escalated"]      = bool(eval_result.get("_escalated_from"))
         result["usage"]          = eval_result.get("_usage", {})
         result["eval"]           = {k: v for k, v in eval_result.items() if k != "_usage"}
 
