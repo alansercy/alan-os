@@ -209,6 +209,32 @@ Pattern 5 from `memory-bank/VIE_PATTERN_ACTION_LIST.md`. Pack files are pointer-
 
 ---
 
+## 7. Prompt Prefix Library
+
+Standard prefixes that prime the right thinking mode before any task. Paste the relevant prefix at the start of a prompt.
+
+**OODA** — for ambiguous or fast-moving situations:
+```
+OODA: Observe current state → Orient to constraints → Decide on one action → Act. Report each stage briefly before executing.
+```
+
+**SCAFFOLD** — for any new build or feature:
+```
+SCAFFOLD: Before writing code — (1) state the problem in one sentence, (2) list assumptions, (3) present the approach, (4) get approval. Then build.
+```
+
+**AUDIT** — for reviewing existing work:
+```
+AUDIT: Read before touching. Report what exists, what's broken, what's missing. No changes until audit is presented and approved.
+```
+
+**COMPRESS** — for approaching context limits:
+```
+COMPRESS: Summarize completed work in 5 bullets. List remaining tasks. Identify the single next action. Then /compact.
+```
+
+---
+
 ## 10. Folder Contracts
 
 Each directory has an explicit owner and purpose. Never write files outside their contract.
