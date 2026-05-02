@@ -187,6 +187,20 @@ my-skill/
 
 ---
 
+## 9. Skill Packs
+
+Skills are grouped by Veritas use case in `docs/skill_packs/`. Load the relevant pack file when starting work in that domain rather than scanning all 100+ available skills.
+
+- **`stack_pack`** — VIE evaluation, AI infrastructure, architecture decisions, systematic debug
+- **`content_pack`** — Loretta content engine + Veritas marketing copy + BD outreach (BD uses content_pack with a different lens; the originally-proposed `bd_pack` was a strict subset and was dropped)
+- **`ops_pack`** — daily ops loop (triage / digest / handoff / task) + scheduling + harness config
+
+GSD skills (`gsd-*`) and n8n skills (`n8n-*`) stay implicitly grouped by prefix and are not packed — load them by name when needed.
+
+Pattern 5 from `memory-bank/VIE_PATTERN_ACTION_LIST.md`. Pack files are pointer-lists, not relocators — member skills live at `~/.claude/skills/<name>/` unchanged.
+
+---
+
 ## MEMORY BANK PROTOCOL
 - Before starting any task: read memory-bank/session-log.md
 - After completing any task: append a dated summary to memory-bank/session-log.md
