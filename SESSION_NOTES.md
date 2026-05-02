@@ -1,41 +1,29 @@
-# SESSION_NOTES — 2026-04-30 (close)
+# SESSION NOTES — 2026-05-02 (Session E-2)
 
-**Session focus:** VIE Step 4 — built the AI Stack tab on Lux Command Center (`localhost:8081`, `claude_usage_dashboard.html`) and visually verified it renders with the live `:8000` `/ai_stack` feed.
+## Session focus
+Three carry-forward patches (task-013, task-014) + Workflow 4.1 first test run — parked mid-test on n8n auth failure.
 
-## What changed (this session)
+## What changed
+| File | Change |
+|---|---|
+| `~/.lux/workflows/ai_research_monitor.py` | task-013: `load_dotenv(r"C:\Users\aserc\.lux\.env")` added before `os.environ.get` — fixes silent no-op when ANTHROPIC_API_KEY missing from scheduler env. lux-os `c795b82` |
+| `~/.lux/claude_usage_dashboard.html` | task-014: removed orphan `byModel`, `byDay`, `days`, `avg` calcs from `fetchUsage()` — loop and totalIn/totalOut/totalCost/totalTok intact. lux-os `4e1d392` |
+| `scripts/import_workflow_41.js` | Fixed mangled `X-N8N-API-KEY` header value (had `notepad C:\...` spliced in). Replaced with `prompt()`-sourced const at top of IIFE. `187370f` |
+| `scripts/import_workflow_41.js` | Fixed `headerRow: 3 → 1`, `firstDataRow: 4 → 2` in both Sheets nodes — n8n counts rows relative to range start (`A3:S`), not absolute sheet row. `9665796` |
+| `memory-bank/closed_items.md` | task-013 and task-014 entries appended. `a3baa20` |
 
-**lux-os (commits):**
-- `33f5e86` — `feat: AI Stack tab on Lux Command Center` (`claude_usage_dashboard.html` only, +445 lines). New 8th tab after SalesOS. Default mode `Top picks` calls `GET /ai_stack/digest?limit=10`; `All items` mode calls `GET /ai_stack` with chip filters (`status` / `fit_pipeline` / `category`) and client-side pagination at 20/page. Per-row `Save` / `Reviewed` / `Dismiss` → `PATCH /ai_stack/{id}` with `{status}`. Brand-consistent (Navy `#0B1E3D` + Gold `#C6A96A`, reuses `--surface` / `--border` / `.badge` / `.btn` tokens, mirrors SalesOS panel pattern). Wired into `refreshAll()` (60s).
-
-**alan-os (commits):**
-- `35ef160` — `chore: session log — VIE Step 4 AI Stack dashboard tab` (memory-bank, +22 lines).
-
-**This close (uncommitted):**
-- `SESSION_NOTES.md` — this file, fresh rewrite.
-- `PROJECTS.md` — Session Queue line 392 updated to reflect VIE V1 build is now complete (endpoints + enrichment + dashboard tab all landed); remaining work is the end-to-end real-email run. Single-line factual fix, no stylistic rewrite.
-
-## Decisions made (don't relitigate)
-
-- **Two-mode segmented control over a single combined view.** `Top picks` (digest) vs `All items` (full filterable list). Filters and paginator only show in `All items` — `Top picks` stays clean by design. Action buttons work identically in both modes.
-- **Chip values pulled from backend constants, not the spec.** Read `AI_STACK_PIPELINES` / `AI_STACK_STATUSES` / `AI_STACK_CATEGORIES_ENUM` directly from `~/.lux/workflows/alan_os_server.py:625-630`. If spec and code disagree, code wins — chips will always reflect what `POST /ai_stack` will accept.
-- **Client-side pagination at 20/page.** `GET /ai_stack` already returns up to 500 items in one call; slicing in the browser is simpler than wiring `offset`/`limit` query params and keeps the count meta accurate after filter changes.
-- **Optimistic-with-refetch on PATCH.** Click Save → buttons disable → `PATCH /ai_stack/{id}` → `loadAIStack()` on success, re-enable on failure with alert. Simpler than full optimistic-update with rollback; one extra round-trip is fine at human click speed.
-- **Backend untouched.** All four endpoints from VIE Steps 1–2 (`952862e`) cover the tab's needs. No new server work.
+## Decisions made
+- `headerRow`/`firstDataRow` in n8n Google Sheets nodes are **range-relative**, not sheet-absolute. Range `A3:S` → header is row 1 of that range, first data row is 2. Hardcoding 3/4 (the sheet row numbers) is wrong.
+- `python-dotenv` 1.2.2 confirmed installed in the host Python environment — safe to use in `.lux` scripts.
+- `Data/` is gitignored in lux-os — `tasks.json` changes are local only, not committed.
 
 ## Open threads
+1. **Workflow 4.1 test blocked — n8n API key stale.** `GET /api/v1/workflows` returns 403 via both direct REST and n8n-mcp. Session cookie also returns 401 on the API path. Workflow `zl9peS1ZGNISLibZ` has the import_workflow_41.js fix committed but the **live nodes in n8n still have the old `headerRow`/`firstDataRow` values** — the patch never landed because auth failed before the PUT.
+2. **Gmail: Send Error credential** — `redirect_uri_mismatch` on Google OAuth. Non-blocking for the main enrichment path; node set to `continueRegularOutput` so failures pass through.
 
-- **Uncommitted at close:** `SESSION_NOTES.md` (this rewrite) + `PROJECTS.md` (line 392 factual update). Asking before commit per close template.
-- **First real-email run** of `nlm_feed_builder.py` Step 2 enrichment hasn't fired against a real AI-research email yet — the only feed item is the VIE Step 2 hand-crafted smoke seed. Pagination, multi-page filter, and "no items match these filters" empty-state copy are coded but exercised only by mock-data inspection.
-- **Lux Command Center server (`:8081`) was started this session** (`python ~/.lux/claude_usage_dashboard.py`) and is still running in background after verification. If Alan wants it running long-term, leave it; if not, kill the process this session started.
-
-## Next action
-
-Run `nlm_feed_builder.py` against a real AI-research email (or seed a few realistic items via `POST /ai_stack`) so the dashboard tab can be exercised at real volume — pagination, chip filtering across multiple categories, and the dismissed/saved status round-trip all need >1 item to be meaningful.
+## Next action — Session F item 1
+Rotate the n8n API key: **Settings → n8n API → Create new API key** → `setx N8N_API_KEY "new-key"` + update `.lux\.env` + update `~/.claude.json` mcpServers.n8n-mcp.env.N8N_API_KEY → restart Claude Code → patch live nodes `41000000-...-0007` and `41000000-...-0013` via MCP (`headerRow: 1, firstDataRow: 2`) → re-run Workflow 4.1 test with lead_id=1.
 
 ## Blockers
-
-- **None for the AI Stack tab itself.** Code is shipped, render is verified, PATCH round-trip works.
-- **Carry-forward from prior sessions (unchanged):**
-  - AlanOS_Server elevated reregister still owed (patched XML at `~/.lux/workflows/AlanOS_Server.xml.patched`).
-  - Anthropic admin-scope API key still pending (PROJECTS.md line 233) — blocks the authoritative Claude usage panel.
-  - Workflow 2.4 first end-to-end run still waiting on `OPUS_CLIP_API_KEY` / `BUFFER_ACCESS_TOKEN` / `BUFFER_PROFILE_IDS` + Loretta source video.
+- **n8n API key rotation** — requires Alan to create a new key in the n8n UI. Blocks all MCP and REST API operations against n8n.
+- **Gmail OAuth** — `redirect_uri_mismatch`; ngrok URL rotates on restart. Fix requires adding the current ngrok redirect URI to the GCP OAuth client's authorized URIs. Low priority — doesn't block 4.1 enrichment path.
