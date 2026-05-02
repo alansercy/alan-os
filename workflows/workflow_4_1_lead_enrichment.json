@@ -147,10 +147,9 @@
         },
         "combineFilters": "AND",
         "options": {
-          "locationDefine": {
+          "dataLocationOnSheet": {
             "values": {
-              "headerRow": 3,
-              "firstDataRow": 4
+              "rangeDefinition": "detectAutomatically"
             }
           },
           "returnFirstMatch": true
@@ -308,8 +307,8 @@
         "options": {
           "locationDefine": {
             "values": {
-              "headerRow": 3,
-              "firstDataRow": 4
+              "headerRow": 1,
+              "firstDataRow": 2
             }
           }
         }
