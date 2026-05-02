@@ -762,3 +762,60 @@
     - `cf41340` feat(ai_research_monitor): delete email after successful Doc append
   - tasks.json + projects.json: no updates (Task 1 + Task 2 are infrastructure changes captured in PROJECTS.md row + memory-bank doc; Task 3 is a runtime-state fix with no project-status implication; Task 4 is dashboard hygiene with no project-status implication).
   - `push_handoff.py` ran at session close — see Drive doc `1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ`.
+
+## 2026-05-02 PM VIE Session B — patterns P7 / P3 / P5 (build-log + slash-wrappers + skill-packs)
+- What was done
+  - **P7 build-log-as-marketing** (alan-os `31f6545`):
+    - `scripts/build_log.py` — gspread helper with `init` + `append` subcommands; 8-column schema (Date | Repo | HEAD | What shipped | Post candidate | Draft | Status | Posted at). Service-account-first auth (`~/.lux/credentials/service_account.json`), OAuth fallback with `refresh_token` auto-refresh. Mirrors `lux-os/workflows/add_tracker_columns.py` pattern.
+    - `CLAUDE.md` §4 — added step 5 to session-close checklist (LinkedIn post candidate; explicit skip-if-not-post-worthy clause to avoid no-op rows).
+    - "Veritas Build Log" tab created live on Loretta Content Calendar (`1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM`). Service account had Editor access despite `drive_registry.json` showing `writable: false` — registry stale (carry-forward).
+    - Idempotent: re-init detects existing tab + correct headers and no-ops.
+  - **P3 slash command wrappers** (alan-os `ff06ec3`):
+    - 5 SKILL.md files written at `~/.claude/skills/{digest,triage,vie,task,handoff}/SKILL.md`. Per Alan's framing call: Claude Code skill wrappers only, no Python orchestrator regex layer.
+    - All 5 verified live in available-skills list after write — `digest` / `triage` / `vie` / `task` / `handoff`.
+    - `/prospect <company>` deferred — no per-company research entry point exists. Workflow 3.2 is batch (no arg), `outbound_campaign.py` is a cycle runner, `fire_3_2_via_webhook.py` fires the batch. Building one would be new functionality, not a wrapper. Three unblock paths documented in `docs/slash_commands.md`.
+    - `docs/slash_commands.md` — canonical inventory + recreate-from-scratch reference (skill files themselves live outside any repo at `~/.claude/skills/` and are not version-controlled).
+  - **P5 skill packs as pointer-lists** (alan-os `5615b24`):
+    - 3 pack files at `docs/skill_packs/{stack,content,ops}_pack.md` — pointer-lists referencing existing skill folders, no moves. Per Alan's framing call.
+    - `bd_pack` dropped: it was a strict subset of content_pack (cold-email + email-sequence + launch-strategy). Documented in content_pack.md as "BD work uses content_pack with a different lens."
+    - **stack_pack** (11 members): `vie`, `claude-api`, `superpowers:{brainstorming, writing-plans, executing-plans, systematic-debugging, requesting-code-review, verification-before-completion, writing-skills}`, `gsd-extract-learnings`, `gsd-debug`.
+    - **content_pack** (6 members): `copywriting`, `cold-email`, `email-sequence`, `content-strategy`, `launch-strategy`, `video-content-strategist`. Plus BD lens note + `/prospect` missing-capability flag.
+    - **ops_pack** (8 members): `digest`, `triage`, `handoff`, `task`, `schedule`, `loop`, `update-config`, `fewer-permission-prompts`.
+    - All 25 member skill names verified in live available-skills list before write — zero typos, but the cross-check forced a deliberate verification.
+    - `CLAUDE.md` §9 added — pointer to `docs/skill_packs/`; notes that GSD (`gsd-*`) and n8n (`n8n-*`) skills stay implicitly grouped by prefix and are not packed.
+- What worked
+  - **Mandatory pre-build audit caught Pattern 1 already shipped.** P1's head-start at `c692f44` extended yesterday into 5 commits + canonical `utils/model_router.py` + `utils/context_manager.py` + `/model-usage` endpoint. Without the audit, would have duplicated yesterday's work or created conflicts. Principle 7 paid off again.
+  - **Asking before running `init` on the build-log script** matched CLAUDE.md "Ask before any action that touches credentials or `~/.lux/`". Service account auth meant no OAuth token touch in the end — but the gate held the right way regardless of the actual outcome.
+  - **Resolving framing calls before writing P3 (skills only, not orchestrator) and P5 (pointer-lists, not relocators)** prevented two wrong-shape commits. Pattern 3's spec text was "wire into orchestrator.py as first-pass regex" — would have been wrong-shape against today's intent. Pattern 5's "audit and group" could have meant a folder reorg — would have moved files unnecessarily.
+  - **Verified all 25 skill names against live available-skills list before writing pack files.** Zero typos found, but the cross-check is the discipline; finding a typo at commit time would have been embarrassing.
+  - **One pattern per commit + report-hash discipline** kept each unit reviewable in isolation. Three clean commits, each self-contained, each runnable independently.
+  - **Building on top of the freshly-installed alireza marketing skills** — content_pack pulled in 6 skills installed only this morning (`7f70abd`). The pattern of (install via skill scan) → (use via pack file) closed cleanly within the same day.
+- Blockers / caveats
+  - **`drive_registry.json` is stale** — Loretta Content Calendar registered `writable: false`, but service account demonstrably has Editor access (P7 init succeeded creating a tab). Registry needs a refresh pass; this could be the only stale row or one of many.
+  - **CLAUDE.md §8 names `prompt.md` as the folder-skill canonical filename, but live ecosystem uses `SKILL.md`.** GSD (~67) + n8n (7) + alireza (6) + obra superpowers (~14) + today's wrappers (5) all use `SKILL.md`. §8 needs update.
+  - **`/prospect <company>` has no underlying capability.** Three unblock paths documented; needs Alan's decision before any build can happen.
+  - **`tasks.json` has duplicate `task-012`** — both "Call my brother Darin" (parents-house) and "Loretta's Web Dashboard" (veritas-ai) share the ID. Pre-existing data integrity issue, did not fix as part of this session. Worth a separate cleanup pass — the dashboard's `/tasks` PATCH endpoint may behave unpredictably with the duplicate ID.
+  - **Skill files at `~/.claude/skills/` live outside any repo** — `docs/slash_commands.md` is the only durable record of what they are and how to recreate them. If `~/.claude/skills/` is wiped (host rebuild, account migration), the 5 wrappers must be hand-rebuilt from the inventory doc.
+  - **Skill descriptions live in skill frontmatter, not in alan-os.** Pack files reference skills by name + one-line use, but the actual `description:` fields (which Claude reads to decide auto-invocation) live in the SKILL.md files themselves. To audit description quality across the 5 wrappers + 3 packs, must read each SKILL.md individually.
+- Carry-forward (8 items, not blocking — added to `tasks.json` as task-013 through task-020)
+  1. **dotenv loading for `ai_research_monitor.py`** (task-013) — silent no-op risk if `ANTHROPIC_API_KEY` not in user env. From morning's session.
+  2. **Dead-calc cleanup in `fetchUsage()`** (task-014) — `byModel`/`byDay`/`avg`/`days` orphan ~5 lines after dashboard tile removal in lux-os `0e182a9`. From morning's session.
+  3. **PROJECTS.md drift scan** (task-015) — TIER 2 Task Scheduler row was wrong; likely more drift between recorded status and reality. From morning's session.
+  4. **`push_handoff.py` 3s timeout fix** (task-016). From morning's session.
+  5. **`drive_registry.json` stale** (task-017) — Loretta calendar `writable: false` but service account has Editor. P7 finding.
+  6. **CLAUDE.md §8 skill convention drift** (task-018) — says `prompt.md`, ecosystem uses `SKILL.md`. P3 finding.
+  7. **`/prospect <company>` capability** (task-019) — needs decision on intended behavior, then build the underlying entry point. P3 finding.
+  8. **claude-mem pilot** (task-020) — evaluate for alan-os. GitHub: search "claude-mem" (~60K stars). Tasks: verify legitimacy, check conflict with CLAUDE.md auto-load + `push_handoff.py`, pilot one session if clean. Document in `memory-bank/claude_mem_pilot_notes.md`. **Do not replace `push_handoff.py` until pilot proves value.**
+- Next step
+  - **VIE-impl-A remaining patterns (P2, P4, P6, P8, P10) still queued.** P2 (three-stage GSD), P4 (end-of-session structured write), P6 (folder contracts), P8 (prompt prefix library), P10 (CLAUDE.md section ordering). Yesterday covered P1 deeply; today covered P3/P5/P7 (Session B). PROJECTS.md SESSION QUEUE row `VIE-impl-A` remains a real outstanding item.
+  - **8 carry-forward items added to `~/.lux/Data/tasks.json`** as task-013 through task-020 — most under `veritas-ai`, one (`/prospect`) under `mmm-trucking`.
+  - **Per-skill description audit** — opportunistic next-session-or-later: read each of the 5 wrapper SKILL.md descriptions to confirm they match the pack-file one-liners. Quality drift is inevitable; calibration is a 5-minute pass.
+- Session close
+  - Final alan-os commits this session (newest → oldest):
+    - `5615b24` feat(VIE-impl-B/P5): skill packs as pointer-lists — stack/content/ops + CLAUDE.md §9
+    - `ff06ec3` feat(VIE-impl-B/P3): slash command skill wrappers + inventory doc
+    - `31f6545` feat(VIE-impl-B/P7): build-log-as-marketing — Veritas Build Log tab + session-close step
+  - No lux-os commits this session (skill files at `~/.claude/skills/` are global, outside any repo).
+  - tasks.json: 8 new entries (task-013 → task-020) for the carry-forwards. No status changes on existing tasks (none of today's work corresponded to a tracked task).
+  - projects.json: no status changes (today's work was infra/tooling, not against a tracked client/project status).
+  - `push_handoff.py` run: see commit summary at session end.
