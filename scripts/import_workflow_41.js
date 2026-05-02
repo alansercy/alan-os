@@ -120,8 +120,7 @@
     },
     body: JSON.stringify({
       name: "4.1 — SalesOS Lead Enrichment (MMM Prospect Tracker)",
-      active: false,
-      settings: {
+            settings: {
         executionOrder: "v1",
         saveManualExecutions: true,
         callerPolicy: "workflowsFromSameOwner",
@@ -220,7 +219,7 @@
             range: "'WA Prospect Tracker (n8n)'!A3:S",
             filtersUI: { values: [{ lookupColumn: "#", lookupValue: "={{ $json.lead_id }}" }] },
             combineFilters: "AND",
-            options: { locationDefine: { values: { headerRow: 3, firstDataRow: 4 } }, returnFirstMatch: true }
+            options: { locationDefine: { values: { headerRow: 1, firstDataRow: 2 } }, returnFirstMatch: true }
           }
         },
         {
@@ -319,7 +318,7 @@
               matchingColumns: ["#"],
               schema: []
             },
-            options: { locationDefine: { values: { headerRow: 3, firstDataRow: 4 } } }
+            options: { locationDefine: { values: { headerRow: 1, firstDataRow: 2 } } }
           }
         },
         {
