@@ -79,7 +79,7 @@ These have been earned the hard way. Never deviate without explicit confirmation
 
 Every session follows three explicit stages. Never skip from Discovery directly to Execution.
 
-1. **DISCOVERY** — read `CLAUDE.md`, `PROJECTS.md`, `memory-bank/session-log.md`. Report current state. Identify blockers. Stop and present findings.
+1. **DISCOVERY** — read `CLAUDE.md`, `PROJECTS.md`, `memory-bank/session-log.md`, `memory-bank/closed_items.md`. Report current state. Identify blockers. Stop and present findings.
 2. **PLANNING** — decompose work into discrete phases. Present the plan to Alan. Get explicit approval before proceeding.
 3. **EXECUTION** — one phase at a time. Confirm completion before starting the next phase.
 
