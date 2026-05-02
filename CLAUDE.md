@@ -209,6 +209,23 @@ Pattern 5 from `memory-bank/VIE_PATTERN_ACTION_LIST.md`. Pack files are pointer-
 
 ---
 
+## 10. Folder Contracts
+
+Each directory has an explicit owner and purpose. Never write files outside their contract.
+
+| Path | Purpose | Owner |
+|---|---|---|
+| `memory-bank/` | Session state, logs, decisions, closed items | Alan OS |
+| `docs/` | Human-readable specs, inventories, guides | Alan OS |
+| `scripts/` | Standalone Python utilities | Alan OS |
+| `~/.claude/skills/` | Slash command SKILL.md files | Claude Code |
+| `C:\Veritas\assets\` | All brand and creative assets | Host |
+| `C:\Veritas\repos\` | All repos — never write outside repos here | Host |
+
+Before creating any new file, confirm its target path matches a folder contract. If no contract fits, stop and ask.
+
+---
+
 ## MEMORY BANK PROTOCOL
 - Before starting any task: read memory-bank/session-log.md
 - After completing any task: append a dated summary to memory-bank/session-log.md
