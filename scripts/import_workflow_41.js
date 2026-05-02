@@ -1,0 +1,441 @@
+// Workflow 4.1 — SalesOS Lead Enrichment (MMM Prospect Tracker)
+// Usage: DevTools (F12) → Sources → Snippets → New snippet → paste → Ctrl+Enter
+// Run from: https://n8n.lorettasercy.com (logged in)
+// Post-import: open workflow → "Gmail: Send Error" node → swap PLACEHOLDER_GMAIL cred
+
+(async () => {
+  const N8N_API_KEY = (prompt('n8n API key') || '').trim();
+  if (!N8N_API_KEY) { console.error('Aborted — no API key provided'); return; }
+
+
+  const jsCode_buildApiBody =
+    "const row = $input.item.json;\n" +
+    "\n" +
+    "const systemPrompt = `You are a B2B sales research assistant for MMM Trucking — a reefer-and-produce, asset-based, minority/women-owned carrier running NorCal → Washington → Utah/Idaho → SoCal/NorCal.\n" +
+    "\n" +
+    "Given a Washington-state shipper prospect, return a JSON object with EXACTLY these fields and nothing else:\n" +
+    "{\n" +
+    "  \"type\": \"<grower / packer / shipper / cold-storage / processor / etc.>\",\n" +
+    "  \"what_they_ship\": \"<commodity description, year-round vs seasonal>\",\n" +
+    "  \"known_ship_to\": \"<CA destinations / DCs / receivers if known>\",\n" +
+    "  \"est_loads_per_week\": \"<range like 5-10 or 10-20, or empty if unknown>\",\n" +
+    "  \"company_summary\": \"<2-3 sentence factual summary>\",\n" +
+    "  \"fit_signal\": \"high\" | \"medium\" | \"low\",\n" +
+    "  \"fit_rationale\": \"<1-2 sentence reason — lane fit, year-round volume, reefer needs, current carrier landscape>\",\n" +
+    "  \"competitor_notes\": \"<who currently hauls for them if known, or empty>\"\n" +
+    "}\n" +
+    "Output ONLY the JSON object, no preamble, no markdown fences.`;\n" +
+    "\n" +
+    "const userPrompt = `Company: ${row['Company'] || ''}\n" +
+    "City/State: ${row['City / State'] || ''}\n" +
+    "Address: ${row['Address'] || ''}\n" +
+    "Existing Type: ${row['Type'] || '(unknown)'}\n" +
+    "Existing What They Ship: ${row['What They Ship'] || '(unknown)'}\n" +
+    "Existing Known Ship-To (CA): ${row['Known Ship-To (CA)'] || '(unknown)'}\n" +
+    "Existing Est. Loads/Wk: ${row['Est. Loads/Wk'] || '(unknown)'}\n" +
+    "Existing Notes: ${row['Notes'] || '(none)'}\n" +
+    "\n" +
+    "Research and return the JSON.`;\n" +
+    "\n" +
+    "return [{\n" +
+    "  json: {\n" +
+    "    ...row,\n" +
+    "    apiBody: JSON.stringify({\n" +
+    "      model: 'claude-sonnet-4-6',\n" +
+    "      max_tokens: 1024,\n" +
+    "      system: systemPrompt,\n" +
+    "      messages: [{ role: 'user', content: userPrompt }]\n" +
+    "    })\n" +
+    "  }\n" +
+    "}];";
+
+  const jsCode_parseResponse =
+    "const original = $('Sheets: Lookup Row').item.json;\n" +
+    "const apiResp  = $input.item.json;\n" +
+    "const raw = apiResp.content?.[0]?.text || '{}';\n" +
+    "\n" +
+    "let enriched = {};\n" +
+    "try {\n" +
+    "  enriched = JSON.parse(raw);\n" +
+    "} catch (e) {\n" +
+    "  const stripped = raw.replace(/^```json\\s*/i, '').replace(/```\\s*$/, '').trim();\n" +
+    "  enriched = JSON.parse(stripped);\n" +
+    "}\n" +
+    "\n" +
+    "const today = new Date().toISOString().slice(0, 10);\n" +
+    "const enrichedNoteBlock = [\n" +
+    "  `[salesos-enrich ${today}]`,\n" +
+    "  enriched.company_summary ? `Summary: ${enriched.company_summary}` : '',\n" +
+    "  enriched.fit_signal ? `Fit: ${enriched.fit_signal} — ${enriched.fit_rationale || ''}` : '',\n" +
+    "  enriched.competitor_notes ? `Competitors: ${enriched.competitor_notes}` : ''\n" +
+    "].filter(Boolean).join('\\n');\n" +
+    "\n" +
+    "const existingNotes = original['Notes'] || '';\n" +
+    "const mergedNotes = existingNotes\n" +
+    "  ? `${existingNotes}\\n\\n${enrichedNoteBlock}`\n" +
+    "  : enrichedNoteBlock;\n" +
+    "\n" +
+    "const writeback = {\n" +
+    "  '#': original['#'],\n" +
+    "  'Type':               original['Type']               || enriched.type || '',\n" +
+    "  'What They Ship':     original['What They Ship']     || enriched.what_they_ship || '',\n" +
+    "  'Known Ship-To (CA)': original['Known Ship-To (CA)'] || enriched.known_ship_to || '',\n" +
+    "  'Est. Loads/Wk':      original['Est. Loads/Wk']      || enriched.est_loads_per_week || '',\n" +
+    "  'Notes': mergedNotes\n" +
+    "};\n" +
+    "\n" +
+    "const rawEmail = (original['Email'] || '').trim();\n" +
+    "const contactEmail = rawEmail.includes('@') ? rawEmail : '';\n" +
+    "\n" +
+    "const salesosLead = {\n" +
+    "  owner: 'alan',\n" +
+    "  pipeline: 'mmm_trucking',\n" +
+    "  source: 'mmm_prospect_tracker',\n" +
+    "  company: original['Company'] || '',\n" +
+    "  contact_name: original['Contact Name'] || '',\n" +
+    "  contact_title: original['Title / Role'] || '',\n" +
+    "  contact_email: contactEmail,\n" +
+    "  contact_linkedin: '',\n" +
+    "  stage: 'researched',\n" +
+    "  last_contact: original['Last Contact'] || '',\n" +
+    "  next_action: original['Next Step'] || '',\n" +
+    "  next_action_date: '',\n" +
+    "  notes: `[mmm:#=${original['#']}] ${mergedNotes}`\n" +
+    "};\n" +
+    "\n" +
+    "return [{\n" +
+    "  json: {\n" +
+    "    lead_id: String(original['#']),\n" +
+    "    writeback,\n" +
+    "    salesos_lead: salesosLead,\n" +
+    "    enriched\n" +
+    "  }\n" +
+    "}];";
+
+  const resp = await fetch('/api/v1/workflows', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-N8N-API-KEY': N8N_API_KEY
+    },
+    body: JSON.stringify({
+      name: "4.1 — SalesOS Lead Enrichment (MMM Prospect Tracker)",
+      active: false,
+      settings: {
+        executionOrder: "v1",
+        saveManualExecutions: true,
+        callerPolicy: "workflowsFromSameOwner",
+        errorWorkflow: ""
+      },
+      nodes: [
+        {
+          id: "41000000-0000-0000-0000-000000000001",
+          name: "Manual Trigger",
+          type: "n8n-nodes-base.manualTrigger",
+          typeVersion: 1,
+          position: [0, 280],
+          parameters: {}
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000002",
+          name: "Webhook: salesos-enrich",
+          type: "n8n-nodes-base.webhook",
+          typeVersion: 2,
+          position: [0, 480],
+          webhookId: "salesos-enrich-trigger",
+          onError: "continueRegularOutput",
+          parameters: {
+            httpMethod: "POST",
+            path: "salesos-enrich",
+            responseMode: "responseNode",
+            options: { rawBody: false }
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000003",
+          name: "Merge: Triggers",
+          type: "n8n-nodes-base.merge",
+          typeVersion: 3,
+          position: [240, 380],
+          parameters: { mode: "append" }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000004",
+          name: "Set: Normalize Input",
+          type: "n8n-nodes-base.set",
+          typeVersion: 3.4,
+          position: [480, 380],
+          parameters: {
+            assignments: {
+              assignments: [
+                { id: "norm-lead-id", name: "lead_id", value: "={{ String($json.lead_id || ($json.body && $json.body.lead_id) || '').trim() }}", type: "string" },
+                { id: "norm-submitted-at", name: "submitted_at", value: "={{ $now.toISO() }}", type: "string" }
+              ]
+            },
+            options: {}
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000005",
+          name: "IF: Validate Input",
+          type: "n8n-nodes-base.if",
+          typeVersion: 2,
+          position: [720, 380],
+          parameters: {
+            conditions: {
+              options: { caseSensitive: true, leftValue: "", typeValidation: "loose" },
+              conditions: [
+                { id: "cond-lead-id-not-empty", leftValue: "={{ $json.lead_id }}", rightValue: "", operator: { type: "string", operation: "notEmpty", singleValue: true } }
+              ],
+              combinator: "and"
+            },
+            options: {}
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000006",
+          name: "Respond 400: Bad Input",
+          type: "n8n-nodes-base.respondToWebhook",
+          typeVersion: 1.5,
+          position: [960, 620],
+          parameters: {
+            respondWith: "json",
+            responseCode: 400,
+            responseBody: "={\n  \"error\": \"lead_id missing or empty\",\n  \"received\": {{ JSON.stringify($json) }}\n}",
+            options: {}
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000007",
+          name: "Sheets: Lookup Row",
+          type: "n8n-nodes-base.googleSheets",
+          typeVersion: 4.4,
+          position: [960, 380],
+          onError: "continueErrorOutput",
+          credentials: { googleSheetsOAuth2Api: { id: "sG8kOyb5bJb0hjgS", name: "Google Sheets account" } },
+          parameters: {
+            operation: "read",
+            documentId: { __rl: true, value: "1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI", mode: "id", cachedResultName: "MMM_Trucking_Prospect_Tracker" },
+            sheetName: { __rl: true, value: "WA Prospect Tracker (n8n)", mode: "name", cachedResultName: "WA Prospect Tracker (n8n)" },
+            range: "'WA Prospect Tracker (n8n)'!A3:S",
+            filtersUI: { values: [{ lookupColumn: "#", lookupValue: "={{ $json.lead_id }}" }] },
+            combineFilters: "AND",
+            options: { locationDefine: { values: { headerRow: 3, firstDataRow: 4 } }, returnFirstMatch: true }
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000008",
+          name: "IF: Row Found",
+          type: "n8n-nodes-base.if",
+          typeVersion: 2,
+          position: [1200, 380],
+          parameters: {
+            conditions: {
+              options: { caseSensitive: true, leftValue: "", typeValidation: "loose" },
+              conditions: [
+                { id: "cond-row-has-company", leftValue: "={{ $json.Company }}", rightValue: "", operator: { type: "string", operation: "notEmpty", singleValue: true } }
+              ],
+              combinator: "and"
+            },
+            options: {}
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000009",
+          name: "Respond 404: Lead Not Found",
+          type: "n8n-nodes-base.respondToWebhook",
+          typeVersion: 1.5,
+          position: [1440, 620],
+          parameters: {
+            respondWith: "json",
+            responseCode: 404,
+            responseBody: "={\n  \"error\": \"lead_id not found in WA Prospect Tracker (n8n)\",\n  \"lead_id\": \"{{ $('Set: Normalize Input').item.json.lead_id }}\"\n}",
+            options: {}
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000010",
+          name: "Code: Build apiBody",
+          type: "n8n-nodes-base.code",
+          typeVersion: 2,
+          position: [1440, 380],
+          parameters: { language: "javaScript", jsCode: jsCode_buildApiBody }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000011",
+          name: "HTTP: Anthropic Messages",
+          type: "n8n-nodes-base.httpRequest",
+          typeVersion: 4.2,
+          position: [1700, 380],
+          onError: "continueErrorOutput",
+          parameters: {
+            method: "POST",
+            url: "https://api.anthropic.com/v1/messages",
+            sendHeaders: true,
+            headerParameters: { parameters: [
+              { name: "x-api-key", value: "={{ $env.ANTHROPIC_API_KEY }}" },
+              { name: "anthropic-version", value: "2023-06-01" },
+              { name: "content-type", value: "application/json" }
+            ]},
+            sendBody: true,
+            contentType: "raw",
+            rawContentType: "application/json",
+            body: "={{ $json.apiBody }}",
+            options: { response: { response: { responseFormat: "json" } }, timeout: 60000 }
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000012",
+          name: "Code: Parse Response",
+          type: "n8n-nodes-base.code",
+          typeVersion: 2,
+          position: [1960, 380],
+          parameters: { language: "javaScript", jsCode: jsCode_parseResponse }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000013",
+          name: "Sheets: Update Row",
+          type: "n8n-nodes-base.googleSheets",
+          typeVersion: 4.4,
+          position: [2200, 380],
+          onError: "continueErrorOutput",
+          credentials: { googleSheetsOAuth2Api: { id: "sG8kOyb5bJb0hjgS", name: "Google Sheets account" } },
+          parameters: {
+            operation: "update",
+            documentId: { __rl: true, value: "1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI", mode: "id", cachedResultName: "MMM_Trucking_Prospect_Tracker" },
+            sheetName: { __rl: true, value: "WA Prospect Tracker (n8n)", mode: "name", cachedResultName: "WA Prospect Tracker (n8n)" },
+            range: "'WA Prospect Tracker (n8n)'!A3:S",
+            values: "={{ $json.writeback }}",
+            columns: {
+              mappingMode: "defineBelow",
+              value: {
+                "#": "={{ $json.writeback['#'] }}",
+                "Type": "={{ $json.writeback.Type }}",
+                "What They Ship": "={{ $json.writeback['What They Ship'] }}",
+                "Known Ship-To (CA)": "={{ $json.writeback['Known Ship-To (CA)'] }}",
+                "Est. Loads/Wk": "={{ $json.writeback['Est. Loads/Wk'] }}",
+                "Notes": "={{ $json.writeback.Notes }}"
+              },
+              matchingColumns: ["#"],
+              schema: []
+            },
+            options: { locationDefine: { values: { headerRow: 3, firstDataRow: 4 } } }
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000014",
+          name: "HTTP: POST /leads",
+          type: "n8n-nodes-base.httpRequest",
+          typeVersion: 4.2,
+          position: [2460, 380],
+          onError: "continueErrorOutput",
+          parameters: {
+            method: "POST",
+            url: "={{ $env.ALAN_OS_PUBLIC_URL }}/leads",
+            sendHeaders: true,
+            headerParameters: { parameters: [{ name: "content-type", value: "application/json" }] },
+            sendBody: true,
+            contentType: "raw",
+            rawContentType: "application/json",
+            body: "={{ JSON.stringify($json.salesos_lead) }}",
+            options: { response: { response: { responseFormat: "json" } }, timeout: 30000 }
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000015",
+          name: "Respond 200: Success",
+          type: "n8n-nodes-base.respondToWebhook",
+          typeVersion: 1.5,
+          position: [2720, 380],
+          parameters: {
+            respondWith: "json",
+            responseCode: 200,
+            responseBody: "={\n  \"lead_id\": \"{{ $('Code: Parse Response').item.json.lead_id }}\",\n  \"salesos_lead_id\": \"{{ $json.id }}\",\n  \"enriched\": {{ JSON.stringify($('Code: Parse Response').item.json.enriched) }}\n}",
+            options: {}
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000016",
+          name: "Set: Build Error Payload",
+          type: "n8n-nodes-base.set",
+          typeVersion: 3.4,
+          position: [2200, 820],
+          parameters: {
+            assignments: {
+              assignments: [
+                { id: "err-lead-id", name: "lead_id", value: "={{ $('Set: Normalize Input').item.json.lead_id || 'unknown' }}", type: "string" },
+                { id: "err-message", name: "error_message", value: "={{ ($json.error && $json.error.message) || $json.message || JSON.stringify($json) }}", type: "string" },
+                { id: "err-when", name: "errored_at", value: "={{ $now.toISO() }}", type: "string" }
+              ]
+            },
+            options: {}
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000017",
+          name: "Gmail: Send Error",
+          type: "n8n-nodes-base.gmail",
+          typeVersion: 2.1,
+          position: [2460, 820],
+          onError: "continueRegularOutput",
+          credentials: { gmailOAuth2: { id: "PLACEHOLDER_GMAIL", name: "Gmail — Alan" } },
+          parameters: {
+            resource: "message",
+            operation: "send",
+            sendTo: "alansercy@gmail.com",
+            subject: "=[SalesOS 4.1] Error enriching lead_id={{ $json.lead_id }}",
+            emailType: "text",
+            message: "=Workflow 4.1 hit an error.\n\nlead_id: {{ $json.lead_id }}\nerrored_at: {{ $json.errored_at }}\nerror: {{ $json.error_message }}\n\nCheck the n8n execution log for the full failing-node trace.",
+            options: { appendAttribution: false }
+          }
+        },
+        {
+          id: "41000000-0000-0000-0000-000000000018",
+          name: "Respond 500: Error",
+          type: "n8n-nodes-base.respondToWebhook",
+          typeVersion: 1.5,
+          position: [2720, 820],
+          parameters: {
+            respondWith: "json",
+            responseCode: 500,
+            responseBody: "={\n  \"error\": \"workflow execution failed\",\n  \"lead_id\": \"{{ $json.lead_id }}\",\n  \"detail\": \"{{ $json.error_message }}\"\n}",
+            options: {}
+          }
+        }
+      ],
+      connections: {
+        "Manual Trigger":           { main: [[{ node: "Merge: Triggers",           type: "main", index: 0 }]] },
+        "Webhook: salesos-enrich":  { main: [[{ node: "Merge: Triggers",           type: "main", index: 1 }]] },
+        "Merge: Triggers":          { main: [[{ node: "Set: Normalize Input",      type: "main", index: 0 }]] },
+        "Set: Normalize Input":     { main: [[{ node: "IF: Validate Input",        type: "main", index: 0 }]] },
+        "IF: Validate Input":       { main: [[{ node: "Sheets: Lookup Row",        type: "main", index: 0 }],
+                                             [{ node: "Respond 400: Bad Input",    type: "main", index: 0 }]] },
+        "Sheets: Lookup Row":       { main: [[{ node: "IF: Row Found",             type: "main", index: 0 }],
+                                             [{ node: "Set: Build Error Payload",  type: "main", index: 0 }]] },
+        "IF: Row Found":            { main: [[{ node: "Code: Build apiBody",       type: "main", index: 0 }],
+                                             [{ node: "Respond 404: Lead Not Found", type: "main", index: 0 }]] },
+        "Code: Build apiBody":      { main: [[{ node: "HTTP: Anthropic Messages",  type: "main", index: 0 }]] },
+        "HTTP: Anthropic Messages": { main: [[{ node: "Code: Parse Response",      type: "main", index: 0 }],
+                                             [{ node: "Set: Build Error Payload",  type: "main", index: 0 }]] },
+        "Code: Parse Response":     { main: [[{ node: "Sheets: Update Row",        type: "main", index: 0 }]] },
+        "Sheets: Update Row":       { main: [[{ node: "HTTP: POST /leads",         type: "main", index: 0 }],
+                                             [{ node: "Set: Build Error Payload",  type: "main", index: 0 }]] },
+        "HTTP: POST /leads":        { main: [[{ node: "Respond 200: Success",      type: "main", index: 0 }],
+                                             [{ node: "Set: Build Error Payload",  type: "main", index: 0 }]] },
+        "Set: Build Error Payload": { main: [[{ node: "Gmail: Send Error",         type: "main", index: 0 }]] },
+        "Gmail: Send Error":        { main: [[{ node: "Respond 500: Error",        type: "main", index: 0 }]] }
+      }
+    })
+  });
+
+  const data = await resp.json();
+  if (data.id) {
+    console.log('%c✓ Workflow created', 'color:green;font-weight:bold');
+    console.log('ID    :', data.id);
+    console.log('Name  :', data.name);
+    console.log('Active:', data.active);
+  } else {
+    console.error('Create failed:', JSON.stringify(data, null, 2));
+  }
+
+})();
