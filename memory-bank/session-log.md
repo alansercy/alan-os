@@ -819,3 +819,32 @@
   - tasks.json: 8 new entries (task-013 → task-020) for the carry-forwards. No status changes on existing tasks (none of today's work corresponded to a tracked task).
   - projects.json: no status changes (today's work was infra/tooling, not against a tracked client/project status).
   - `push_handoff.py` run: see commit summary at session end.
+
+## 2026-05-02 Session D — Dictionary additions + carry-forward triage + claude-mem pilot
+- What was done
+  - **Dictionary additions** (alan-os `e6512b9`): GRILL prefix (5th in §2 — pre-spec Socratic mode), Progressive Disclosure sentence (§3 Skill Packs intro), Subagent gotcha #9 (§6 — spawn for isolation not convenience; one level deep). All three in one commit.
+  - **task-016 fix** (lux-os `9167fd4`): push_handoff.py health-check timeout 3s → 10s. Prevents false-abort when server responds slowly on cold start; more urgent since P4 extended the script to capture decisions + closed items.
+  - **task-018 fix** (alan-os `07f1fb8`): CLAUDE.md §10 — corrected `prompt.md` → `SKILL.md` in two places (folder example + Why sentence). Confirmed §10 is the right section post-P10 reorder (was incorrectly referenced as §8 in the task brief).
+  - **task-019 build** (alan-os `bc59308`): `/prospect <company>` skill — Option B, Claude-only inline research. SKILL.md at `~/.claude/skills/prospect/`. Returns: what they do, fleet size estimate, decision-maker profile, MMM talking points, confidence rating. No Python, no external API. docs/slash_commands.md updated: promoted from Deferred to Active (6 wrappers).
+  - **task-015 drift cleanup** (alan-os `6b07563`): PROJECTS.md — crossed out VIE-impl-A queue row (all done, commit refs added); removed 3 expired standing reminders (HP Hood May 1, ApexBot/RageBot Apr 30); updated Last Updated to 2026-05-02. CLAUDE.md §8 — removed MMM-fix + Workflow 2.4 (both done); promoted 2.3-finish, ApexBot S3, Loretta L1 to top-3; added VIE E2E run + Job Search as 4–5.
+  - **task-020 claude-mem pilot** (alan-os `a952ab1`): REJECT verdict. Two hard blockers: (1) Windows pipe mode bug — `claude --print` returns empty output silently when plugin active on Windows (Issue #1482, open); (2) CLAUDE.md auto-generation cannot be disabled (Issue #767, open) — directly conflicts with version-controlled CLAUDE.md. Secondary: duplicates push_handoff.py + P4 session-close pattern. Install step skipped: hook registration is global, cannot be isolated to a temp dir. Re-evaluation gates: both upstream issues must close before retry.
+  - **tasks 013, 014, 017 scheduled**: dotenv loading, dead-calc cleanup, drive_registry.json — all deferred, no action this session.
+- What worked
+  - **Pre-flight conflict check caught task-018 section number drift** before touching files. Brief said "§8" but post-P10 reorder that section is now "Active Projects" — the Skill File Convention is §10. Flagged in discovery, confirmed, fixed correctly.
+  - **Flag 2 catch in discovery**: "Ruflo pilot" label in Session D brief was a stale carry-forward; Ruflo was already rejected in a prior session. Redirected to correct target (claude-mem, task-020) without wasted work.
+  - **Research-before-install on claude-mem**: Two open upstream issues (Windows pipe + CLAUDE.md auto-gen) found via web research before any install attempt. Prevented hook registration from touching global Claude Code settings mid-session. Same 4-question rubric that caught Ruflo now formalized at bottom of claude_mem_pilot_notes.md for future evaluations.
+  - **Isolated install is impossible for hook-based plugins**: the hook registration writes to global Claude Code settings regardless of where the npm package is installed. Documenting this as a constraint on the rubric so future evaluations don't waste time trying to "isolate" hook registration.
+- Blockers / caveats
+  - **tasks.json not updated this session** — tasks 015–020 show completed work but tasks.json was not patched (would require reading 25K+ token file at 56% context with COMPRESS active). Follow-up: mark task-015 through task-020 done in tasks.json next session via dashboard Complete button or direct JSON edit.
+  - **docs/slash_commands.md still references §8** in the "Convention drift note" at the bottom (old section numbering from before P10 reorder). Minor drift; §10 is now correct. Not worth a solo commit — patch opportunistically when the file is next touched.
+- Session D decisions
+  - claude-mem: REJECT — Windows pipe bug (Issue #1482) + CLAUDE.md auto-gen (Issue #767) are hard blockers. Re-evaluate only when both upstream issues close.
+  - /prospect: Option B chosen — Claude-only inline, no Python, no external API. Upgrade path to Option C (enrichment API) documented but not scheduled.
+  - task-018 section number: §10 confirmed correct post-P10 reorder (§8 in the original task brief was stale).
+- Session close
+  - Final alan-os commits (newest → oldest): `a952ab1` `6b07563` `bc59308` `07f1fb8` `e6512b9`
+  - Final lux-os commit: `9167fd4`
+  - push_handoff.py: fired clean — Drive doc `1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ` updated (3,971 bytes)
+  - tasks.json: NOT updated this session (follow-up next session — mark tasks 015–020 done)
+  - projects.json: no status changes (today's work was tooling/infra, not against tracked client projects)
+  - LinkedIn post candidate: no — all commits were internal tooling (dictionary additions, timeout fix, drift cleanup, pilot notes). Nothing post-worthy for external audience.
