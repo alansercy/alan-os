@@ -233,7 +233,7 @@
 | Claude usage panel — estimated (local) | ✅ Live | Apr 29 (lux-os `3941978`): "Estimated Local Usage" panel on Lux Command Center (port 8081). Today's pace, window tokens, est cost, reset countdown, snapshot-trend sparkline. Persists to `~/.lux/Data/claude_burn_history.json` (gitignored, 5-min cadence, 30-day retention). Cost uses base-context published rates per model family — flagged "est" in UI. |
 | Claude usage panel — authoritative (admin API) | ⏳ Blocked on admin key | `.env` currently holds a workspace key (`sk-ant-api03-...`), not an admin-scope key — admin endpoints will reject. Loader is BOM-tolerant (line 12). Needs true `sk-ant-admin01-...` key in `ANTHROPIC_ADMIN_API_KEY` — see "Admin API key" below for creation steps. The estimated panel above gives drift-check value once this lands. |
 | Push handoff to Drive | ✅ Live | `push_handoff.py` |
-| Task Scheduler (alan_os_server) | ⬜ Not started | Add auto-start at login |
+| Task Scheduler (alan_os_server) | ✅ Live | `\AlanOS_Server` task — At logon trigger, runs `C:\Python314\python.exe alan_os_server.py` as `aserc`. Verified 2026-05-02. Full config + recreate-from-scratch PowerShell in `memory-bank/alan_os_server_task_scheduler.md` |
 | Obsidian install + setup | ⬜ Queued | Scoped, not installed |
 | Dashboard Drive Panel UI | ⬜ Not started | New tab showing registered asset cards |
 | Sunday evening weekly preview | ⬜ Queued | — |
