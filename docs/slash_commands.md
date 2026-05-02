@@ -4,7 +4,7 @@
 
 **Skill location:** `~/.claude/skills/<name>/SKILL.md` — global, outside any repo. This file is the canonical inventory; the skill files themselves are not version-controlled.
 
-## Active wrappers (5)
+## Active wrappers (6)
 
 | Slash command | Skill folder | Target |
 |---|---|---|
@@ -13,20 +13,7 @@
 | `/vie <url> [--dry-run]` | `~/.claude/skills/vie/` | `python alan-os/workflows/yt_transcribe.py <url>` |
 | `/task <title>` | `~/.claude/skills/task/` | `POST http://localhost:8000/tasks` (status=todo, HEREDOC body per gotcha #5) |
 | `/handoff` | `~/.claude/skills/handoff/` | `python ~/.lux/workflows/push_handoff.py` |
-
-## Deferred — `/prospect <company>`
-
-**Status:** Skipped. No existing entry point.
-
-The Pattern 3 spec lists `/prospect <company>` as the sixth wrapper, mapped to "MMM prospect research workflow." The closest existing scripts are:
-
-- **n8n workflow 3.2** (`VvHYTjheeecJ441F`) — MMM Prospect Audit, batch-only, no per-company arg
-- **`lux-os/workflows/outbound_campaign.py`** — campaign cycle runner, not a single-company lookup
-- **`lux-os/workflows/fire_3_2_via_webhook.py`** — fires 3.2 via webhook, still batch
-
-None take a `<company>` argument. Building a per-company research flow would be new functionality, not a wrapper — out of scope per Principle 7 (Build Only What Doesn't Exist).
-
-**To unblock:** decide what `/prospect <company>` should do — fire 3.2 batch (ignore arg), enrich-via-Claude single company lookup, or something else — then either build the underlying capability or wire to an existing one.
+| `/prospect <company>` | `~/.claude/skills/prospect/` | Claude inline research — no script, no external API. Returns MMM prospect brief from training data. |
 
 ## Recreating the skills
 
