@@ -196,11 +196,11 @@ Lessons earned through session failures and Alan-corrections. Distinct from §2 
 
 Pulled from `PROJECTS.md` Session Queue + TIER 1. Read `PROJECTS.md` for full context.
 
-1. **MMM-fix** — Re-auth Gmail cred `68RydHz0N1dUAj9S` in n8n UI; run `handoff/vm-scripts/01` + `02` in elevated PS on VM; click Execute on workflow `VvHYTjheeecJ441F` to verify 3.2.
-2. **Workflow 2.4 deploy** — Re-auth the three Google creds; set `OPUS_CLIP_API_KEY` / `BUFFER_ACCESS_TOKEN` / `BUFFER_PROFILE_IDS`; create `Video Log` Sheet tab; import `workflows/workflow_2_4_video_repurposing.json`; activate.
-3. **Workflow 2.3 finish** — After Twilio account exists: store credential, fill `__SET_*__` placeholders in `AukTldfaY4oWcu1Q`, activate.
-4. **ApexBot Session 3** — `events.yaml` SVS/KE flags, template capture (gather/march/close-popup), scheduler wiring for 4 alts.
-5. **Loretta L1** — Wire Buffer auto-post (Telegram intake C is live); then `/relist-guide` page next session.
+1. **Workflow 2.3 finish** — After Twilio account exists: store credential, fill `__SET_*__` placeholders in `AukTldfaY4oWcu1Q`, activate.
+2. **ApexBot Session 3** — `events.yaml` SVS/KE flags, template capture (gather/march/close-popup), scheduler wiring for 4 alts.
+3. **Loretta L1** — Wire Buffer auto-post (Telegram intake C is live); then `/relist-guide` page next session.
+4. **VIE end-to-end run** — Fire pipeline against a real AI-research email; confirm `/ai_stack` endpoint + dashboard tab surface the enriched record.
+5. **Job Search** — Fill resume placeholders (LinkedIn URL, Rocktop numbers, Citi years/title); rewrite cover letter.
 
 ---
 

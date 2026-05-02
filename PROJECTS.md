@@ -1,5 +1,5 @@
 # Alan OS — Master Project Registry
-**Last Updated:** April 29, 2026 (Workflow 2.4 deployed + active, MMM Gmail cred reauthed, n8n-mcp + memory bank live)
+**Last Updated:** 2026-05-02 (Session D: VIE-impl-A complete, /prospect skill, PROJECTS.md drift cleanup)
 **Owner:** Alan Sercy | CentPenny LLC / Veritas AI Partners
 **Canonical location:** GitHub → `alan-os` repo → `PROJECTS.md`
 **Session protocol:** See `SESSION_PROTOCOL.md` for the canonical open/close flow across claude.ai and Claude Code. Templates in `templates/`. Legacy: paste this file URL into Claude at session start + state environment (Host/VM) + objective.
@@ -390,7 +390,7 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 | **Veritas** | Painter SOW (after demo), health enthusiast SOW | Host | 45 min |
 | **GitHub** | alan-os repo, loretta-os repo, skill stubs populated | Host | 60 min |
 | **VIE** | Veritas Intelligence Engine — V1 build complete: `/ai_stack` endpoints (lux-os `952862e`), per-URL enrichment in `nlm_feed_builder.py` (lux-os `e990881`), AI Stack dashboard tab on Lux Command Center 8081 (lux-os `33f5e86`, 2026-04-30). Remaining: end-to-end run against a real AI-research email to confirm the full pipeline. | Host | 30 min |
-| **VIE-impl-A** | Implement 6 immediate patterns from `memory-bank/VIE_PATTERN_ACTION_LIST.md`: model tier routing (P1), three-stage GSD protocol (P2), end-of-session structured write (P4), folder contracts in CLAUDE.md (P6), prompt prefix library (P8), CLAUDE.md section ordering (P10). All low-effort, mostly CLAUDE.md/config edits. **MANDATORY pre-build audit per the action list — Principle 7: Build Only What Doesn't Exist.** | Host | 1-2 hr |
+| ~~**VIE-impl-A**~~ | ~~Implement 6 immediate patterns from `memory-bank/VIE_PATTERN_ACTION_LIST.md`~~ — ✅ Done 2026-05-02. P1 `0c60c1e`, P2 `490515f`, P4 `5025baa`, P6 `33dcffd`, P8 `18b0081`, P10 `06c3ee4`. Dictionary additions (GRILL/Progressive Disclosure/Subagent) `e6512b9`. | Host | — |
 | **VIE-impl-B** | Implement 3 medium-effort patterns: slash command shortcuts (P3), skill packs as bundles (P5), build-log-as-marketing (P7). New files + content pipeline wiring. | Host | 2-3 hr |
 | **VIE-impl-C** | Backlog: public skill repo (P9). Defer until first AgentOS BD conversation. | Host | TBD |
 
@@ -399,9 +399,6 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 ## STANDING REMINDERS
 - Trash: Every Thursday 8pm (Friday pickup)
 - Recycle: Every other Tuesday 8pm (Wednesday pickup 4pm CST) — next: Wed Apr 29
-- HP Hood deadline: May 1 — Matthew Bauer contact
-- ApexBot SVS ends: est. Apr 30 — flip `active_override: false` in events.yaml
-- RageBot expiry: Apr 30 — market entry window
 
 ---
 
