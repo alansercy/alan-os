@@ -12,3 +12,5 @@
 2026-05-02 | task-019-prospect | /prospect skill built — Claude-only inline MMM brief (bc59308)
 2026-05-02 | task-015-drift | PROJECTS.md drift + CLAUDE.md §8 refresh (6b07563)
 2026-05-02 | task-020-claude-mem | claude-mem pilot REJECT — Windows pipe bug + CLAUDE.md auto-gen conflict (a952ab1)
+2026-05-02 | task-013-dotenv | ai_research_monitor.py dotenv patch — silent no-op risk fixed (lux-os c795b82)
+2026-05-02 | task-014-orphan-calcs | fetchUsage() orphan byModel/byDay/days/avg removed (lux-os 4e1d392)
