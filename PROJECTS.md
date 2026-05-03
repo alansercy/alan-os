@@ -196,7 +196,17 @@
 - ⬜ Pending: Parents Move, Before You Leave Suburbs, Seller Protection
 - 📋 Wave Report pillars: Built by Alan, do not change architecture
 
-**WordPress migration:** Queued for Session W1 — build on Netlify, Roots & Room brand
+**WordPress site — Session I complete:**
+| Field | Value |
+|---|---|
+| Status | 🔨 IN PROGRESS — Session I complete |
+| Platform | SiteGround GrowBig — WordPress 6.9.4 |
+| Staging | staging2.lorettasercy.com (loretta-build) |
+| DNS gate | A record needed in Lofty → 8.230.105.83 (not yet propagated as of 2026-05-03) |
+| Assets | `C:\Veritas\repos\loretta-os\wp-build\` (10 files committed, commit `638a8f8`) |
+| Next | Session J — DNS resolves → run wp-install-checklist.md via Claude Code |
+| Open copy | about.html bio · transitions.html body · markets.html neighborhoods + MLS stats |
+| Last updated | 2026-05-03 Session I |
 
 ---
 
@@ -385,7 +395,8 @@ Loretta texts topic → n8n webhook → Claude generates brief + caption + hasht
 | **L1** | Loretta: reduce Sheet friction, wire Telegram → brief, Buffer auto-post | VM | 60 min |
 | **L2** | Loretta: /relist-guide page, Lofty tagging, PDF delivery | VM | 90 min |
 | **L3** | Loretta: ManyChat RELIST trigger, first nurture sequence | VM | 60 min |
-| **W1** | Loretta: WordPress site build (Netlify, Roots & Room) | Host | 90 min |
+| ~~**W1/Session I**~~ | ~~Loretta: WordPress offline asset build~~ — ✅ Done 2026-05-03. 10 files committed to `loretta-os/wp-build/` (commit `638a8f8`). DNS gate blocking live install. | Host | — |
+| **Session J** | Loretta: WP install — DNS must resolve → run wp-install-checklist.md → Kadence config → page stubs → contact form → nav | Host | 60 min |
 | **MMM** | Chief of Staff Proposal — needs context dump from Alan | Host | 45 min |
 | **Veritas** | Painter SOW (after demo), health enthusiast SOW | Host | 45 min |
 | **GitHub** | alan-os repo, loretta-os repo, skill stubs populated | Host | 60 min |
@@ -639,5 +650,5 @@ Autonomous AI research radar. Monitors email inbox for AI/tool links, enriches e
 
 ---
 *Generated: April 25, 2026 — End of cross-project governance session*
-*Last updated: April 29, 2026 — Workflow 2.4 deployed + active (`tX09Uxf9LdjVLmvl`), MMM Gmail cred reauthed, n8n-mcp + memory bank live, all three Google creds confirmed green*
+*Last updated: 2026-05-03 Session I — Loretta WP offline build complete (10 files, `loretta-os/wp-build/`, commit `638a8f8`). PROJECTS.md Netlify reference removed. DNS gate pending (Lofty A record → 8.230.105.83). Session J queued.*
 *Next update: push via `push_handoff.py` or `git commit` at end of next session*
