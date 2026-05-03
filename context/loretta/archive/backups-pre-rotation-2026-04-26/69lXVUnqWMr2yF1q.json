@@ -1,0 +1,1427 @@
+{
+    "updatedAt":  "2026-04-08T15:59:28.914Z",
+    "createdAt":  "2026-04-03T20:26:46.470Z",
+    "id":  "69lXVUnqWMr2yF1q",
+    "name":  "2.1 — Weekly Content Brief",
+    "description":  null,
+    "active":  true,
+    "isArchived":  false,
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "rule":  {
+                                                      "interval":  [
+                                                                       {
+                                                                           "field":  "weeks",
+                                                                           "triggerAtDay":  [
+                                                                                                1
+                                                                                            ],
+                                                                           "triggerAtHour":  7
+                                                                       }
+                                                                   ]
+                                                  }
+                                     },
+                      "id":  "sched-1",
+                      "name":  "Every Monday 7AM",
+                      "type":  "n8n-nodes-base.scheduleTrigger",
+                      "typeVersion":  1.3,
+                      "position":  [
+                                       0,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "documentId":  {
+                                                            "__rl":  true,
+                                                            "value":  "1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM",
+                                                            "mode":  "id"
+                                                        },
+                                         "sheetName":  {
+                                                           "__rl":  true,
+                                                           "value":  "Content Calendar",
+                                                           "mode":  "name"
+                                                       },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "sheets-read-1",
+                      "name":  "Read Content Calendar",
+                      "type":  "n8n-nodes-base.googleSheets",
+                      "typeVersion":  4.7,
+                      "position":  [
+                                       288,
+                                       304
+                                   ],
+                      "credentials":  {
+                                          "googleSheetsOAuth2Api":  {
+                                                                        "id":  "sG8kOyb5bJb0hjgS",
+                                                                        "name":  "Google Sheets account"
+                                                                    }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const today = new Date();\ntoday.setHours(0,0,0,0);\nconst cutoff = new Date(today);\ncutoff.setDate(today.getDate() + 14);\n\nconst qualifying = [];\nfor (const item of $input.all()) {\n  const status = (item.json[\u0027Status\u0027] || \u0027\u0027).trim();\n  const filmDateStr = (item.json[\u0027Film Date\u0027] || \u0027\u0027).trim();\n  const filmDate = new Date(filmDateStr);\n  filmDate.setHours(0,0,0,0);\n\n  console.log(\u0027Episode: \u0027 + item.json[\u0027Episode Title\u0027] + \u0027 | Status: \u0027 + status + \u0027 | Film Date: \u0027 + filmDateStr + \u0027 | Parsed: \u0027 + filmDate + \u0027 | inRange: \u0027 + (filmDate \u003e= today \u0026\u0026 filmDate \u003c= cutoff));\n\n  if (status !== \u0027Idea\u0027 \u0026\u0026 status !== \u0027Brief Ready\u0027) continue;\n  if (!filmDateStr) continue;\n  if (isNaN(filmDate.getTime())) continue;\n  if (filmDate \u003e= today \u0026\u0026 filmDate \u003c= cutoff) {\n    qualifying.push({json: item.json});\n  }\n}\nreturn qualifying;"
+                                     },
+                      "id":  "code-filter-1",
+                      "name":  "Filter Episodes",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       560,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const briefItems = $input.all();\nconst episodeItems = $(\u0027Filter Episodes\u0027).all();\nconst today = new Date().toLocaleDateString(\u0027en-US\u0027, {month:\u0027long\u0027, day:\u0027numeric\u0027, year:\u0027numeric\u0027});\nconst results = [];\n\nfor (let i = 0; i \u003c briefItems.length; i++) {\n  const episode = episodeItems[i] ? episodeItems[i].json : {};\n  const briefText = briefItems[i].json.content[0].text;\n  const docTitle = (episode[\u0027Episode Title\u0027] || \u0027Untitled\u0027) + \u0027 \\u2014 Filming Brief\u0027;\n  const separator = \u0027\\u2501\u0027.repeat(48);\n\n  const contentLines = [\n    \u0027EPISODE #\u0027 + (episode[\u0027Episode #\u0027] || \u0027\u0027) + \u0027: \u0027 + (episode[\u0027Episode Title\u0027] || \u0027\u0027),\n    \u0027Series: \u0027 + (episode[\u0027Series\u0027] || \u0027\u0027) + \u0027  |  Pillar \u0027 + (episode[\u0027Pillar\u0027] || \u0027\u0027),\n    \u0027Towns Featured: \u0027 + (episode[\u0027Towns Featured\u0027] || \u0027\u0027),\n    \u0027Film Date: \u0027 + (episode[\u0027Film Date\u0027] || \u0027\u0027),\n    \u0027Brief Generated: \u0027 + today,\n    \u0027\u0027,\n    separator,\n    \u0027\u0027,\n    briefText,\n    \u0027\u0027,\n    separator,\n    \u0027East of Dallas \\u2014 lorettasercy.com  |  eXp Realty  |  License #0633703\u0027\n  ];\n\n  results.push({\n    json: {\n      episodeNumber: episode[\u0027Episode #\u0027] || \u0027\u0027,\n      episodeTitle: episode[\u0027Episode Title\u0027] || \u0027\u0027,\n      series: episode[\u0027Series\u0027] || \u0027\u0027,\n      filmDate: episode[\u0027Film Date\u0027] || \u0027\u0027,\n      towns: episode[\u0027Towns Featured\u0027] || \u0027\u0027,\n      docTitle: docTitle,\n      docContent: contentLines.join(\u0027\\n\u0027)\n    }\n  });\n}\nreturn results;"
+                                     },
+                      "id":  "code-doc-1",
+                      "name":  "Build Doc Content",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1120,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://www.googleapis.com/drive/v3/files",
+                                         "authentication":  "predefinedCredentialType",
+                                         "nodeCredentialType":  "googleDocsOAuth2Api",
+                                         "sendBody":  true,
+                                         "contentType":  "raw",
+                                         "rawContentType":  "application/json",
+                                         "body":  "={{ JSON.stringify({ name: $json.docTitle, mimeType: \"application/vnd.google-apps.document\", parents: [\"1sdkWt7DgoLl1JCldcH0zyM_XeBt_CP9f\"] }) }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "http-create-doc-1",
+                      "name":  "Create Google Doc",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.4,
+                      "position":  [
+                                       1408,
+                                       304
+                                   ],
+                      "credentials":  {
+                                          "googleDocsOAuth2Api":  {
+                                                                      "id":  "gbwzaRu0ONWfhuUr",
+                                                                      "name":  "Google Docs account"
+                                                                  }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "s1",
+                                                                                     "name":  "documentId",
+                                                                                     "value":  "={{ $json.id }}",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "s2",
+                                                                                     "name":  "docUrl",
+                                                                                     "value":  "=https://docs.google.com/document/d/{{ $json.documentId }}/edit",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "s3",
+                                                                                     "name":  "episodeTitle",
+                                                                                     "value":  "={{ $(\u0027Build Doc Content\u0027).item.json.episodeTitle }}",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "s4",
+                                                                                     "name":  "episodeNumber",
+                                                                                     "value":  "={{ $(\u0027Build Doc Content\u0027).item.json.episodeNumber }}",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "s5",
+                                                                                     "name":  "docContent",
+                                                                                     "value":  "={{ $(\u0027Build Doc Content\u0027).item.json.docContent }}",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "set-doc-url-1",
+                      "name":  "Set Doc URL",
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.4,
+                      "position":  [
+                                       1680,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "=https://docs.googleapis.com/v1/documents/{{ $json.documentId }}:batchUpdate",
+                                         "authentication":  "predefinedCredentialType",
+                                         "nodeCredentialType":  "googleDocsOAuth2Api",
+                                         "sendBody":  true,
+                                         "contentType":  "raw",
+                                         "rawContentType":  "application/json",
+                                         "body":  "={{ $json.requestBody }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "http-update-doc-1",
+                      "name":  "Insert Doc Content",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.4,
+                      "position":  [
+                                       1968,
+                                       304
+                                   ],
+                      "credentials":  {
+                                          "googleDocsOAuth2Api":  {
+                                                                      "id":  "gbwzaRu0ONWfhuUr",
+                                                                      "name":  "Google Docs account"
+                                                                  }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "r1",
+                                                                                     "name":  "episodeTitle",
+                                                                                     "value":  "={{ $(\u0027Build Docs Payload\u0027).item.json.episodeTitle }}",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "r2",
+                                                                                     "name":  "docUrl",
+                                                                                     "value":  "={{ $(\u0027Build Docs Payload\u0027).item.json.docUrl }}",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "set-restore-1",
+                      "name":  "Restore Episode Data",
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.4,
+                      "position":  [
+                                       2240,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "operation":  "appendOrUpdate",
+                                         "documentId":  {
+                                                            "__rl":  true,
+                                                            "value":  "1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM",
+                                                            "mode":  "id"
+                                                        },
+                                         "sheetName":  {
+                                                           "__rl":  true,
+                                                           "value":  "Content Calendar",
+                                                           "mode":  "name"
+                                                       },
+                                         "columns":  {
+                                                         "mappingMode":  "defineBelow",
+                                                         "matchingColumns":  [
+                                                                                 "Episode Title"
+                                                                             ],
+                                                         "value":  {
+                                                                       "Episode Title":  "={{ $json.episodeTitle }}",
+                                                                       "Brief Doc Link":  "={{ $json.docUrl }}"
+                                                                   },
+                                                         "schema":  [
+                                                                        {
+                                                                            "id":  "Episode #",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Episode #",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  true
+                                                                        },
+                                                                        {
+                                                                            "id":  "Episode Title",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Episode Title",
+                                                                            "defaultMatch":  true,
+                                                                            "canBeUsedToMatch":  true
+                                                                        },
+                                                                        {
+                                                                            "id":  "Series",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Series",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Pillar",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Pillar",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Status",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Status",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Towns Featured",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Towns Featured",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Talking Points",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Talking Points",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Film Date",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Film Date",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Edit Deadline",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Edit Deadline",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Publish Date",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Publish Date",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "YouTube URL",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "YouTube URL",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "UTM Slug",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "UTM Slug",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Brief Doc Link",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Brief Doc Link",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Description Doc Link",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Description Doc Link",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Thumbnail Status",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Thumbnail Status",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Clip Status",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Clip Status",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        },
+                                                                        {
+                                                                            "id":  "Notes",
+                                                                            "type":  "string",
+                                                                            "display":  true,
+                                                                            "required":  false,
+                                                                            "displayName":  "Notes",
+                                                                            "defaultMatch":  false,
+                                                                            "canBeUsedToMatch":  false
+                                                                        }
+                                                                    ],
+                                                         "attemptToConvertTypes":  false,
+                                                         "convertFieldsToString":  false
+                                                     },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "sheets-write-1",
+                      "name":  "Write Brief Doc Link",
+                      "type":  "n8n-nodes-base.googleSheets",
+                      "typeVersion":  4.7,
+                      "position":  [
+                                       2496,
+                                       304
+                                   ],
+                      "credentials":  {
+                                          "googleSheetsOAuth2Api":  {
+                                                                        "id":  "sG8kOyb5bJb0hjgS",
+                                                                        "name":  "Google Sheets account"
+                                                                    }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "aggregate":  "aggregateAllItemData",
+                                         "destinationFieldName":  "episodes",
+                                         "include":  "specifiedFields",
+                                         "fieldsToInclude":  "episodeTitle, docUrl",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "agg-1",
+                      "name":  "Aggregate Episodes",
+                      "type":  "n8n-nodes-base.aggregate",
+                      "typeVersion":  1,
+                      "position":  [
+                                       2720,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const items = $(\u0027Restore Episode Data\u0027).all();\nconst episodes = items.map(function(item) {\n  return {\n    episodeTitle: item.json.episodeTitle,\n    docUrl: item.json.docUrl\n  };\n});\nconst count = episodes.length;\nif (count === 0) return [];\nconst today = new Date().toLocaleDateString(\u0027en-US\u0027, {weekday:\u0027long\u0027, month:\u0027long\u0027, day:\u0027numeric\u0027, year:\u0027numeric\u0027});\nconst lines = [\u0027Hi Loretta,\u0027, \u0027\u0027];\nlines.push(\u0027Your filming briefs for the week of \u0027 + today + \u0027 are ready. \u0027 + count + \u0027 episode\u0027 + (count !== 1 ? \u0027s\u0027 : \u0027\u0027) + \u0027 queued:\u0027);\nlines.push(\u0027\u0027);\nepisodes.forEach(function(ep, i) {\n  lines.push((i + 1) + \u0027. \u0027 + ep.episodeTitle);\n  lines.push(\u0027   \u0027 + ep.docUrl);\n  lines.push(\u0027\u0027);\n});\nlines.push(\u0027Each brief includes 3 hook options, talking points in your voice, compliance flags, b-roll suggestions, and your verbal CTA.\u0027);\nlines.push(\u0027\u0027);\nlines.push(\u0027\\u2014 East of Dallas AgentOS\u0027);\nconst result = {\n  emailBody: lines.join(\u0027\\n\u0027),\n  emailSubject: \u0027Your filming briefs are ready (\u0027 + count + \u0027 episode\u0027 + (count !== 1 ? \u0027s\u0027 : \u0027\u0027) + \u0027)\u0027,\n  episodeCount: count\n};\nreturn [{ json: result }];"
+                                     },
+                      "id":  "code-email-1",
+                      "name":  "Build Email Body",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       3088,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "sendTo":  "lorettasercy@gmail.com",
+                                         "subject":  "={{ $json.emailSubject }}",
+                                         "message":  "={{ $json.emailBody }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "gmail-1",
+                      "name":  "Send Email to Loretta",
+                      "type":  "n8n-nodes-base.gmail",
+                      "typeVersion":  2.2,
+                      "position":  [
+                                       3360,
+                                       304
+                                   ],
+                      "webhookId":  "1ba7f76e-96d0-414b-9317-1c3d60acb3de",
+                      "credentials":  {
+                                          "gmailOAuth2":  {
+                                                              "id":  "wGmwTYI4VJte9Fbr",
+                                                              "name":  "Gmail account 3"
+                                                          }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForEachItem",
+                                         "jsCode":  "const result = {\n  documentId: $json.documentId,\n  docUrl: $json.docUrl,\n  episodeTitle: $json.episodeTitle,\n  episodeNumber: $json.episodeNumber,\n  requestBody: JSON.stringify({\n    requests: [{\n      insertText: {\n        location: { index: 1 },\n        text: $json.docContent\n      }\n    }]\n  })\n};\nreturn result;"
+                                     },
+                      "id":  "code-payload-1",
+                      "name":  "Build Docs Payload",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1824,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://api.anthropic.com/v1/messages",
+                                         "sendHeaders":  true,
+                                         "headerParameters":  {
+                                                                  "parameters":  [
+                                                                                     {
+                                                                                         "name":  "x-api-key",
+                                                                                         "value":  "{{ANTHROPIC_API_KEY}}"
+                                                                                     },
+                                                                                     {
+                                                                                         "name":  "anthropic-version",
+                                                                                         "value":  "2023-06-01"
+                                                                                     },
+                                                                                     {
+                                                                                         "name":  "content-type",
+                                                                                         "value":  "application/json"
+                                                                                     }
+                                                                                 ]
+                                                              },
+                                         "sendBody":  true,
+                                         "contentType":  "raw",
+                                         "body":  "={\n  \"model\": \"claude-haiku-4-5-20251001\",\n  \"max_tokens\": 1000,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Generate a filming brief for this episode: Episode #{{ $json[\u0027Episode #\u0027] }}: {{ $json[\u0027Episode Title\u0027] }} Series: {{ $json[\u0027Series\u0027] }} | Pillar {{ $json[\u0027Pillar\u0027] }} Towns Featured: {{ $json[\u0027Towns Featured\u0027] }} Calendar Talking Points: {{ $json[\u0027Talking Points\u0027] }} Film Date: {{ $json[\u0027Film Date\u0027] }}\"\n    }\n  ]\n}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.4,
+                      "position":  [
+                                       848,
+                                       304
+                                   ],
+                      "id":  "ef5ecb7a-c6f5-4ef6-be37-90ed6d4d4e4c",
+                      "name":  "HTTP Request"
+                  }
+              ],
+    "connections":  {
+                        "Every Monday 7AM":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Read Content Calendar",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "Read Content Calendar":  {
+                                                      "main":  [
+                                                                   [
+                                                                       {
+                                                                           "node":  "Filter Episodes",
+                                                                           "type":  "main",
+                                                                           "index":  0
+                                                                       }
+                                                                   ]
+                                                               ]
+                                                  },
+                        "Filter Episodes":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "HTTP Request",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Build Doc Content":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "Create Google Doc",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "Create Google Doc":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "Set Doc URL",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "Insert Doc Content":  {
+                                                   "main":  [
+                                                                [
+                                                                    {
+                                                                        "node":  "Restore Episode Data",
+                                                                        "type":  "main",
+                                                                        "index":  0
+                                                                    }
+                                                                ]
+                                                            ]
+                                               },
+                        "Restore Episode Data":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Write Brief Doc Link",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "Write Brief Doc Link":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Aggregate Episodes",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "Aggregate Episodes":  {
+                                                   "main":  [
+                                                                [
+                                                                    {
+                                                                        "node":  "Build Email Body",
+                                                                        "type":  "main",
+                                                                        "index":  0
+                                                                    }
+                                                                ]
+                                                            ]
+                                               },
+                        "Build Email Body":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Send Email to Loretta",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "Set Doc URL":  {
+                                            "main":  [
+                                                         [
+                                                             {
+                                                                 "node":  "Build Docs Payload",
+                                                                 "type":  "main",
+                                                                 "index":  0
+                                                             }
+                                                         ]
+                                                     ]
+                                        },
+                        "Build Docs Payload":  {
+                                                   "main":  [
+                                                                [
+                                                                    {
+                                                                        "node":  "Insert Doc Content",
+                                                                        "type":  "main",
+                                                                        "index":  0
+                                                                    }
+                                                                ]
+                                                            ]
+                                               },
+                        "HTTP Request":  {
+                                             "main":  [
+                                                          [
+                                                              {
+                                                                  "node":  "Build Doc Content",
+                                                                  "type":  "main",
+                                                                  "index":  0
+                                                              }
+                                                          ]
+                                                      ]
+                                         }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1",
+                     "saveDataErrorExecution":  "all",
+                     "saveDataSuccessExecution":  "all",
+                     "saveManualExecutions":  true,
+                     "callerPolicy":  "workflowsFromSameOwner",
+                     "availableInMCP":  false,
+                     "binaryMode":  "separate"
+                 },
+    "staticData":  {
+                       "node:Every Monday 7AM":  {
+                                                     "recurrenceRules":  [
+
+                                                                         ]
+                                                 }
+                   },
+    "meta":  null,
+    "pinData":  {
+
+                },
+    "versionId":  "71c24e56-20e5-4bc4-9721-eaa9c14ac9b8",
+    "activeVersionId":  "71c24e56-20e5-4bc4-9721-eaa9c14ac9b8",
+    "versionCounter":  83,
+    "triggerCount":  1,
+    "shared":  [
+                   {
+                       "updatedAt":  "2026-04-03T20:26:46.474Z",
+                       "createdAt":  "2026-04-03T20:26:46.474Z",
+                       "role":  "workflow:owner",
+                       "workflowId":  "69lXVUnqWMr2yF1q",
+                       "projectId":  "gg1wD0X6rdHCJvKB",
+                       "project":  {
+                                       "updatedAt":  "2026-03-21T22:27:29.036Z",
+                                       "createdAt":  "2026-03-21T22:24:56.455Z",
+                                       "id":  "gg1wD0X6rdHCJvKB",
+                                       "name":  "Alan Sercy \u003calansercy@gmail.com\u003e",
+                                       "type":  "personal",
+                                       "icon":  null,
+                                       "description":  null,
+                                       "creatorId":  "19773a36-d839-4b09-93d5-6b41434750c0"
+                                   }
+                   }
+               ],
+    "tags":  [
+
+             ],
+    "activeVersion":  {
+                          "updatedAt":  "2026-04-08T15:59:28.916Z",
+                          "createdAt":  "2026-04-08T15:59:28.916Z",
+                          "versionId":  "71c24e56-20e5-4bc4-9721-eaa9c14ac9b8",
+                          "workflowId":  "69lXVUnqWMr2yF1q",
+                          "nodes":  [
+                                        {
+                                            "parameters":  {
+                                                               "rule":  {
+                                                                            "interval":  [
+                                                                                             {
+                                                                                                 "field":  "weeks",
+                                                                                                 "triggerAtDay":  [
+                                                                                                                      1
+                                                                                                                  ],
+                                                                                                 "triggerAtHour":  7
+                                                                                             }
+                                                                                         ]
+                                                                        }
+                                                           },
+                                            "id":  "sched-1",
+                                            "name":  "Every Monday 7AM",
+                                            "type":  "n8n-nodes-base.scheduleTrigger",
+                                            "typeVersion":  1.3,
+                                            "position":  [
+                                                             0,
+                                                             304
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "documentId":  {
+                                                                                  "__rl":  true,
+                                                                                  "value":  "1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM",
+                                                                                  "mode":  "id"
+                                                                              },
+                                                               "sheetName":  {
+                                                                                 "__rl":  true,
+                                                                                 "value":  "Content Calendar",
+                                                                                 "mode":  "name"
+                                                                             },
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "sheets-read-1",
+                                            "name":  "Read Content Calendar",
+                                            "type":  "n8n-nodes-base.googleSheets",
+                                            "typeVersion":  4.7,
+                                            "position":  [
+                                                             288,
+                                                             304
+                                                         ],
+                                            "credentials":  {
+                                                                "googleSheetsOAuth2Api":  {
+                                                                                              "id":  "sG8kOyb5bJb0hjgS",
+                                                                                              "name":  "Google Sheets account"
+                                                                                          }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "jsCode":  "const today = new Date();\ntoday.setHours(0,0,0,0);\nconst cutoff = new Date(today);\ncutoff.setDate(today.getDate() + 14);\n\nconst qualifying = [];\nfor (const item of $input.all()) {\n  const status = (item.json[\u0027Status\u0027] || \u0027\u0027).trim();\n  const filmDateStr = (item.json[\u0027Film Date\u0027] || \u0027\u0027).trim();\n  const filmDate = new Date(filmDateStr);\n  filmDate.setHours(0,0,0,0);\n\n  console.log(\u0027Episode: \u0027 + item.json[\u0027Episode Title\u0027] + \u0027 | Status: \u0027 + status + \u0027 | Film Date: \u0027 + filmDateStr + \u0027 | Parsed: \u0027 + filmDate + \u0027 | inRange: \u0027 + (filmDate \u003e= today \u0026\u0026 filmDate \u003c= cutoff));\n\n  if (status !== \u0027Idea\u0027 \u0026\u0026 status !== \u0027Brief Ready\u0027) continue;\n  if (!filmDateStr) continue;\n  if (isNaN(filmDate.getTime())) continue;\n  if (filmDate \u003e= today \u0026\u0026 filmDate \u003c= cutoff) {\n    qualifying.push({json: item.json});\n  }\n}\nreturn qualifying;"
+                                                           },
+                                            "id":  "code-filter-1",
+                                            "name":  "Filter Episodes",
+                                            "type":  "n8n-nodes-base.code",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             560,
+                                                             304
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "jsCode":  "const briefItems = $input.all();\nconst episodeItems = $(\u0027Filter Episodes\u0027).all();\nconst today = new Date().toLocaleDateString(\u0027en-US\u0027, {month:\u0027long\u0027, day:\u0027numeric\u0027, year:\u0027numeric\u0027});\nconst results = [];\n\nfor (let i = 0; i \u003c briefItems.length; i++) {\n  const episode = episodeItems[i] ? episodeItems[i].json : {};\n  const briefText = briefItems[i].json.content[0].text;\n  const docTitle = (episode[\u0027Episode Title\u0027] || \u0027Untitled\u0027) + \u0027 \\u2014 Filming Brief\u0027;\n  const separator = \u0027\\u2501\u0027.repeat(48);\n\n  const contentLines = [\n    \u0027EPISODE #\u0027 + (episode[\u0027Episode #\u0027] || \u0027\u0027) + \u0027: \u0027 + (episode[\u0027Episode Title\u0027] || \u0027\u0027),\n    \u0027Series: \u0027 + (episode[\u0027Series\u0027] || \u0027\u0027) + \u0027  |  Pillar \u0027 + (episode[\u0027Pillar\u0027] || \u0027\u0027),\n    \u0027Towns Featured: \u0027 + (episode[\u0027Towns Featured\u0027] || \u0027\u0027),\n    \u0027Film Date: \u0027 + (episode[\u0027Film Date\u0027] || \u0027\u0027),\n    \u0027Brief Generated: \u0027 + today,\n    \u0027\u0027,\n    separator,\n    \u0027\u0027,\n    briefText,\n    \u0027\u0027,\n    separator,\n    \u0027East of Dallas \\u2014 lorettasercy.com  |  eXp Realty  |  License #0633703\u0027\n  ];\n\n  results.push({\n    json: {\n      episodeNumber: episode[\u0027Episode #\u0027] || \u0027\u0027,\n      episodeTitle: episode[\u0027Episode Title\u0027] || \u0027\u0027,\n      series: episode[\u0027Series\u0027] || \u0027\u0027,\n      filmDate: episode[\u0027Film Date\u0027] || \u0027\u0027,\n      towns: episode[\u0027Towns Featured\u0027] || \u0027\u0027,\n      docTitle: docTitle,\n      docContent: contentLines.join(\u0027\\n\u0027)\n    }\n  });\n}\nreturn results;"
+                                                           },
+                                            "id":  "code-doc-1",
+                                            "name":  "Build Doc Content",
+                                            "type":  "n8n-nodes-base.code",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             1120,
+                                                             304
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "method":  "POST",
+                                                               "url":  "https://www.googleapis.com/drive/v3/files",
+                                                               "authentication":  "predefinedCredentialType",
+                                                               "nodeCredentialType":  "googleDocsOAuth2Api",
+                                                               "sendBody":  true,
+                                                               "contentType":  "raw",
+                                                               "rawContentType":  "application/json",
+                                                               "body":  "={{ JSON.stringify({ name: $json.docTitle, mimeType: \"application/vnd.google-apps.document\", parents: [\"1sdkWt7DgoLl1JCldcH0zyM_XeBt_CP9f\"] }) }}",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "http-create-doc-1",
+                                            "name":  "Create Google Doc",
+                                            "type":  "n8n-nodes-base.httpRequest",
+                                            "typeVersion":  4.4,
+                                            "position":  [
+                                                             1408,
+                                                             304
+                                                         ],
+                                            "credentials":  {
+                                                                "googleDocsOAuth2Api":  {
+                                                                                            "id":  "gbwzaRu0ONWfhuUr",
+                                                                                            "name":  "Google Docs account"
+                                                                                        }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "assignments":  {
+                                                                                   "assignments":  [
+                                                                                                       {
+                                                                                                           "id":  "s1",
+                                                                                                           "name":  "documentId",
+                                                                                                           "value":  "={{ $json.id }}",
+                                                                                                           "type":  "string"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "id":  "s2",
+                                                                                                           "name":  "docUrl",
+                                                                                                           "value":  "=https://docs.google.com/document/d/{{ $json.documentId }}/edit",
+                                                                                                           "type":  "string"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "id":  "s3",
+                                                                                                           "name":  "episodeTitle",
+                                                                                                           "value":  "={{ $(\u0027Build Doc Content\u0027).item.json.episodeTitle }}",
+                                                                                                           "type":  "string"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "id":  "s4",
+                                                                                                           "name":  "episodeNumber",
+                                                                                                           "value":  "={{ $(\u0027Build Doc Content\u0027).item.json.episodeNumber }}",
+                                                                                                           "type":  "string"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "id":  "s5",
+                                                                                                           "name":  "docContent",
+                                                                                                           "value":  "={{ $(\u0027Build Doc Content\u0027).item.json.docContent }}",
+                                                                                                           "type":  "string"
+                                                                                                       }
+                                                                                                   ]
+                                                                               },
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "set-doc-url-1",
+                                            "name":  "Set Doc URL",
+                                            "type":  "n8n-nodes-base.set",
+                                            "typeVersion":  3.4,
+                                            "position":  [
+                                                             1680,
+                                                             304
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "method":  "POST",
+                                                               "url":  "=https://docs.googleapis.com/v1/documents/{{ $json.documentId }}:batchUpdate",
+                                                               "authentication":  "predefinedCredentialType",
+                                                               "nodeCredentialType":  "googleDocsOAuth2Api",
+                                                               "sendBody":  true,
+                                                               "contentType":  "raw",
+                                                               "rawContentType":  "application/json",
+                                                               "body":  "={{ $json.requestBody }}",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "http-update-doc-1",
+                                            "name":  "Insert Doc Content",
+                                            "type":  "n8n-nodes-base.httpRequest",
+                                            "typeVersion":  4.4,
+                                            "position":  [
+                                                             1968,
+                                                             304
+                                                         ],
+                                            "credentials":  {
+                                                                "googleDocsOAuth2Api":  {
+                                                                                            "id":  "gbwzaRu0ONWfhuUr",
+                                                                                            "name":  "Google Docs account"
+                                                                                        }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "assignments":  {
+                                                                                   "assignments":  [
+                                                                                                       {
+                                                                                                           "id":  "r1",
+                                                                                                           "name":  "episodeTitle",
+                                                                                                           "value":  "={{ $(\u0027Build Docs Payload\u0027).item.json.episodeTitle }}",
+                                                                                                           "type":  "string"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "id":  "r2",
+                                                                                                           "name":  "docUrl",
+                                                                                                           "value":  "={{ $(\u0027Build Docs Payload\u0027).item.json.docUrl }}",
+                                                                                                           "type":  "string"
+                                                                                                       }
+                                                                                                   ]
+                                                                               },
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "set-restore-1",
+                                            "name":  "Restore Episode Data",
+                                            "type":  "n8n-nodes-base.set",
+                                            "typeVersion":  3.4,
+                                            "position":  [
+                                                             2240,
+                                                             304
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "operation":  "appendOrUpdate",
+                                                               "documentId":  {
+                                                                                  "__rl":  true,
+                                                                                  "value":  "1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM",
+                                                                                  "mode":  "id"
+                                                                              },
+                                                               "sheetName":  {
+                                                                                 "__rl":  true,
+                                                                                 "value":  "Content Calendar",
+                                                                                 "mode":  "name"
+                                                                             },
+                                                               "columns":  {
+                                                                               "mappingMode":  "defineBelow",
+                                                                               "matchingColumns":  [
+                                                                                                       "Episode Title"
+                                                                                                   ],
+                                                                               "value":  {
+                                                                                             "Episode Title":  "={{ $json.episodeTitle }}",
+                                                                                             "Brief Doc Link":  "={{ $json.docUrl }}"
+                                                                                         },
+                                                                               "schema":  [
+                                                                                              {
+                                                                                                  "id":  "Episode #",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Episode #",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  true
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Episode Title",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Episode Title",
+                                                                                                  "defaultMatch":  true,
+                                                                                                  "canBeUsedToMatch":  true
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Series",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Series",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Pillar",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Pillar",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Status",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Status",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Towns Featured",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Towns Featured",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Talking Points",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Talking Points",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Film Date",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Film Date",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Edit Deadline",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Edit Deadline",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Publish Date",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Publish Date",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "YouTube URL",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "YouTube URL",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "UTM Slug",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "UTM Slug",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Brief Doc Link",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Brief Doc Link",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Description Doc Link",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Description Doc Link",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Thumbnail Status",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Thumbnail Status",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Clip Status",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Clip Status",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              },
+                                                                                              {
+                                                                                                  "id":  "Notes",
+                                                                                                  "type":  "string",
+                                                                                                  "display":  true,
+                                                                                                  "required":  false,
+                                                                                                  "displayName":  "Notes",
+                                                                                                  "defaultMatch":  false,
+                                                                                                  "canBeUsedToMatch":  false
+                                                                                              }
+                                                                                          ],
+                                                                               "attemptToConvertTypes":  false,
+                                                                               "convertFieldsToString":  false
+                                                                           },
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "sheets-write-1",
+                                            "name":  "Write Brief Doc Link",
+                                            "type":  "n8n-nodes-base.googleSheets",
+                                            "typeVersion":  4.7,
+                                            "position":  [
+                                                             2496,
+                                                             304
+                                                         ],
+                                            "credentials":  {
+                                                                "googleSheetsOAuth2Api":  {
+                                                                                              "id":  "sG8kOyb5bJb0hjgS",
+                                                                                              "name":  "Google Sheets account"
+                                                                                          }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "aggregate":  "aggregateAllItemData",
+                                                               "destinationFieldName":  "episodes",
+                                                               "include":  "specifiedFields",
+                                                               "fieldsToInclude":  "episodeTitle, docUrl",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "agg-1",
+                                            "name":  "Aggregate Episodes",
+                                            "type":  "n8n-nodes-base.aggregate",
+                                            "typeVersion":  1,
+                                            "position":  [
+                                                             2720,
+                                                             304
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "jsCode":  "const items = $(\u0027Restore Episode Data\u0027).all();\nconst episodes = items.map(function(item) {\n  return {\n    episodeTitle: item.json.episodeTitle,\n    docUrl: item.json.docUrl\n  };\n});\nconst count = episodes.length;\nif (count === 0) return [];\nconst today = new Date().toLocaleDateString(\u0027en-US\u0027, {weekday:\u0027long\u0027, month:\u0027long\u0027, day:\u0027numeric\u0027, year:\u0027numeric\u0027});\nconst lines = [\u0027Hi Loretta,\u0027, \u0027\u0027];\nlines.push(\u0027Your filming briefs for the week of \u0027 + today + \u0027 are ready. \u0027 + count + \u0027 episode\u0027 + (count !== 1 ? \u0027s\u0027 : \u0027\u0027) + \u0027 queued:\u0027);\nlines.push(\u0027\u0027);\nepisodes.forEach(function(ep, i) {\n  lines.push((i + 1) + \u0027. \u0027 + ep.episodeTitle);\n  lines.push(\u0027   \u0027 + ep.docUrl);\n  lines.push(\u0027\u0027);\n});\nlines.push(\u0027Each brief includes 3 hook options, talking points in your voice, compliance flags, b-roll suggestions, and your verbal CTA.\u0027);\nlines.push(\u0027\u0027);\nlines.push(\u0027\\u2014 East of Dallas AgentOS\u0027);\nconst result = {\n  emailBody: lines.join(\u0027\\n\u0027),\n  emailSubject: \u0027Your filming briefs are ready (\u0027 + count + \u0027 episode\u0027 + (count !== 1 ? \u0027s\u0027 : \u0027\u0027) + \u0027)\u0027,\n  episodeCount: count\n};\nreturn [{ json: result }];"
+                                                           },
+                                            "id":  "code-email-1",
+                                            "name":  "Build Email Body",
+                                            "type":  "n8n-nodes-base.code",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             3088,
+                                                             304
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "sendTo":  "lorettasercy@gmail.com",
+                                                               "subject":  "={{ $json.emailSubject }}",
+                                                               "message":  "={{ $json.emailBody }}",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "gmail-1",
+                                            "name":  "Send Email to Loretta",
+                                            "type":  "n8n-nodes-base.gmail",
+                                            "typeVersion":  2.2,
+                                            "position":  [
+                                                             3360,
+                                                             304
+                                                         ],
+                                            "webhookId":  "1ba7f76e-96d0-414b-9317-1c3d60acb3de",
+                                            "credentials":  {
+                                                                "gmailOAuth2":  {
+                                                                                    "id":  "wGmwTYI4VJte9Fbr",
+                                                                                    "name":  "Gmail account 3"
+                                                                                }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "mode":  "runOnceForEachItem",
+                                                               "jsCode":  "const result = {\n  documentId: $json.documentId,\n  docUrl: $json.docUrl,\n  episodeTitle: $json.episodeTitle,\n  episodeNumber: $json.episodeNumber,\n  requestBody: JSON.stringify({\n    requests: [{\n      insertText: {\n        location: { index: 1 },\n        text: $json.docContent\n      }\n    }]\n  })\n};\nreturn result;"
+                                                           },
+                                            "id":  "code-payload-1",
+                                            "name":  "Build Docs Payload",
+                                            "type":  "n8n-nodes-base.code",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             1824,
+                                                             304
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "method":  "POST",
+                                                               "url":  "https://api.anthropic.com/v1/messages",
+                                                               "sendHeaders":  true,
+                                                               "headerParameters":  {
+                                                                                        "parameters":  [
+                                                                                                           {
+                                                                                                               "name":  "x-api-key",
+                                                                                                               "value":  "{{ANTHROPIC_API_KEY}}"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "name":  "anthropic-version",
+                                                                                                               "value":  "2023-06-01"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "name":  "content-type",
+                                                                                                               "value":  "application/json"
+                                                                                                           }
+                                                                                                       ]
+                                                                                    },
+                                                               "sendBody":  true,
+                                                               "contentType":  "raw",
+                                                               "body":  "={\n  \"model\": \"claude-haiku-4-5-20251001\",\n  \"max_tokens\": 1000,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Generate a filming brief for this episode: Episode #{{ $json[\u0027Episode #\u0027] }}: {{ $json[\u0027Episode Title\u0027] }} Series: {{ $json[\u0027Series\u0027] }} | Pillar {{ $json[\u0027Pillar\u0027] }} Towns Featured: {{ $json[\u0027Towns Featured\u0027] }} Calendar Talking Points: {{ $json[\u0027Talking Points\u0027] }} Film Date: {{ $json[\u0027Film Date\u0027] }}\"\n    }\n  ]\n}",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "type":  "n8n-nodes-base.httpRequest",
+                                            "typeVersion":  4.4,
+                                            "position":  [
+                                                             848,
+                                                             304
+                                                         ],
+                                            "id":  "ef5ecb7a-c6f5-4ef6-be37-90ed6d4d4e4c",
+                                            "name":  "HTTP Request"
+                                        }
+                                    ],
+                          "connections":  {
+                                              "Every Monday 7AM":  {
+                                                                       "main":  [
+                                                                                    [
+                                                                                        {
+                                                                                            "node":  "Read Content Calendar",
+                                                                                            "type":  "main",
+                                                                                            "index":  0
+                                                                                        }
+                                                                                    ]
+                                                                                ]
+                                                                   },
+                                              "Read Content Calendar":  {
+                                                                            "main":  [
+                                                                                         [
+                                                                                             {
+                                                                                                 "node":  "Filter Episodes",
+                                                                                                 "type":  "main",
+                                                                                                 "index":  0
+                                                                                             }
+                                                                                         ]
+                                                                                     ]
+                                                                        },
+                                              "Filter Episodes":  {
+                                                                      "main":  [
+                                                                                   [
+                                                                                       {
+                                                                                           "node":  "HTTP Request",
+                                                                                           "type":  "main",
+                                                                                           "index":  0
+                                                                                       }
+                                                                                   ]
+                                                                               ]
+                                                                  },
+                                              "Build Doc Content":  {
+                                                                        "main":  [
+                                                                                     [
+                                                                                         {
+                                                                                             "node":  "Create Google Doc",
+                                                                                             "type":  "main",
+                                                                                             "index":  0
+                                                                                         }
+                                                                                     ]
+                                                                                 ]
+                                                                    },
+                                              "Create Google Doc":  {
+                                                                        "main":  [
+                                                                                     [
+                                                                                         {
+                                                                                             "node":  "Set Doc URL",
+                                                                                             "type":  "main",
+                                                                                             "index":  0
+                                                                                         }
+                                                                                     ]
+                                                                                 ]
+                                                                    },
+                                              "Insert Doc Content":  {
+                                                                         "main":  [
+                                                                                      [
+                                                                                          {
+                                                                                              "node":  "Restore Episode Data",
+                                                                                              "type":  "main",
+                                                                                              "index":  0
+                                                                                          }
+                                                                                      ]
+                                                                                  ]
+                                                                     },
+                                              "Restore Episode Data":  {
+                                                                           "main":  [
+                                                                                        [
+                                                                                            {
+                                                                                                "node":  "Write Brief Doc Link",
+                                                                                                "type":  "main",
+                                                                                                "index":  0
+                                                                                            }
+                                                                                        ]
+                                                                                    ]
+                                                                       },
+                                              "Write Brief Doc Link":  {
+                                                                           "main":  [
+                                                                                        [
+                                                                                            {
+                                                                                                "node":  "Aggregate Episodes",
+                                                                                                "type":  "main",
+                                                                                                "index":  0
+                                                                                            }
+                                                                                        ]
+                                                                                    ]
+                                                                       },
+                                              "Aggregate Episodes":  {
+                                                                         "main":  [
+                                                                                      [
+                                                                                          {
+                                                                                              "node":  "Build Email Body",
+                                                                                              "type":  "main",
+                                                                                              "index":  0
+                                                                                          }
+                                                                                      ]
+                                                                                  ]
+                                                                     },
+                                              "Build Email Body":  {
+                                                                       "main":  [
+                                                                                    [
+                                                                                        {
+                                                                                            "node":  "Send Email to Loretta",
+                                                                                            "type":  "main",
+                                                                                            "index":  0
+                                                                                        }
+                                                                                    ]
+                                                                                ]
+                                                                   },
+                                              "Set Doc URL":  {
+                                                                  "main":  [
+                                                                               [
+                                                                                   {
+                                                                                       "node":  "Build Docs Payload",
+                                                                                       "type":  "main",
+                                                                                       "index":  0
+                                                                                   }
+                                                                               ]
+                                                                           ]
+                                                              },
+                                              "Build Docs Payload":  {
+                                                                         "main":  [
+                                                                                      [
+                                                                                          {
+                                                                                              "node":  "Insert Doc Content",
+                                                                                              "type":  "main",
+                                                                                              "index":  0
+                                                                                          }
+                                                                                      ]
+                                                                                  ]
+                                                                     },
+                                              "HTTP Request":  {
+                                                                   "main":  [
+                                                                                [
+                                                                                    {
+                                                                                        "node":  "Build Doc Content",
+                                                                                        "type":  "main",
+                                                                                        "index":  0
+                                                                                    }
+                                                                                ]
+                                                                            ]
+                                                               }
+                                          },
+                          "authors":  "Alan Sercy",
+                          "name":  null,
+                          "description":  null,
+                          "autosaved":  false,
+                          "workflowPublishHistory":  [
+                                                         {
+                                                             "createdAt":  "2026-04-08T15:59:30.830Z",
+                                                             "id":  68,
+                                                             "workflowId":  "69lXVUnqWMr2yF1q",
+                                                             "versionId":  "71c24e56-20e5-4bc4-9721-eaa9c14ac9b8",
+                                                             "event":  "activated",
+                                                             "userId":  "19773a36-d839-4b09-93d5-6b41434750c0"
+                                                         },
+                                                         {
+                                                             "createdAt":  "2026-04-08T15:59:30.786Z",
+                                                             "id":  67,
+                                                             "workflowId":  "69lXVUnqWMr2yF1q",
+                                                             "versionId":  "71c24e56-20e5-4bc4-9721-eaa9c14ac9b8",
+                                                             "event":  "deactivated",
+                                                             "userId":  "19773a36-d839-4b09-93d5-6b41434750c0"
+                                                         }
+                                                     ]
+                      }
+}

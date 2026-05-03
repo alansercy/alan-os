@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+    REPLACE FOR EACH ISSUE:
+    - <title> month + year
+    - meta description
+    - og:title, og:url
+    - ISSUE_NUMBER, MONTH_YEAR, MONTH, YEAR throughout
+  ============================================================ -->
+  <title>The Wave Report — <!-- REPLACE: Month Year --> | East Dallas Growth · Loretta Sercy</title>
+  <meta name="description" content="<!-- REPLACE: 150-char description of this issue's key themes -->" />
+  <meta property="og:title" content="The Wave Report · <!-- REPLACE: Month Year --> | MoveWithClarity" />
+  <meta property="og:url" content="https://lorettasercy.com/wave/<!-- REPLACE: month-year (e.g. june-2026) -->" />
+  <meta property="og:type" content="article" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── DESIGN TOKENS — DO NOT CHANGE ── */
+    :root {
+      --navy:        #1A2B3C;
+      --navy-deep:   #111E2A;
+      --navy-mid:    #243448;
+      --gold:        #B8903C;
+      --gold-light:  #D4AF6A;
+      --gold-pale:   rgba(184,144,60,0.09);
+      --gold-rule:   rgba(184,144,60,0.25);
+      --cream:       #F5F1EB;
+      --cream-warm:  #EDE8E0;
+      --chalk:       #F9F7F4;
+      --bluegray:    #8FA0B0;
+      --bluegray-lt: #C2CDD6;
+      --stone:       #4A5A6A;
+      --ink:         #1A2B3C;
+      --white:       #FFFFFF;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans:  'Jost', sans-serif;
+      --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--font-sans); background: var(--chalk); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── READING PROGRESS ── */
+    .reading-progress { position: fixed; top: 0; left: 0; right: 0; z-index: 300; height: 2px; }
+    .reading-progress-bar { height: 100%; background: var(--gold); width: 0%; transition: width 0.1s linear; }
+
+    /* ── NAV — DO NOT CHANGE ── */
+    nav {
+      position: fixed; top: 2px; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 64px;
+      background: rgba(249,247,244,0.96);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(184,144,60,0.1);
+      transition: padding 0.4s var(--ease-out);
+    }
+    nav.scrolled { padding: 13px 64px; }
+    .nav-wordmark { display: flex; flex-direction: column; gap: 1px; }
+    .nav-wordmark-top { font-family: var(--font-serif); font-size: 17px; font-weight: 500; color: var(--navy); letter-spacing: -0.01em; line-height: 1; }
+    .nav-wordmark-top em { font-style: italic; color: var(--gold); }
+    .nav-wordmark-sub { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--bluegray); }
+    .nav-center { display: flex; align-items: center; gap: 32px; }
+    .nav-report-label { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+    .nav-report-label::before { content: ''; width: 20px; height: 1px; background: var(--gold-rule); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { font-family: var(--font-sans); font-weight: 300; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--stone); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { font-family: var(--font-sans); font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--white); background: var(--navy); padding: 11px 26px; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--navy-mid); }
+
+    /* ── MASTHEAD ── */
+    .masthead { background: var(--navy-deep); padding: 130px 64px 80px; position: relative; overflow: hidden; }
+    .masthead::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(ellipse 60% 70% at 85% 40%, rgba(184,144,60,0.05) 0%, transparent 65%), radial-gradient(ellipse 30% 50% at 5% 90%, rgba(184,144,60,0.03) 0%, transparent 55%); pointer-events: none; }
+    .masthead::after { content: ''; position: absolute; left: 64px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, rgba(184,144,60,0.14) 30%, rgba(184,144,60,0.14) 70%, transparent); }
+    .masthead-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; }
+    .masthead-pub-info { display: flex; align-items: center; gap: 20px; margin-bottom: 40px; opacity: 0; animation: revealUp 0.8s 0.1s var(--ease-out) forwards; }
+    .mpi-label { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); }
+    .mpi-divider { width: 1px; height: 12px; background: rgba(255,255,255,0.12); }
+    .mpi-date { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+    .mpi-issue { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+    .masthead-title { font-family: var(--font-serif); font-weight: 400; font-size: clamp(52px, 7vw, 104px); line-height: 0.9; letter-spacing: -0.025em; color: var(--white); margin-bottom: 8px; opacity: 0; animation: revealUp 1s 0.2s var(--ease-out) forwards; }
+    .masthead-title-2 { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(52px, 7vw, 104px); line-height: 0.9; letter-spacing: -0.025em; color: var(--gold-light); margin-bottom: 48px; opacity: 0; animation: revealUp 1s 0.3s var(--ease-out) forwards; }
+    .masthead-rule { width: 48px; height: 2px; background: rgba(184,144,60,0.35); margin-bottom: 28px; opacity: 0; animation: revealUp 0.8s 0.4s var(--ease-out) forwards; }
+    .masthead-sub { font-family: var(--font-sans); font-weight: 300; font-size: 14px; line-height: 2; color: rgba(210,220,230,0.58); max-width: 420px; opacity: 0; animation: revealUp 0.9s 0.48s var(--ease-out) forwards; }
+    .masthead-right { opacity: 0; animation: revealUp 1s 0.36s var(--ease-out) forwards; }
+    .mr-section-index { border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.03); padding: 28px 28px 8px; margin-bottom: 16px; }
+    .mr-index-title { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.32em; text-transform: uppercase; color: rgba(255,255,255,0.22); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .mr-index-title::before { content: ''; width: 16px; height: 1px; background: rgba(255,255,255,0.15); }
+    .mr-index-list { display: flex; flex-direction: column; }
+    .mr-index-item { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: opacity 0.2s; }
+    .mr-index-item:last-child { border-bottom: none; margin-bottom: 20px; }
+    .mr-index-item:hover { opacity: 0.8; }
+    .mrii-num { font-family: var(--font-serif); font-style: italic; font-size: 11px; color: rgba(184,144,60,0.4); flex-shrink: 0; min-width: 18px; }
+    .mrii-label { font-family: var(--font-sans); font-weight: 300; font-size: 12px; line-height: 1.45; color: rgba(210,220,230,0.4); }
+    .mr-archive-link { display: flex; align-items: center; gap: 10px; font-family: var(--font-sans); font-weight: 300; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.25); transition: color 0.2s, gap 0.2s; }
+    .mr-archive-link::after { content: '→'; font-size: 12px; }
+    .mr-archive-link:hover { color: var(--gold-light); gap: 14px; }
+
+    /* ── ARTICLE BODY ── */
+    .article { max-width: 1100px; margin: 0 auto; padding: 0 64px; }
+
+    /* ── REPORT SECTION ── */
+    .report-section { padding: 80px 0 0; border-top: 1px solid var(--cream-warm); margin-top: 80px; }
+    .report-section:first-child { border-top: none; margin-top: 0; }
+    .rs-number { font-family: var(--font-serif); font-style: italic; font-size: 72px; color: rgba(184,144,60,0.07); line-height: 1; margin-bottom: -8px; font-weight: 400; }
+    .rs-eyebrow { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .rs-eyebrow::before { content: ''; width: 22px; height: 1px; background: var(--gold); flex-shrink: 0; }
+    .rs-headline { font-family: var(--font-serif); font-weight: 400; font-size: clamp(26px, 2.8vw, 40px); color: var(--navy); line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 36px; }
+    .rs-headline em { font-style: italic; color: var(--gold); }
+
+    /* ── PROSE ── */
+    .prose { font-family: var(--font-sans); font-weight: 300; font-size: 16px; line-height: 2.08; color: var(--stone); margin-bottom: 22px; }
+    .prose strong { font-weight: 400; color: var(--navy); }
+    .prose em { font-style: italic; color: var(--navy); }
+    .pull-quote { font-family: var(--font-serif); font-style: italic; font-size: clamp(18px, 1.9vw, 24px); color: var(--navy); line-height: 1.65; border-left: 2px solid rgba(184,144,60,0.3); padding: 4px 0 4px 28px; margin: 40px 0; max-width: 640px; }
+
+    /* ── TWO-COLUMN LAYOUT ── */
+    .two-col { display: grid; grid-template-columns: 1fr 300px; gap: 60px; align-items: start; margin-top: 8px; }
+    .two-col.reverse { grid-template-columns: 300px 1fr; }
+
+    /* ── SIDEBAR CARDS ── */
+    .sidebar { display: flex; flex-direction: column; gap: 2px; padding-top: 8px; }
+    .sb-card { background: var(--white); padding: 22px 24px; border-left: 2px solid var(--gold); }
+    .sb-card.muted { border-left-color: var(--bluegray-lt); background: var(--cream); }
+    .sb-card.dark { background: var(--navy); border-left-color: rgba(184,144,60,0.4); }
+    .sb-label { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+    .sb-label.light { color: var(--gold-light); }
+    .sb-label.muted { color: var(--bluegray); }
+    .sb-text { font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--navy); line-height: 1.5; }
+    .sb-text.light { color: rgba(255,255,255,0.75); }
+    .sb-body { font-family: var(--font-sans); font-weight: 300; font-size: 12px; line-height: 1.8; color: var(--stone); margin-top: 8px; }
+    .sb-body.light { color: rgba(210,220,230,0.6); }
+
+    /* ── OBSERVATION LIST ── */
+    .obs-list { display: flex; flex-direction: column; gap: 0; margin: 24px 0; }
+    .obs-item { display: flex; gap: 18px; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid var(--cream-warm); }
+    .obs-item:last-child { border-bottom: none; }
+    .obs-dot { width: 5px; height: 5px; background: var(--gold); border-radius: 50%; flex-shrink: 0; margin-top: 9px; }
+    .obs-text { font-family: var(--font-sans); font-weight: 300; font-size: 15px; line-height: 1.85; color: var(--stone); }
+    .obs-text strong { font-weight: 400; color: var(--navy); }
+
+    /* ── TOWN SPOTLIGHT — full-bleed dark panel ── */
+    .spotlight-panel { background: var(--navy); margin: 80px -64px 0; padding: 72px 64px; position: relative; overflow: hidden; }
+    .spotlight-panel::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 80% at 90% 50%, rgba(184,144,60,0.06) 0%, transparent 65%); pointer-events: none; }
+    .spotlight-inner { position: relative; z-index: 1; }
+    .spotlight-header { margin-bottom: 40px; }
+    .spotlight-tag { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .spotlight-tag::before { content: ''; width: 22px; height: 1px; background: var(--gold); }
+    .spotlight-town { font-family: var(--font-serif); font-weight: 400; font-size: clamp(40px, 5vw, 72px); line-height: 0.92; letter-spacing: -0.02em; color: var(--white); margin-bottom: 6px; }
+    .spotlight-town em { font-style: italic; color: var(--gold-light); }
+    .spotlight-county { font-family: var(--font-sans); font-weight: 200; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.22); }
+    .spotlight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 40px; }
+    .spotlight-prose { font-family: var(--font-sans); font-weight: 300; font-size: 15px; line-height: 2.05; color: rgba(210,220,230,0.68); margin-bottom: 20px; }
+    .spotlight-prose strong { font-weight: 400; color: rgba(255,255,255,0.88); }
+    .spotlight-pull { font-family: var(--font-serif); font-style: italic; font-size: 19px; color: rgba(255,255,255,0.65); line-height: 1.65; border-left: 2px solid rgba(184,144,60,0.38); padding-left: 22px; margin-top: 28px; }
+    .spotlight-data { display: flex; flex-direction: column; gap: 2px; }
+    .sd-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); padding: 20px 22px; }
+    .sd-label { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(184,144,60,0.55); margin-bottom: 5px; }
+    .sd-value { font-family: var(--font-serif); font-size: 16px; color: rgba(255,255,255,0.75); line-height: 1.3; }
+    .sd-sub { font-family: var(--font-sans); font-weight: 300; font-size: 11px; color: rgba(255,255,255,0.28); margin-top: 4px; line-height: 1.6; }
+
+    /* ── LOOKING AHEAD CARDS ── */
+    .ahead-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 36px; }
+    .ahead-card { background: var(--white); padding: 30px 26px; border-top: 2px solid transparent; transition: border-color 0.3s, transform 0.3s var(--ease-out), box-shadow 0.3s; }
+    .ahead-card:hover { border-top-color: var(--gold); transform: translateY(-4px); box-shadow: 0 14px 36px rgba(26,43,60,0.07); }
+    .ac-horizon { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+    .ac-title { font-family: var(--font-serif); font-size: 18px; font-weight: 500; color: var(--navy); line-height: 1.2; margin-bottom: 12px; }
+    .ac-title em { font-style: italic; }
+    .ac-body { font-family: var(--font-sans); font-weight: 300; font-size: 13px; line-height: 1.85; color: var(--stone); }
+
+    /* ── CLOSING NOTE ── */
+    .closing-note { background: var(--cream); margin: 80px -64px 0; padding: 64px; border-top: 1px solid var(--cream-warm); }
+    .cn-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+    .cn-eyebrow { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .cn-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--gold); }
+    .cn-headline { font-family: var(--font-serif); font-weight: 400; font-size: clamp(22px, 2.4vw, 34px); color: var(--navy); line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 18px; }
+    .cn-headline em { font-style: italic; color: var(--gold); }
+    .cn-body { font-family: var(--font-sans); font-weight: 300; font-size: 14px; line-height: 1.95; color: var(--stone); margin-bottom: 28px; }
+    .cn-sig { font-family: var(--font-serif); font-style: italic; font-size: 18px; color: var(--navy); }
+    .cn-sig-sub { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bluegray); margin-top: 4px; }
+    .cn-guides { display: flex; flex-direction: column; gap: 2px; }
+    .cg-title { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--bluegray); margin-bottom: 14px; }
+    .cg-link { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--white); font-family: var(--font-sans); font-weight: 300; font-size: 12px; color: var(--stone); border-left: 2px solid transparent; transition: all 0.2s; }
+    .cg-link:hover { border-left-color: var(--gold); color: var(--navy); padding-left: 24px; }
+    .cg-link-cat { font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); min-width: 60px; }
+
+    /* ── ARCHIVE STRIP ── */
+    .archive-strip { background: var(--chalk); padding: 48px 64px; border-top: 1px solid var(--cream-warm); }
+    .as-inner { display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+    .as-label { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--bluegray); }
+    .as-issues { display: flex; gap: 8px; flex-wrap: wrap; }
+    .as-issue { font-family: var(--font-sans); font-weight: 300; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone); background: var(--white); padding: 8px 18px; border: 1px solid var(--cream-warm); transition: all 0.2s; }
+    .as-issue:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .as-issue.current { background: var(--navy); color: var(--white); border-color: var(--navy); cursor: default; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--navy-deep); padding: 60px 64px 40px; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(184,144,60,0.1); }
+    .footer-wordmark { font-family: var(--font-serif); font-size: 22px; color: var(--white); margin-bottom: 10px; display: block; }
+    .footer-wordmark em { font-style: italic; color: var(--gold-light); }
+    .footer-tagline { font-family: var(--font-serif); font-style: italic; font-size: 13px; color: rgba(220,230,240,0.3); }
+    .footer-col-title { font-family: var(--font-sans); font-weight: 400; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(184,144,60,0.48); margin-bottom: 18px; }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-link { font-family: var(--font-sans); font-weight: 300; font-size: 12px; color: rgba(255,255,255,0.3); transition: color 0.2s; }
+    .footer-link:hover { color: var(--gold-light); }
+    .footer-bottom { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; }
+    .footer-legal { font-family: var(--font-sans); font-weight: 300; font-size: 10px; line-height: 1.85; color: rgba(255,255,255,0.14); max-width: 560px; }
+    .footer-legal a { color: rgba(255,255,255,0.22); }
+    .footer-legal a:hover { color: var(--gold-light); }
+    .footer-compliance { text-align: right; flex-shrink: 0; }
+    .footer-compliance-line { font-family: var(--font-sans); font-weight: 200; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.12); line-height: 2.1; }
+    .footer-fair-housing { font-family: var(--font-sans); font-weight: 300; font-size: 9px; color: rgba(255,255,255,0.15); margin-top: 10px; display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+    .fh-icon { width: 14px; height: 14px; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 7px; color: rgba(255,255,255,0.18); flex-shrink: 0; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes revealUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.82s var(--ease-out), transform 0.82s var(--ease-out); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.12s; }
+    .reveal-delay-2 { transition-delay: 0.24s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      nav { padding: 18px 32px; }
+      nav.scrolled { padding: 12px 32px; }
+      .nav-center { display: none; }
+      .masthead { padding: 120px 40px 64px; }
+      .masthead-inner { grid-template-columns: 1fr; gap: 40px; }
+      .masthead-right { display: none; }
+      .article { padding: 0 40px; }
+      .two-col, .two-col.reverse { grid-template-columns: 1fr; gap: 40px; }
+      .spotlight-panel { margin: 80px -40px 0; padding: 60px 40px; }
+      .spotlight-grid { grid-template-columns: 1fr; gap: 40px; }
+      .ahead-grid { grid-template-columns: 1fr; }
+      .closing-note { margin: 80px -40px 0; padding: 48px 40px; }
+      .cn-inner { grid-template-columns: 1fr; gap: 40px; }
+      .archive-strip { padding: 40px; }
+      footer { padding: 60px 40px 40px; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; }
+      .footer-compliance { text-align: left; }
+      .footer-fair-housing { justify-content: flex-start; }
+    }
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .masthead { padding: 100px 24px 56px; }
+      .article { padding: 0 24px; }
+      .spotlight-panel { margin: 80px -24px 0; padding: 48px 24px; }
+      .closing-note { margin: 80px -24px 0; padding: 40px 24px; }
+      .archive-strip { padding: 32px 24px; }
+      footer { padding: 48px 24px 32px; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="reading-progress"><div class="reading-progress-bar" id="progress"></div></div>
+
+  <!-- NAV — update archive link text each issue if needed -->
+  <nav id="nav">
+    <a href="https://lorettasercy.com" class="nav-wordmark">
+      <div class="nav-wordmark-top">Move with <em>Clarity.</em></div>
+      <div class="nav-wordmark-sub">Loretta Sercy · eXp Realty</div>
+    </a>
+    <div class="nav-center">
+      <div class="nav-report-label">The Wave Report</div>
+      <ul class="nav-links">
+        <li><a href="https://lorettasercy.com/wave-report">Archive</a></li>
+        <li><a href="https://lorettasercy.com/#guides">Guides</a></li>
+        <li><a href="https://lorettasercy.com/#markets">Markets</a></li>
+      </ul>
+    </div>
+    <a href="https://lorettasercy.com/#contact" class="nav-cta">Start a Conversation</a>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MASTHEAD — REPLACE everything marked REPLACE
+       Issue number increments each month (01, 02, 03...)
+       Title line 1 = "The Wave" (always)
+       Title line 2 = Month + Year + period (italic gold)
+       Sub = 1-sentence summary of this issue's focus
+  ══════════════════════════════════════════════════════════ -->
+  <section class="masthead">
+    <div class="masthead-inner">
+      <div class="masthead-left">
+        <div class="masthead-pub-info">
+          <div class="mpi-label">The Wave Report</div>
+          <div class="mpi-divider"></div>
+          <div class="mpi-date"><!-- REPLACE: Month Year --></div>
+          <div class="mpi-divider"></div>
+          <div class="mpi-issue">Issue No. <!-- REPLACE: 02 --></div>
+        </div>
+        <div class="masthead-title">The Wave</div>
+        <div class="masthead-title-2"><!-- REPLACE: Month Year. --></div>
+        <div class="masthead-rule"></div>
+        <p class="masthead-sub"><!-- REPLACE: 1–2 sentence summary of this issue's angle and key themes. --></p>
+      </div>
+      <div class="masthead-right">
+        <div class="mr-section-index">
+          <div class="mr-index-title">This issue</div>
+          <div class="mr-index-list">
+            <!-- REPLACE: Update section titles to match this issue's sections -->
+            <div class="mr-index-item" onclick="document.getElementById('s01').scrollIntoView({behavior:'smooth'})">
+              <div class="mrii-num">01</div><div class="mrii-label"><!-- REPLACE: Section 01 title --></div>
+            </div>
+            <div class="mr-index-item" onclick="document.getElementById('s02').scrollIntoView({behavior:'smooth'})">
+              <div class="mrii-num">02</div><div class="mrii-label"><!-- REPLACE: Section 02 title --></div>
+            </div>
+            <div class="mr-index-item" onclick="document.getElementById('s03').scrollIntoView({behavior:'smooth'})">
+              <div class="mrii-num">03</div><div class="mrii-label"><!-- REPLACE: Section 03 title --></div>
+            </div>
+            <div class="mr-index-item" onclick="document.getElementById('s04').scrollIntoView({behavior:'smooth'})">
+              <div class="mrii-num">04</div><div class="mrii-label"><!-- REPLACE: Town Spotlight — Town Name --></div>
+            </div>
+            <div class="mr-index-item" onclick="document.getElementById('s05').scrollIntoView({behavior:'smooth'})">
+              <div class="mrii-num">05</div><div class="mrii-label"><!-- REPLACE: Section 05 title --></div>
+            </div>
+            <div class="mr-index-item" onclick="document.getElementById('s06').scrollIntoView({behavior:'smooth'})">
+              <div class="mrii-num">06</div><div class="mrii-label"><!-- REPLACE: Section 06 title --></div>
+            </div>
+          </div>
+        </div>
+        <a href="https://lorettasercy.com/wave-report" class="mr-archive-link">View all issues</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARTICLE BODY — all content sections live inside .article -->
+  <div class="article">
+
+    <!-- ── SECTION 01 — Opening Observation ── -->
+    <section class="report-section" id="s01" style="border-top:none;margin-top:72px">
+      <div class="rs-number reveal">01</div>
+      <div class="rs-eyebrow reveal"><!-- REPLACE: eyebrow label --></div>
+      <h2 class="rs-headline reveal"><!-- REPLACE: Section headline. Can use <em>italic</em>. --></h2>
+
+      <div class="two-col">
+        <div>
+          <p class="prose reveal"><!-- REPLACE: Opening paragraph. Set the scene. --></p>
+          <p class="prose reveal"><!-- REPLACE: Second paragraph. --></p>
+          <p class="prose reveal"><!-- REPLACE: Third paragraph. --></p>
+
+          <div class="pull-quote reveal">"<!-- REPLACE: Key observation from this section. -->"</div>
+
+          <p class="prose reveal"><!-- REPLACE: Closing paragraph for this section. --></p>
+
+          <!-- Optional observation list -->
+          <div class="obs-list reveal">
+            <div class="obs-item"><div class="obs-dot"></div><div class="obs-text"><strong><!-- Label --></strong> — <!-- REPLACE: observation --></div></div>
+            <div class="obs-item"><div class="obs-dot"></div><div class="obs-text"><strong><!-- Label --></strong> — <!-- REPLACE: observation --></div></div>
+            <div class="obs-item"><div class="obs-dot"></div><div class="obs-text"><strong><!-- Label --></strong> — <!-- REPLACE: observation --></div></div>
+          </div>
+        </div>
+
+        <!-- Sidebar cards — remove div.sidebar if not needed, change to two-col full -->
+        <div class="sidebar">
+          <div class="sb-card reveal">
+            <div class="sb-label"><!-- REPLACE: label --></div>
+            <div class="sb-text"><!-- REPLACE: key insight or framing statement --></div>
+          </div>
+          <div class="sb-card muted reveal reveal-delay-1">
+            <div class="sb-label muted"><!-- REPLACE: label --></div>
+            <div class="sb-text"><!-- REPLACE: supporting observation --></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 02 ── -->
+    <section class="report-section" id="s02">
+      <div class="rs-number reveal">02</div>
+      <div class="rs-eyebrow reveal"><!-- REPLACE --></div>
+      <h2 class="rs-headline reveal"><!-- REPLACE --></h2>
+      <div class="two-col">
+        <div>
+          <p class="prose reveal"><!-- REPLACE --></p>
+          <p class="prose reveal"><!-- REPLACE --></p>
+          <div class="pull-quote reveal">"<!-- REPLACE -->"</div>
+          <p class="prose reveal"><!-- REPLACE --></p>
+        </div>
+        <div class="sidebar">
+          <div class="sb-card reveal"><div class="sb-label"><!-- label --></div><div class="sb-text"><!-- insight --></div></div>
+          <div class="sb-card muted reveal reveal-delay-1"><div class="sb-label muted"><!-- label --></div><div class="sb-body"><!-- body --></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 03 ── -->
+    <section class="report-section" id="s03">
+      <div class="rs-number reveal">03</div>
+      <div class="rs-eyebrow reveal"><!-- REPLACE --></div>
+      <h2 class="rs-headline reveal"><!-- REPLACE --></h2>
+      <p class="prose reveal"><!-- REPLACE --></p>
+      <p class="prose reveal"><!-- REPLACE --></p>
+      <div class="pull-quote reveal">"<!-- REPLACE -->"</div>
+      <div class="obs-list reveal">
+        <div class="obs-item"><div class="obs-dot"></div><div class="obs-text"><strong><!-- Label --></strong> — <!-- REPLACE --></div></div>
+        <div class="obs-item"><div class="obs-dot"></div><div class="obs-text"><strong><!-- Label --></strong> — <!-- REPLACE --></div></div>
+        <div class="obs-item"><div class="obs-dot"></div><div class="obs-text"><strong><!-- Label --></strong> — <!-- REPLACE --></div></div>
+      </div>
+    </section>
+
+  </div><!-- end .article -->
+
+  <!-- ── SECTION 04 — TOWN SPOTLIGHT — full-bleed dark panel ──
+       REPLACE: town name, county, spotlight prose, sidebar data items
+       This section always breaks out of .article for full-bleed effect.
+  ── -->
+  <div class="article">
+    <section class="report-section" id="s04">
+      <div class="spotlight-panel">
+        <div class="spotlight-inner">
+          <div class="spotlight-header">
+            <div class="spotlight-tag reveal">Town Spotlight · <!-- REPLACE: County --> County</div>
+            <div class="spotlight-town reveal"><!-- REPLACE: Town<br><em>Name</em> --></div>
+            <div class="spotlight-county reveal"><!-- REPLACE: County, Texas --></div>
+          </div>
+          <div class="spotlight-grid">
+            <div>
+              <p class="spotlight-prose reveal"><!-- REPLACE: Opening paragraph about this town. --></p>
+              <p class="spotlight-prose reveal"><!-- REPLACE: Second paragraph. What's changing, what to watch. --></p>
+              <p class="spotlight-prose reveal"><!-- REPLACE: Third paragraph. What buyers/sellers need to understand. --></p>
+              <div class="spotlight-pull reveal">"<!-- REPLACE: Key insight about this town. -->"</div>
+            </div>
+            <div class="spotlight-data reveal reveal-delay-1">
+              <!-- REPLACE: Data items. These are observational, not appraisal. List price / DOM / narrative only. -->
+              <div class="sd-item">
+                <div class="sd-label"><!-- REPLACE: Data label --></div>
+                <div class="sd-value"><!-- REPLACE: Value --></div>
+                <div class="sd-sub"><!-- REPLACE: Context note --></div>
+              </div>
+              <div class="sd-item">
+                <div class="sd-label"><!-- REPLACE --></div>
+                <div class="sd-value"><!-- REPLACE --></div>
+                <div class="sd-sub"><!-- REPLACE --></div>
+              </div>
+              <div class="sd-item">
+                <div class="sd-label"><!-- REPLACE --></div>
+                <div class="sd-value"><!-- REPLACE --></div>
+                <div class="sd-sub"><!-- REPLACE --></div>
+              </div>
+              <div class="sd-item">
+                <div class="sd-label"><!-- REPLACE --></div>
+                <div class="sd-value"><!-- REPLACE --></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="article">
+
+    <!-- ── SECTION 05 ── -->
+    <section class="report-section" id="s05">
+      <div class="rs-number reveal">05</div>
+      <div class="rs-eyebrow reveal"><!-- REPLACE --></div>
+      <h2 class="rs-headline reveal"><!-- REPLACE --></h2>
+      <div class="two-col">
+        <div>
+          <p class="prose reveal"><!-- REPLACE --></p>
+          <p class="prose reveal"><!-- REPLACE --></p>
+        </div>
+        <div class="sidebar">
+          <div class="sb-card reveal"><div class="sb-label"><!-- label --></div><div class="sb-text"><!-- insight --></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 06 — Looking Ahead ── -->
+    <section class="report-section" id="s06">
+      <div class="rs-number reveal">06</div>
+      <div class="rs-eyebrow reveal">Looking Ahead</div>
+      <h2 class="rs-headline reveal"><!-- REPLACE: Headline for forward-looking section --></h2>
+      <p class="prose reveal"><!-- REPLACE: Framing paragraph --></p>
+
+      <!-- REPLACE: 3 ahead cards — short/medium/long horizon -->
+      <div class="ahead-grid">
+        <div class="ahead-card reveal">
+          <div class="ac-horizon">6 Months</div>
+          <div class="ac-title"><!-- REPLACE: What to watch --></div>
+          <div class="ac-body"><!-- REPLACE: 2–3 sentences --></div>
+        </div>
+        <div class="ahead-card reveal reveal-delay-1">
+          <div class="ac-horizon">12 Months</div>
+          <div class="ac-title"><!-- REPLACE --></div>
+          <div class="ac-body"><!-- REPLACE --></div>
+        </div>
+        <div class="ahead-card reveal reveal-delay-2">
+          <div class="ac-horizon">24 Months</div>
+          <div class="ac-title"><!-- REPLACE --></div>
+          <div class="ac-body"><!-- REPLACE --></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CLOSING NOTE ── -->
+    <section class="closing-note">
+      <div class="cn-inner">
+        <div class="cn-text">
+          <div class="cn-eyebrow reveal"><!-- REPLACE: "Until Next Month" or similar --></div>
+          <h2 class="cn-headline reveal"><!-- REPLACE: Closing headline with <em>emphasis</em> --></h2>
+          <p class="cn-body reveal"><!-- REPLACE: 2–3 sentences. Personal, grounded, non-sales. Loretta's voice. --></p>
+          <div class="cn-sig reveal">Loretta Sercy</div>
+          <div class="cn-sig-sub reveal">Realtor · eXp Realty · East Dallas Corridor</div>
+        </div>
+        <div class="cn-guides">
+          <div class="cg-title reveal">Related Guides</div>
+          <!-- REPLACE: Link to 2–3 guides relevant to this issue's themes -->
+          <a href="https://lorettasercy.com/clarity-blueprint" class="cg-link reveal">
+            <div class="cg-link-cat">Seller</div>
+            The Clarity Blueprint
+          </a>
+          <a href="https://lorettasercy.com/acreage-transition-guide" class="cg-link reveal reveal-delay-1">
+            <div class="cg-link-cat">Lifestyle</div>
+            Acreage Transition Guide
+          </a>
+          <a href="https://lorettasercy.com/before-you-leave-the-suburbs" class="cg-link reveal reveal-delay-2">
+            <div class="cg-link-cat">Transition</div>
+            Before You Leave the Suburbs
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- end .article -->
+
+  <!-- ARCHIVE STRIP — update issue links each month -->
+  <div class="archive-strip">
+    <div class="as-inner">
+      <div class="as-label">All Issues</div>
+      <div class="as-issues">
+        <!-- Add new issue chip each month. Mark current issue with class="as-issue current" -->
+        <a href="https://lorettasercy.com/wave/may-2026" class="as-issue">May 2026</a>
+        <span class="as-issue current"><!-- REPLACE: Month Year --></span>
+        <!-- Add future issues below as they publish -->
+      </div>
+      <a href="https://lorettasercy.com/wave-report" class="mr-archive-link">Full archive</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-top">
+      <div>
+        <a href="https://lorettasercy.com" class="footer-wordmark">Move with <em>Clarity.</em></a>
+        <div class="footer-tagline">"Not Pressure."</div>
+      </div>
+      <div>
+        <div class="footer-col-title">The Wave Report</div>
+        <div class="footer-links">
+          <a href="https://lorettasercy.com/wave-report" class="footer-link">Archive Hub</a>
+          <a href="https://lorettasercy.com/wave/may-2026" class="footer-link">May 2026 — Issue No. 01</a>
+          <!-- REPLACE: Add link to this issue below -->
+          <a href="https://lorettasercy.com/wave/<!-- REPLACE: month-year -->" class="footer-link"><!-- REPLACE: Month Year --> — This Issue</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Guides</div>
+        <div class="footer-links">
+          <a href="https://lorettasercy.com/clarity-blueprint" class="footer-link">The Clarity Blueprint</a>
+          <a href="https://lorettasercy.com/parents-move-guide" class="footer-link">The Parents' Move Guide</a>
+          <a href="https://lorettasercy.com/why-your-house-didnt-sell" class="footer-link">Why Your House Didn't Sell</a>
+          <a href="https://lorettasercy.com/divorce-housing-clarity-guide" class="footer-link">Divorce &amp; Housing Clarity</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        The Wave Report is an interpretive regional publication by Loretta Sercy, Licensed Realtor® with eXp Realty. All observations are editorial in nature and do not constitute legal, financial, or appraisal advice. Texas is a non-disclosure state — no closed sale prices are referenced. Market observations are based on publicly available information and firsthand local knowledge. Published monthly around the 15th.<br><br>
+        <a href="https://lorettasercy.com">lorettasercy.com</a> &nbsp;|&nbsp; <a href="#">Texas Real Estate Commission Information About Brokerage Services</a>
+      </div>
+      <div class="footer-compliance">
+        <div class="footer-compliance-line">Loretta Sercy · Licensed Realtor®</div>
+        <div class="footer-compliance-line">eXp Realty · TX License #0633703</div>
+        <div class="footer-compliance-line">lorettasercy.com · © 2026 All Rights Reserved</div>
+        <div class="footer-fair-housing"><div class="fh-icon">⊜</div>Equal Housing Opportunity</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+      const doc = document.documentElement;
+      const pct = (window.scrollY / (doc.scrollHeight - doc.clientHeight)) * 100;
+      document.getElementById('progress').style.width = pct + '%';
+    });
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.06 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    document.querySelectorAll('[onclick]').forEach(el => {
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') el.click(); });
+    });
+  </script>
+
+</body>
+</html>

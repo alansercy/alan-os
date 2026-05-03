@@ -1,0 +1,879 @@
+{
+    "updatedAt":  "2026-04-07T15:49:30.128Z",
+    "createdAt":  "2026-04-05T16:55:53.595Z",
+    "id":  "r1pkTZ94DuuWrTtA",
+    "name":  "3.1 - MMM Trucking Gmail Triage",
+    "description":  null,
+    "active":  true,
+    "isArchived":  false,
+    "nodes":  [
+                  {
+                      "id":  "n1",
+                      "name":  "Schedule Trigger",
+                      "type":  "n8n-nodes-base.scheduleTrigger",
+                      "typeVersion":  1.2,
+                      "position":  [
+                                       240,
+                                       300
+                                   ],
+                      "parameters":  {
+                                         "rule":  {
+                                                      "interval":  [
+                                                                       {
+                                                                           "field":  "cronExpression",
+                                                                           "expression":  "0 14,16,18,20,22 * * 1-5"
+                                                                       }
+                                                                   ]
+                                                  }
+                                     }
+                  },
+                  {
+                      "id":  "n2",
+                      "name":  "Get MMM Emails",
+                      "type":  "n8n-nodes-base.gmail",
+                      "typeVersion":  2.2,
+                      "position":  [
+                                       460,
+                                       300
+                                   ],
+                      "credentials":  {
+                                          "gmailOAuth2":  {
+                                                              "id":  "68RydHz0N1dUAj9S",
+                                                              "name":  "MMM Trucking"
+                                                          }
+                                      },
+                      "parameters":  {
+                                         "operation":  "getAll",
+                                         "limit":  10,
+                                         "filters":  {
+                                                         "labelIds":  [
+                                                                          "INBOX"
+                                                                      ],
+                                                         "readStatus":  "unread"
+                                                     },
+                                         "options":  {
+
+                                                     }
+                                     }
+                  },
+                  {
+                      "id":  "n3",
+                      "name":  "Mark as Read",
+                      "type":  "n8n-nodes-base.gmail",
+                      "typeVersion":  2.2,
+                      "position":  [
+                                       680,
+                                       300
+                                   ],
+                      "credentials":  {
+                                          "gmailOAuth2":  {
+                                                              "id":  "68RydHz0N1dUAj9S",
+                                                              "name":  "MMM Trucking"
+                                                          }
+                                      },
+                      "parameters":  {
+                                         "operation":  "markAsRead",
+                                         "messageId":  "={{ $json.id }}",
+                                         "options":  {
+
+                                                     }
+                                     }
+                  },
+                  {
+                      "id":  "n3b",
+                      "name":  "Restore Email Data",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       880,
+                                       300
+                                   ],
+                      "parameters":  {
+                                         "jsCode":  "const marked=$input.first().json;const original=$(\u0027Get MMM Emails\u0027).all();const match=original.find(e=\u003ee.json.id===marked.id)||original[0];const e=match.json;return [{json:{emailId:e.id||\u0027\u0027,From:e.From||e.from||\u0027Unknown\u0027,Subject:e.Subject||e.subject||\u0027(no subject)\u0027,snippet:e.snippet||e.text||e.body||\u0027\u0027,threadId:e.threadId||\u0027\u0027}}];"
+                                     }
+                  },
+                  {
+                      "id":  "n4",
+                      "name":  "Classify Email",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4,
+                      "position":  [
+                                       1100,
+                                       300
+                                   ],
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://api.anthropic.com/v1/messages",
+                                         "sendHeaders":  true,
+                                         "headerParameters":  {
+                                                                  "parameters":  [
+                                                                                     {
+                                                                                         "name":  "x-api-key",
+                                                                                         "value":  "{{ANTHROPIC_API_KEY}}"
+                                                                                     },
+                                                                                     {
+                                                                                         "name":  "anthropic-version",
+                                                                                         "value":  "2023-06-01"
+                                                                                     },
+                                                                                     {
+                                                                                         "name":  "content-type",
+                                                                                         "value":  "application/json"
+                                                                                     }
+                                                                                 ]
+                                                              },
+                                         "sendBody":  true,
+                                         "contentType":  "raw",
+                                         "body":  "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 500,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are email triage for MMM Trucking asset-based reefer carrier minority women-owned CEO Nimrat Samra Stockton CA 35 trucks WA to CA lanes.\\n\\nClassify into ONE:\\nPROSPECT_REPLY - shipper responding or new inbound inquiry\\nLOAD_INQUIRY - asking about capacity or rates\\nEXISTING_CUSTOMER - HP Hood Active Berry Zirkle Skone Connors Grimmway Taylor Farms Chelan Fresh\\nCARRIER_BROKER - another carrier or broker\\nJUNK_ADMIN - newsletter spam automated receipt\\n\\nRespond ONLY with JSON no preamble:\\n{\\\"category\\\":\\\"X\\\",\\\"sender_name\\\":\\\"X\\\",\\\"subject_summary\\\":\\\"X\\\",\\\"urgency\\\":\\\"HIGH|MEDIUM|LOW\\\"}\\n\\nFrom: {{ $json.From }}\\nSubject: {{ $json.Subject }}\\nBody: {{ $json.snippet }}\"\n    }\n  ]\n}",
+                                         "options":  {
+
+                                                     }
+                                     }
+                  },
+                  {
+                      "id":  "n5",
+                      "name":  "Parse Classification",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1320,
+                                       300
+                                   ],
+                      "parameters":  {
+                                         "jsCode":  "const resp=$input.first().json;const prev=$(\u0027Restore Email Data\u0027).first().json;let c={category:\u0027JUNK_ADMIN\u0027,sender_name:prev.From||\u0027Unknown\u0027,subject_summary:prev.Subject||\u0027\u0027,urgency:\u0027LOW\u0027};try{c=JSON.parse(resp.content[0].text.replace(/```json|```/g,\u0027\u0027).trim());}catch(e){}return [{json:{...c,From:prev.From,Subject:prev.Subject,snippet:prev.snippet,threadId:prev.threadId}}];"
+                                     }
+                  },
+                  {
+                      "id":  "n6",
+                      "name":  "Needs Draft?",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1540,
+                                       300
+                                   ],
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  false
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "leftValue":  "={{ $json.category }}",
+                                                                                   "rightValue":  "CARRIER_BROKER",
+                                                                                   "operator":  {
+                                                                                                    "type":  "string",
+                                                                                                    "operation":  "notEquals"
+                                                                                                }
+                                                                               },
+                                                                               {
+                                                                                   "leftValue":  "={{ $json.category }}",
+                                                                                   "rightValue":  "JUNK_ADMIN",
+                                                                                   "operator":  {
+                                                                                                    "type":  "string",
+                                                                                                    "operation":  "notEquals"
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     }
+                  },
+                  {
+                      "id":  "n7",
+                      "name":  "Generate Draft",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4,
+                      "position":  [
+                                       1760,
+                                       180
+                                   ],
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://api.anthropic.com/v1/messages",
+                                         "sendHeaders":  true,
+                                         "headerParameters":  {
+                                                                  "parameters":  [
+                                                                                     {
+                                                                                         "name":  "x-api-key",
+                                                                                         "value":  "{{ANTHROPIC_API_KEY}}"
+                                                                                     },
+                                                                                     {
+                                                                                         "name":  "anthropic-version",
+                                                                                         "value":  "2023-06-01"
+                                                                                     },
+                                                                                     {
+                                                                                         "name":  "content-type",
+                                                                                         "value":  "application/json"
+                                                                                     }
+                                                                                 ]
+                                                              },
+                                         "sendBody":  true,
+                                         "contentType":  "raw",
+                                         "body":  "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 800,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Draft a reply for Loretta Sercy BD Rep MMM Trucking.\\n\\nMMM: Asset-based reefer carrier NOT a broker. Minority women-owned. CEO Nimrat Samra approves sends all external emails Loretta drafts. Stockton CA 35 trucks NorCal to WA to UT/ID to SoCal lanes.\\n\\nRULES: Never call MMM broker. Never lead with price. Lead with reliability shipper trust. Mention minority women-owned naturally. Say reliable coverage not carrier relationships. No signature needed.\\n\\nFRAMEWORK: Open with their lane or pain. Middle establish fit no rates first contact. Close with a simple ask for a call or next step.\\n\\nCategory: {{ $json.category }}\\nFrom: {{ $json.From }}\\nSubject: {{ $json.Subject }}\\nBody: {{ $json.snippet }}\\n\\nWrite only email body starting with greeting. No subject no signature.\"\n    }\n  ]\n}",
+                                         "options":  {
+
+                                                     }
+                                     }
+                  },
+                  {
+                      "id":  "n8",
+                      "name":  "Parse Draft",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1980,
+                                       180
+                                   ],
+                      "parameters":  {
+                                         "jsCode":  "const resp=$input.first().json;const prev=$(\u0027Parse Classification\u0027).first().json;let draftText=\u0027Could not generate draft. Please reply manually.\u0027;try{draftText=resp.content[0].text;}catch(e){}const draftHtml=draftText.replace(/\\n/g,\u0027\u003cbr\u003e\u0027);const reSubject=\u0027Re: \u0027+prev.Subject;return [{json:{...prev,draftText,draftHtml,reSubject}}];"
+                                     }
+                  },
+                  {
+                      "id":  "n10",
+                      "name":  "Alert Loretta",
+                      "type":  "n8n-nodes-base.gmail",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2200,
+                                       280
+                                   ],
+                      "credentials":  {
+                                          "gmailOAuth2":  {
+                                                              "id":  "68RydHz0N1dUAj9S",
+                                                              "name":  "MMM Trucking"
+                                                          }
+                                      },
+                      "parameters":  {
+                                         "sendTo":  "lorettasercy@gmail.com",
+                                         "subject":  "=🚨 [MMM] New {{ $json.category }} — {{ $json.urgency }} urgency — Draft in MMM inbox",
+                                         "emailType":  "html",
+                                         "message":  "=\u003chtml\u003e\u003cbody style=\u0027font-family:Arial,sans-serif;font-size:14px;color:#333;\u0027\u003e\u003ch2 style=\u0027color:#c00;\u0027\u003eAction Required — MMM Trucking Email\u003c/h2\u003e\u003cp\u003eA draft reply is waiting in your \u003cstrong\u003eMMM Trucking inbox\u003c/strong\u003e (lsercy@mmmtrucks.com). Open it, copy the draft, and paste it as your reply to the sender.\u003c/p\u003e\u003chr/\u003e\u003ctable style=\u0027background:#f5f5f5;padding:12px;width:100%;\u0027\u003e\u003ctr\u003e\u003ctd\u003e\u003cstrong\u003eFROM:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.From }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd\u003e\u003cstrong\u003eSUBJECT:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.Subject }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd\u003e\u003cstrong\u003eCATEGORY:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.category }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd\u003e\u003cstrong\u003eURGENCY:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.urgency }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd\u003e\u003cstrong\u003eSUMMARY:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.subject_summary }}\u003c/td\u003e\u003c/tr\u003e\u003c/table\u003e\u003cbr/\u003e\u003ch3\u003eDraft Preview\u003c/h3\u003e\u003cdiv style=\u0027background:#fff;border-left:4px solid #1a4b8c;padding:12px;\u0027\u003e{{ $json.draftHtml }}\u003c/div\u003e\u003cbr/\u003e\u003cp style=\u0027color:#888;font-size:12px;\u0027\u003eFull draft sent to lsercy@mmmtrucks.com — Copy, paste, send to prospect\u003c/p\u003e\u003c/body\u003e\u003c/html\u003e",
+                                         "options":  {
+
+                                                     }
+                                     }
+                  },
+                  {
+                      "id":  "n11",
+                      "name":  "No Draft Needed",
+                      "type":  "n8n-nodes-base.noOp",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1760,
+                                       420
+                                   ],
+                      "parameters":  {
+
+                                     }
+                  },
+                  {
+                      "id":  "n9b",
+                      "name":  "Send Draft to MMM Inbox",
+                      "type":  "n8n-nodes-base.gmail",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2200,
+                                       100
+                                   ],
+                      "credentials":  {
+                                          "gmailOAuth2":  {
+                                                              "id":  "68RydHz0N1dUAj9S",
+                                                              "name":  "MMM Trucking"
+                                                          }
+                                      },
+                      "parameters":  {
+                                         "sendTo":  "lsercy@mmmtrucks.com",
+                                         "subject":  "={{ \u0027[DRAFT REPLY] Re: \u0027 + $json.Subject }}",
+                                         "emailType":  "html",
+                                         "message":  "=\u003chtml\u003e\u003cbody style=\u0027font-family:Arial,sans-serif;max-width:680px;\u0027\u003e\u003cdiv style=\u0027background:#003087;padding:16px 24px;\u0027\u003e\u003ch2 style=\u0027color:white;margin:0;\u0027\u003eMMM Trucking — Draft Reply Ready\u003c/h2\u003e\u003c/div\u003e\u003cdiv style=\u0027padding:24px;background:#f9f9f9;border-left:4px solid #003087;margin:24px 0;\u0027\u003e\u003ch3 style=\u0027color:#003087;\u0027\u003eInbound Email\u003c/h3\u003e\u003ctable style=\u0027width:100%;\u0027\u003e\u003ctr\u003e\u003ctd style=\u0027padding:6px 12px 6px 0;color:#555;\u0027\u003e\u003cstrong\u003eFrom:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.From }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd style=\u0027padding:6px 12px 6px 0;color:#555;\u0027\u003e\u003cstrong\u003eSubject:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.Subject }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd style=\u0027padding:6px 12px 6px 0;color:#555;\u0027\u003e\u003cstrong\u003eCategory:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.category }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd style=\u0027padding:6px 12px 6px 0;color:#555;\u0027\u003e\u003cstrong\u003eUrgency:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.urgency }}\u003c/td\u003e\u003c/tr\u003e\u003c/table\u003e\u003c/div\u003e\u003cdiv style=\u0027padding:24px;background:#fff;border:2px solid #003087;border-radius:4px;margin:0 0 24px 0;\u0027\u003e\u003ch3 style=\u0027color:#003087;\u0027\u003eSuggested Reply — Copy and Paste\u003c/h3\u003e\u003cdiv style=\u0027background:#f4f8ff;padding:16px;white-space:pre-wrap;font-family:Georgia,serif;line-height:1.6;\u0027\u003e{{ $json.draftText }}\u003c/div\u003e\u003c/div\u003e\u003cdiv style=\u0027padding:16px;background:#f0f0f0;font-size:12px;color:#888;text-align:center;\u0027\u003eMMM Trucking AgentOS — Workflow 3.1 — Draft requires human review\u003c/div\u003e\u003c/body\u003e\u003c/html\u003e",
+                                         "options":  {
+
+                                                     }
+                                     }
+                  }
+              ],
+    "connections":  {
+                        "Schedule Trigger":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Get MMM Emails",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "Get MMM Emails":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Mark as Read",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "Mark as Read":  {
+                                             "main":  [
+                                                          [
+                                                              {
+                                                                  "node":  "Restore Email Data",
+                                                                  "type":  "main",
+                                                                  "index":  0
+                                                              }
+                                                          ]
+                                                      ]
+                                         },
+                        "Restore Email Data":  {
+                                                   "main":  [
+                                                                [
+                                                                    {
+                                                                        "node":  "Classify Email",
+                                                                        "type":  "main",
+                                                                        "index":  0
+                                                                    }
+                                                                ]
+                                                            ]
+                                               },
+                        "Classify Email":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Parse Classification",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "Parse Classification":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Needs Draft?",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "Needs Draft?":  {
+                                             "main":  [
+                                                          [
+                                                              {
+                                                                  "node":  "Generate Draft",
+                                                                  "type":  "main",
+                                                                  "index":  0
+                                                              }
+                                                          ],
+                                                          [
+                                                              {
+                                                                  "node":  "No Draft Needed",
+                                                                  "type":  "main",
+                                                                  "index":  0
+                                                              }
+                                                          ]
+                                                      ]
+                                         },
+                        "Generate Draft":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Parse Draft",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "Parse Draft":  {
+                                            "main":  [
+                                                         [
+                                                             {
+                                                                 "node":  "Send Draft to MMM Inbox",
+                                                                 "type":  "main",
+                                                                 "index":  0
+                                                             },
+                                                             {
+                                                                 "node":  "Alert Loretta",
+                                                                 "type":  "main",
+                                                                 "index":  0
+                                                             }
+                                                         ]
+                                                     ]
+                                        }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1",
+                     "callerPolicy":  "workflowsFromSameOwner",
+                     "availableInMCP":  false,
+                     "saveManualExecutions":  true,
+                     "binaryMode":  "separate"
+                 },
+    "staticData":  {
+                       "node:Schedule Trigger":  {
+                                                     "recurrenceRules":  [
+
+                                                                         ]
+                                                 }
+                   },
+    "meta":  null,
+    "pinData":  {
+
+                },
+    "versionId":  "660b426e-04a3-49f7-99c9-da3a087f947b",
+    "activeVersionId":  "660b426e-04a3-49f7-99c9-da3a087f947b",
+    "versionCounter":  72,
+    "triggerCount":  1,
+    "shared":  [
+                   {
+                       "updatedAt":  "2026-04-05T16:55:53.599Z",
+                       "createdAt":  "2026-04-05T16:55:53.599Z",
+                       "role":  "workflow:owner",
+                       "workflowId":  "r1pkTZ94DuuWrTtA",
+                       "projectId":  "gg1wD0X6rdHCJvKB",
+                       "project":  {
+                                       "updatedAt":  "2026-03-21T22:27:29.036Z",
+                                       "createdAt":  "2026-03-21T22:24:56.455Z",
+                                       "id":  "gg1wD0X6rdHCJvKB",
+                                       "name":  "Alan Sercy \u003calansercy@gmail.com\u003e",
+                                       "type":  "personal",
+                                       "icon":  null,
+                                       "description":  null,
+                                       "creatorId":  "19773a36-d839-4b09-93d5-6b41434750c0"
+                                   }
+                   }
+               ],
+    "tags":  [
+
+             ],
+    "activeVersion":  {
+                          "updatedAt":  "2026-04-07T15:49:30.130Z",
+                          "createdAt":  "2026-04-07T15:49:30.130Z",
+                          "versionId":  "660b426e-04a3-49f7-99c9-da3a087f947b",
+                          "workflowId":  "r1pkTZ94DuuWrTtA",
+                          "nodes":  [
+                                        {
+                                            "id":  "n1",
+                                            "name":  "Schedule Trigger",
+                                            "type":  "n8n-nodes-base.scheduleTrigger",
+                                            "typeVersion":  1.2,
+                                            "position":  [
+                                                             240,
+                                                             300
+                                                         ],
+                                            "parameters":  {
+                                                               "rule":  {
+                                                                            "interval":  [
+                                                                                             {
+                                                                                                 "field":  "cronExpression",
+                                                                                                 "expression":  "0 14,16,18,20,22 * * 1-5"
+                                                                                             }
+                                                                                         ]
+                                                                        }
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n2",
+                                            "name":  "Get MMM Emails",
+                                            "type":  "n8n-nodes-base.gmail",
+                                            "typeVersion":  2.2,
+                                            "position":  [
+                                                             460,
+                                                             300
+                                                         ],
+                                            "credentials":  {
+                                                                "gmailOAuth2":  {
+                                                                                    "id":  "68RydHz0N1dUAj9S",
+                                                                                    "name":  "MMM Trucking"
+                                                                                }
+                                                            },
+                                            "parameters":  {
+                                                               "operation":  "getAll",
+                                                               "limit":  10,
+                                                               "filters":  {
+                                                                               "labelIds":  [
+                                                                                                "INBOX"
+                                                                                            ],
+                                                                               "readStatus":  "unread"
+                                                                           },
+                                                               "options":  {
+
+                                                                           }
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n3",
+                                            "name":  "Mark as Read",
+                                            "type":  "n8n-nodes-base.gmail",
+                                            "typeVersion":  2.2,
+                                            "position":  [
+                                                             680,
+                                                             300
+                                                         ],
+                                            "credentials":  {
+                                                                "gmailOAuth2":  {
+                                                                                    "id":  "68RydHz0N1dUAj9S",
+                                                                                    "name":  "MMM Trucking"
+                                                                                }
+                                                            },
+                                            "parameters":  {
+                                                               "operation":  "markAsRead",
+                                                               "messageId":  "={{ $json.id }}",
+                                                               "options":  {
+
+                                                                           }
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n3b",
+                                            "name":  "Restore Email Data",
+                                            "type":  "n8n-nodes-base.code",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             880,
+                                                             300
+                                                         ],
+                                            "parameters":  {
+                                                               "jsCode":  "const marked=$input.first().json;const original=$(\u0027Get MMM Emails\u0027).all();const match=original.find(e=\u003ee.json.id===marked.id)||original[0];const e=match.json;return [{json:{emailId:e.id||\u0027\u0027,From:e.From||e.from||\u0027Unknown\u0027,Subject:e.Subject||e.subject||\u0027(no subject)\u0027,snippet:e.snippet||e.text||e.body||\u0027\u0027,threadId:e.threadId||\u0027\u0027}}];"
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n4",
+                                            "name":  "Classify Email",
+                                            "type":  "n8n-nodes-base.httpRequest",
+                                            "typeVersion":  4,
+                                            "position":  [
+                                                             1100,
+                                                             300
+                                                         ],
+                                            "parameters":  {
+                                                               "method":  "POST",
+                                                               "url":  "https://api.anthropic.com/v1/messages",
+                                                               "sendHeaders":  true,
+                                                               "headerParameters":  {
+                                                                                        "parameters":  [
+                                                                                                           {
+                                                                                                               "name":  "x-api-key",
+                                                                                                               "value":  "{{ANTHROPIC_API_KEY}}"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "name":  "anthropic-version",
+                                                                                                               "value":  "2023-06-01"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "name":  "content-type",
+                                                                                                               "value":  "application/json"
+                                                                                                           }
+                                                                                                       ]
+                                                                                    },
+                                                               "sendBody":  true,
+                                                               "contentType":  "raw",
+                                                               "body":  "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 500,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are email triage for MMM Trucking asset-based reefer carrier minority women-owned CEO Nimrat Samra Stockton CA 35 trucks WA to CA lanes.\\n\\nClassify into ONE:\\nPROSPECT_REPLY - shipper responding or new inbound inquiry\\nLOAD_INQUIRY - asking about capacity or rates\\nEXISTING_CUSTOMER - HP Hood Active Berry Zirkle Skone Connors Grimmway Taylor Farms Chelan Fresh\\nCARRIER_BROKER - another carrier or broker\\nJUNK_ADMIN - newsletter spam automated receipt\\n\\nRespond ONLY with JSON no preamble:\\n{\\\"category\\\":\\\"X\\\",\\\"sender_name\\\":\\\"X\\\",\\\"subject_summary\\\":\\\"X\\\",\\\"urgency\\\":\\\"HIGH|MEDIUM|LOW\\\"}\\n\\nFrom: {{ $json.From }}\\nSubject: {{ $json.Subject }}\\nBody: {{ $json.snippet }}\"\n    }\n  ]\n}",
+                                                               "options":  {
+
+                                                                           }
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n5",
+                                            "name":  "Parse Classification",
+                                            "type":  "n8n-nodes-base.code",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             1320,
+                                                             300
+                                                         ],
+                                            "parameters":  {
+                                                               "jsCode":  "const resp=$input.first().json;const prev=$(\u0027Restore Email Data\u0027).first().json;let c={category:\u0027JUNK_ADMIN\u0027,sender_name:prev.From||\u0027Unknown\u0027,subject_summary:prev.Subject||\u0027\u0027,urgency:\u0027LOW\u0027};try{c=JSON.parse(resp.content[0].text.replace(/```json|```/g,\u0027\u0027).trim());}catch(e){}return [{json:{...c,From:prev.From,Subject:prev.Subject,snippet:prev.snippet,threadId:prev.threadId}}];"
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n6",
+                                            "name":  "Needs Draft?",
+                                            "type":  "n8n-nodes-base.if",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             1540,
+                                                             300
+                                                         ],
+                                            "parameters":  {
+                                                               "conditions":  {
+                                                                                  "options":  {
+                                                                                                  "caseSensitive":  false
+                                                                                              },
+                                                                                  "conditions":  [
+                                                                                                     {
+                                                                                                         "leftValue":  "={{ $json.category }}",
+                                                                                                         "rightValue":  "CARRIER_BROKER",
+                                                                                                         "operator":  {
+                                                                                                                          "type":  "string",
+                                                                                                                          "operation":  "notEquals"
+                                                                                                                      }
+                                                                                                     },
+                                                                                                     {
+                                                                                                         "leftValue":  "={{ $json.category }}",
+                                                                                                         "rightValue":  "JUNK_ADMIN",
+                                                                                                         "operator":  {
+                                                                                                                          "type":  "string",
+                                                                                                                          "operation":  "notEquals"
+                                                                                                                      }
+                                                                                                     }
+                                                                                                 ],
+                                                                                  "combinator":  "and"
+                                                                              }
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n7",
+                                            "name":  "Generate Draft",
+                                            "type":  "n8n-nodes-base.httpRequest",
+                                            "typeVersion":  4,
+                                            "position":  [
+                                                             1760,
+                                                             180
+                                                         ],
+                                            "parameters":  {
+                                                               "method":  "POST",
+                                                               "url":  "https://api.anthropic.com/v1/messages",
+                                                               "sendHeaders":  true,
+                                                               "headerParameters":  {
+                                                                                        "parameters":  [
+                                                                                                           {
+                                                                                                               "name":  "x-api-key",
+                                                                                                               "value":  "{{ANTHROPIC_API_KEY}}"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "name":  "anthropic-version",
+                                                                                                               "value":  "2023-06-01"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "name":  "content-type",
+                                                                                                               "value":  "application/json"
+                                                                                                           }
+                                                                                                       ]
+                                                                                    },
+                                                               "sendBody":  true,
+                                                               "contentType":  "raw",
+                                                               "body":  "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 800,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Draft a reply for Loretta Sercy BD Rep MMM Trucking.\\n\\nMMM: Asset-based reefer carrier NOT a broker. Minority women-owned. CEO Nimrat Samra approves sends all external emails Loretta drafts. Stockton CA 35 trucks NorCal to WA to UT/ID to SoCal lanes.\\n\\nRULES: Never call MMM broker. Never lead with price. Lead with reliability shipper trust. Mention minority women-owned naturally. Say reliable coverage not carrier relationships. No signature needed.\\n\\nFRAMEWORK: Open with their lane or pain. Middle establish fit no rates first contact. Close with a simple ask for a call or next step.\\n\\nCategory: {{ $json.category }}\\nFrom: {{ $json.From }}\\nSubject: {{ $json.Subject }}\\nBody: {{ $json.snippet }}\\n\\nWrite only email body starting with greeting. No subject no signature.\"\n    }\n  ]\n}",
+                                                               "options":  {
+
+                                                                           }
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n8",
+                                            "name":  "Parse Draft",
+                                            "type":  "n8n-nodes-base.code",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             1980,
+                                                             180
+                                                         ],
+                                            "parameters":  {
+                                                               "jsCode":  "const resp=$input.first().json;const prev=$(\u0027Parse Classification\u0027).first().json;let draftText=\u0027Could not generate draft. Please reply manually.\u0027;try{draftText=resp.content[0].text;}catch(e){}const draftHtml=draftText.replace(/\\n/g,\u0027\u003cbr\u003e\u0027);const reSubject=\u0027Re: \u0027+prev.Subject;return [{json:{...prev,draftText,draftHtml,reSubject}}];"
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n10",
+                                            "name":  "Alert Loretta",
+                                            "type":  "n8n-nodes-base.gmail",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             2200,
+                                                             280
+                                                         ],
+                                            "credentials":  {
+                                                                "gmailOAuth2":  {
+                                                                                    "id":  "68RydHz0N1dUAj9S",
+                                                                                    "name":  "MMM Trucking"
+                                                                                }
+                                                            },
+                                            "parameters":  {
+                                                               "sendTo":  "lorettasercy@gmail.com",
+                                                               "subject":  "=🚨 [MMM] New {{ $json.category }} — {{ $json.urgency }} urgency — Draft in MMM inbox",
+                                                               "emailType":  "html",
+                                                               "message":  "=\u003chtml\u003e\u003cbody style=\u0027font-family:Arial,sans-serif;font-size:14px;color:#333;\u0027\u003e\u003ch2 style=\u0027color:#c00;\u0027\u003eAction Required — MMM Trucking Email\u003c/h2\u003e\u003cp\u003eA draft reply is waiting in your \u003cstrong\u003eMMM Trucking inbox\u003c/strong\u003e (lsercy@mmmtrucks.com). Open it, copy the draft, and paste it as your reply to the sender.\u003c/p\u003e\u003chr/\u003e\u003ctable style=\u0027background:#f5f5f5;padding:12px;width:100%;\u0027\u003e\u003ctr\u003e\u003ctd\u003e\u003cstrong\u003eFROM:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.From }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd\u003e\u003cstrong\u003eSUBJECT:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.Subject }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd\u003e\u003cstrong\u003eCATEGORY:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.category }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd\u003e\u003cstrong\u003eURGENCY:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.urgency }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd\u003e\u003cstrong\u003eSUMMARY:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.subject_summary }}\u003c/td\u003e\u003c/tr\u003e\u003c/table\u003e\u003cbr/\u003e\u003ch3\u003eDraft Preview\u003c/h3\u003e\u003cdiv style=\u0027background:#fff;border-left:4px solid #1a4b8c;padding:12px;\u0027\u003e{{ $json.draftHtml }}\u003c/div\u003e\u003cbr/\u003e\u003cp style=\u0027color:#888;font-size:12px;\u0027\u003eFull draft sent to lsercy@mmmtrucks.com — Copy, paste, send to prospect\u003c/p\u003e\u003c/body\u003e\u003c/html\u003e",
+                                                               "options":  {
+
+                                                                           }
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n11",
+                                            "name":  "No Draft Needed",
+                                            "type":  "n8n-nodes-base.noOp",
+                                            "typeVersion":  1,
+                                            "position":  [
+                                                             1760,
+                                                             420
+                                                         ],
+                                            "parameters":  {
+
+                                                           }
+                                        },
+                                        {
+                                            "id":  "n9b",
+                                            "name":  "Send Draft to MMM Inbox",
+                                            "type":  "n8n-nodes-base.gmail",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             2200,
+                                                             100
+                                                         ],
+                                            "credentials":  {
+                                                                "gmailOAuth2":  {
+                                                                                    "id":  "68RydHz0N1dUAj9S",
+                                                                                    "name":  "MMM Trucking"
+                                                                                }
+                                                            },
+                                            "parameters":  {
+                                                               "sendTo":  "lsercy@mmmtrucks.com",
+                                                               "subject":  "={{ \u0027[DRAFT REPLY] Re: \u0027 + $json.Subject }}",
+                                                               "emailType":  "html",
+                                                               "message":  "=\u003chtml\u003e\u003cbody style=\u0027font-family:Arial,sans-serif;max-width:680px;\u0027\u003e\u003cdiv style=\u0027background:#003087;padding:16px 24px;\u0027\u003e\u003ch2 style=\u0027color:white;margin:0;\u0027\u003eMMM Trucking — Draft Reply Ready\u003c/h2\u003e\u003c/div\u003e\u003cdiv style=\u0027padding:24px;background:#f9f9f9;border-left:4px solid #003087;margin:24px 0;\u0027\u003e\u003ch3 style=\u0027color:#003087;\u0027\u003eInbound Email\u003c/h3\u003e\u003ctable style=\u0027width:100%;\u0027\u003e\u003ctr\u003e\u003ctd style=\u0027padding:6px 12px 6px 0;color:#555;\u0027\u003e\u003cstrong\u003eFrom:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.From }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd style=\u0027padding:6px 12px 6px 0;color:#555;\u0027\u003e\u003cstrong\u003eSubject:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.Subject }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd style=\u0027padding:6px 12px 6px 0;color:#555;\u0027\u003e\u003cstrong\u003eCategory:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.category }}\u003c/td\u003e\u003c/tr\u003e\u003ctr\u003e\u003ctd style=\u0027padding:6px 12px 6px 0;color:#555;\u0027\u003e\u003cstrong\u003eUrgency:\u003c/strong\u003e\u003c/td\u003e\u003ctd\u003e{{ $json.urgency }}\u003c/td\u003e\u003c/tr\u003e\u003c/table\u003e\u003c/div\u003e\u003cdiv style=\u0027padding:24px;background:#fff;border:2px solid #003087;border-radius:4px;margin:0 0 24px 0;\u0027\u003e\u003ch3 style=\u0027color:#003087;\u0027\u003eSuggested Reply — Copy and Paste\u003c/h3\u003e\u003cdiv style=\u0027background:#f4f8ff;padding:16px;white-space:pre-wrap;font-family:Georgia,serif;line-height:1.6;\u0027\u003e{{ $json.draftText }}\u003c/div\u003e\u003c/div\u003e\u003cdiv style=\u0027padding:16px;background:#f0f0f0;font-size:12px;color:#888;text-align:center;\u0027\u003eMMM Trucking AgentOS — Workflow 3.1 — Draft requires human review\u003c/div\u003e\u003c/body\u003e\u003c/html\u003e",
+                                                               "options":  {
+
+                                                                           }
+                                                           }
+                                        }
+                                    ],
+                          "connections":  {
+                                              "Schedule Trigger":  {
+                                                                       "main":  [
+                                                                                    [
+                                                                                        {
+                                                                                            "node":  "Get MMM Emails",
+                                                                                            "type":  "main",
+                                                                                            "index":  0
+                                                                                        }
+                                                                                    ]
+                                                                                ]
+                                                                   },
+                                              "Get MMM Emails":  {
+                                                                     "main":  [
+                                                                                  [
+                                                                                      {
+                                                                                          "node":  "Mark as Read",
+                                                                                          "type":  "main",
+                                                                                          "index":  0
+                                                                                      }
+                                                                                  ]
+                                                                              ]
+                                                                 },
+                                              "Mark as Read":  {
+                                                                   "main":  [
+                                                                                [
+                                                                                    {
+                                                                                        "node":  "Restore Email Data",
+                                                                                        "type":  "main",
+                                                                                        "index":  0
+                                                                                    }
+                                                                                ]
+                                                                            ]
+                                                               },
+                                              "Restore Email Data":  {
+                                                                         "main":  [
+                                                                                      [
+                                                                                          {
+                                                                                              "node":  "Classify Email",
+                                                                                              "type":  "main",
+                                                                                              "index":  0
+                                                                                          }
+                                                                                      ]
+                                                                                  ]
+                                                                     },
+                                              "Classify Email":  {
+                                                                     "main":  [
+                                                                                  [
+                                                                                      {
+                                                                                          "node":  "Parse Classification",
+                                                                                          "type":  "main",
+                                                                                          "index":  0
+                                                                                      }
+                                                                                  ]
+                                                                              ]
+                                                                 },
+                                              "Parse Classification":  {
+                                                                           "main":  [
+                                                                                        [
+                                                                                            {
+                                                                                                "node":  "Needs Draft?",
+                                                                                                "type":  "main",
+                                                                                                "index":  0
+                                                                                            }
+                                                                                        ]
+                                                                                    ]
+                                                                       },
+                                              "Needs Draft?":  {
+                                                                   "main":  [
+                                                                                [
+                                                                                    {
+                                                                                        "node":  "Generate Draft",
+                                                                                        "type":  "main",
+                                                                                        "index":  0
+                                                                                    }
+                                                                                ],
+                                                                                [
+                                                                                    {
+                                                                                        "node":  "No Draft Needed",
+                                                                                        "type":  "main",
+                                                                                        "index":  0
+                                                                                    }
+                                                                                ]
+                                                                            ]
+                                                               },
+                                              "Generate Draft":  {
+                                                                     "main":  [
+                                                                                  [
+                                                                                      {
+                                                                                          "node":  "Parse Draft",
+                                                                                          "type":  "main",
+                                                                                          "index":  0
+                                                                                      }
+                                                                                  ]
+                                                                              ]
+                                                                 },
+                                              "Parse Draft":  {
+                                                                  "main":  [
+                                                                               [
+                                                                                   {
+                                                                                       "node":  "Send Draft to MMM Inbox",
+                                                                                       "type":  "main",
+                                                                                       "index":  0
+                                                                                   },
+                                                                                   {
+                                                                                       "node":  "Alert Loretta",
+                                                                                       "type":  "main",
+                                                                                       "index":  0
+                                                                                   }
+                                                                               ]
+                                                                           ]
+                                                              }
+                                          },
+                          "authors":  "Alan Sercy",
+                          "name":  null,
+                          "description":  null,
+                          "autosaved":  false,
+                          "workflowPublishHistory":  [
+                                                         {
+                                                             "createdAt":  "2026-04-07T15:49:30.257Z",
+                                                             "id":  60,
+                                                             "workflowId":  "r1pkTZ94DuuWrTtA",
+                                                             "versionId":  "660b426e-04a3-49f7-99c9-da3a087f947b",
+                                                             "event":  "activated",
+                                                             "userId":  "19773a36-d839-4b09-93d5-6b41434750c0"
+                                                         },
+                                                         {
+                                                             "createdAt":  "2026-04-07T15:49:30.239Z",
+                                                             "id":  59,
+                                                             "workflowId":  "r1pkTZ94DuuWrTtA",
+                                                             "versionId":  "660b426e-04a3-49f7-99c9-da3a087f947b",
+                                                             "event":  "deactivated",
+                                                             "userId":  "19773a36-d839-4b09-93d5-6b41434750c0"
+                                                         }
+                                                     ]
+                      }
+}

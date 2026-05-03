@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Wave Report | East Dallas Growth · Loretta Sercy</title>
+  <meta name="description" content="A monthly interpretation of East Dallas growth patterns — what's changing, what it means, and what thoughtful buyers and sellers should understand before it becomes obvious everywhere else." />
+  <meta property="og:title" content="The Wave Report | MoveWithClarity" />
+  <meta property="og:description" content="Monthly interpretation of East Dallas growth. Published by Loretta Sercy, eXp Realty." />
+  <meta property="og:url" content="https://lorettasercy.com/wave-report" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --navy:        #1A2B3C;
+      --navy-deep:   #111E2A;
+      --navy-mid:    #243448;
+      --gold:        #B8903C;
+      --gold-light:  #D4AF6A;
+      --gold-pale:   rgba(184,144,60,0.09);
+      --gold-rule:   rgba(184,144,60,0.25);
+      --cream:       #F5F1EB;
+      --cream-warm:  #EDE8E0;
+      --chalk:       #F9F7F4;
+      --bluegray:    #8FA0B0;
+      --bluegray-lt: #C2CDD6;
+      --stone:       #4A5A6A;
+      --ink:         #1A2B3C;
+      --white:       #FFFFFF;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans:  'Jost', sans-serif;
+      --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--font-sans); background: var(--chalk); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 64px;
+      background: rgba(249,247,244,0.96);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(184,144,60,0.1);
+      transition: padding 0.4s var(--ease-out);
+    }
+    nav.scrolled { padding: 13px 64px; }
+    .nav-wordmark { display: flex; flex-direction: column; gap: 1px; }
+    .nav-wordmark-top { font-family: var(--font-serif); font-size: 17px; font-weight: 500; color: var(--navy); letter-spacing: -0.01em; line-height: 1; }
+    .nav-wordmark-top em { font-style: italic; color: var(--gold); }
+    .nav-wordmark-sub { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--bluegray); }
+    .nav-center { display: flex; align-items: center; gap: 32px; }
+    .nav-report-label { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+    .nav-report-label::before { content: ''; width: 20px; height: 1px; background: var(--gold-rule); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { font-family: var(--font-sans); font-weight: 300; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--stone); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { font-family: var(--font-sans); font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--white); background: var(--navy); padding: 11px 26px; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--navy-mid); }
+
+    /* ── MASTHEAD ── */
+    .masthead {
+      background: var(--navy-deep);
+      padding: 140px 64px 100px;
+      position: relative; overflow: hidden;
+    }
+    .masthead::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(ellipse 55% 60% at 85% 40%, rgba(184,144,60,0.05) 0%, transparent 65%),
+        radial-gradient(ellipse 30% 50% at 5% 90%, rgba(184,144,60,0.03) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .masthead::after {
+      content: '';
+      position: absolute; left: 64px; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(184,144,60,0.14) 30%, rgba(184,144,60,0.14) 70%, transparent);
+    }
+    .masthead-inner { position: relative; z-index: 1; max-width: 760px; }
+    .masthead-pub-tag {
+      font-family: var(--font-sans); font-weight: 300; font-size: 9px;
+      letter-spacing: 0.38em; text-transform: uppercase;
+      color: var(--gold);
+      display: flex; align-items: center; gap: 16px; margin-bottom: 44px;
+      opacity: 0; animation: revealUp 0.8s 0.1s var(--ease-out) forwards;
+    }
+    .masthead-pub-tag::before { content: ''; width: 28px; height: 1px; background: var(--gold-rule); flex-shrink: 0; }
+    .masthead-title {
+      font-family: var(--font-serif); font-weight: 400;
+      font-size: clamp(52px, 7vw, 104px);
+      line-height: 0.9; letter-spacing: -0.025em;
+      color: var(--white); margin-bottom: 8px;
+      opacity: 0; animation: revealUp 1s 0.2s var(--ease-out) forwards;
+    }
+    .masthead-title-2 {
+      font-family: var(--font-serif); font-style: italic; font-weight: 400;
+      font-size: clamp(52px, 7vw, 104px);
+      line-height: 0.9; letter-spacing: -0.025em;
+      color: var(--gold-light); margin-bottom: 52px;
+      opacity: 0; animation: revealUp 1s 0.3s var(--ease-out) forwards;
+    }
+    .masthead-rule { width: 48px; height: 2px; background: rgba(184,144,60,0.32); margin-bottom: 28px; opacity: 0; animation: revealUp 0.8s 0.4s var(--ease-out) forwards; }
+    .masthead-sub {
+      font-family: var(--font-sans); font-weight: 300;
+      font-size: clamp(14px, 1.4vw, 17px); line-height: 2;
+      color: rgba(210,220,230,0.58); max-width: 520px; margin-bottom: 16px;
+      opacity: 0; animation: revealUp 0.9s 0.48s var(--ease-out) forwards;
+    }
+    .masthead-meta {
+      font-family: var(--font-sans); font-weight: 300; font-size: 10px;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      opacity: 0; animation: revealUp 0.9s 0.56s var(--ease-out) forwards;
+    }
+
+    /* ── ABOUT STRIP ── */
+    .about-strip {
+      background: var(--cream);
+      padding: 80px 64px;
+    }
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+      max-width: 1100px;
+    }
+    .about-eyebrow { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .about-eyebrow::before { content: ''; width: 22px; height: 1px; background: var(--gold); flex-shrink: 0; }
+    .about-headline { font-family: var(--font-serif); font-weight: 400; font-size: clamp(24px, 2.6vw, 38px); color: var(--navy); line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 24px; }
+    .about-headline em { font-style: italic; color: var(--gold); }
+    .about-body { font-family: var(--font-sans); font-weight: 300; font-size: 15px; line-height: 2; color: var(--stone); margin-bottom: 18px; }
+    .about-body strong { font-weight: 400; color: var(--navy); }
+    .about-cards { display: flex; flex-direction: column; gap: 2px; padding-top: 8px; }
+    .about-card { background: var(--white); padding: 24px 26px; border-left: 2px solid var(--gold); }
+    .about-card.soft { border-left-color: var(--bluegray-lt); background: var(--chalk); }
+    .ac-label { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+    .ac-label.soft { color: var(--bluegray); }
+    .ac-text { font-family: var(--font-serif); font-style: italic; font-size: 15px; color: var(--navy); line-height: 1.5; }
+
+    /* ── LATEST ISSUE FEATURE ── */
+    .latest {
+      background: var(--chalk);
+      padding: 80px 64px;
+    }
+    .latest-eyebrow { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
+    .latest-eyebrow::before { content: ''; width: 22px; height: 1px; background: var(--gold); flex-shrink: 0; }
+    .latest-card {
+      background: var(--navy-deep);
+      padding: 56px 60px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 64px;
+      align-items: start;
+      position: relative;
+      overflow: hidden;
+      max-width: 1100px;
+    }
+    .latest-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 50% 70% at 90% 50%, rgba(184,144,60,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .lc-inner { position: relative; z-index: 1; }
+    .lc-issue-tag { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+    .lc-issue-tag::before { content: ''; width: 18px; height: 1px; background: var(--gold-rule); }
+    .lc-headline { font-family: var(--font-serif); font-weight: 400; font-size: clamp(32px, 3.5vw, 54px); color: var(--white); line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .lc-headline-2 { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(32px, 3.5vw, 54px); color: var(--gold-light); line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 32px; }
+    .lc-desc { font-family: var(--font-sans); font-weight: 300; font-size: 14px; line-height: 2; color: rgba(210,220,230,0.58); margin-bottom: 36px; max-width: 480px; }
+    .lc-read { font-family: var(--font-sans); font-weight: 400; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; background: var(--gold); color: var(--white); padding: 15px 36px; display: inline-block; transition: background 0.3s; }
+    .lc-read:hover { background: #9a7530; }
+    .lc-toc { position: relative; z-index: 1; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.03); padding: 24px 24px 8px; }
+    .lc-toc-title { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.2); margin-bottom: 16px; }
+    .lc-toc-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .lc-toc-item:last-child { border-bottom: none; margin-bottom: 16px; }
+    .lc-toc-num { font-family: var(--font-serif); font-style: italic; font-size: 11px; color: rgba(184,144,60,0.4); flex-shrink: 0; min-width: 16px; }
+    .lc-toc-label { font-family: var(--font-sans); font-weight: 300; font-size: 11px; line-height: 1.45; color: rgba(210,220,230,0.38); }
+
+    /* ── ARCHIVE ── */
+    .archive { background: var(--white); padding: 80px 64px; }
+    .archive-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 16px; }
+    .archive-eyebrow { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 12px; }
+    .archive-eyebrow::before { content: ''; width: 22px; height: 1px; background: var(--gold); flex-shrink: 0; }
+    .archive-count { font-family: var(--font-sans); font-weight: 300; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--bluegray); }
+    .archive-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .archive-card {
+      background: var(--chalk);
+      padding: 32px 28px;
+      border-top: 2px solid transparent;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s var(--ease-out);
+      display: flex; flex-direction: column;
+    }
+    .archive-card:hover { border-top-color: var(--gold); background: var(--white); transform: translateY(-3px); }
+    .archive-card.current { border-top-color: var(--gold); background: var(--navy-deep); cursor: default; }
+    .ac-issue-num { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+    .archive-card.current .ac-issue-num { color: var(--gold-light); }
+    .ac-date { font-family: var(--font-serif); font-weight: 400; font-size: 22px; color: var(--navy); margin-bottom: 4px; }
+    .archive-card.current .ac-date { color: var(--white); }
+    .ac-subtitle { font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--gold); margin-bottom: 14px; }
+    .archive-card.current .ac-subtitle { color: var(--gold-light); }
+    .ac-summary { font-family: var(--font-sans); font-weight: 300; font-size: 12px; line-height: 1.8; color: var(--stone); flex-grow: 1; margin-bottom: 20px; }
+    .archive-card.current .ac-summary { color: rgba(210,220,230,0.5); }
+    .ac-link { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 8px; transition: gap 0.2s; }
+    .ac-link::after { content: '→'; font-size: 11px; }
+    .ac-link:hover { gap: 12px; }
+    .archive-card.current .ac-link { color: var(--gold-light); }
+    /* Placeholder card for upcoming issues */
+    .archive-card.upcoming { opacity: 0.4; cursor: default; }
+    .archive-card.upcoming:hover { border-top-color: transparent; background: var(--chalk); transform: none; }
+    .ac-upcoming-label { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--bluegray); }
+
+    /* ── SUBSCRIBE / FOLLOW ── */
+    .follow {
+      background: var(--navy);
+      padding: 80px 64px;
+      text-align: center;
+    }
+    .follow-eyebrow { font-family: var(--font-sans); font-weight: 300; font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; }
+    .follow-eyebrow::before, .follow-eyebrow::after { content: ''; width: 22px; height: 1px; background: var(--gold-rule); }
+    .follow-headline { font-family: var(--font-serif); font-weight: 400; font-size: clamp(24px, 2.8vw, 40px); color: var(--white); line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 16px; }
+    .follow-headline em { font-style: italic; color: var(--gold-light); }
+    .follow-sub { font-family: var(--font-sans); font-weight: 300; font-size: 14px; line-height: 1.9; color: rgba(210,220,230,0.5); max-width: 480px; margin: 0 auto 40px; }
+    .follow-options { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-gold { font-family: var(--font-sans); font-weight: 400; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; background: var(--gold); color: var(--white); padding: 15px 36px; display: inline-block; transition: background 0.3s; }
+    .btn-gold:hover { background: #9a7530; }
+    .btn-ghost { font-family: var(--font-sans); font-weight: 300; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.65); padding: 15px 36px; display: inline-block; transition: all 0.3s; }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.05); }
+
+    /* ── FOOTER ── */
+    footer { background: var(--navy-deep); padding: 60px 64px 40px; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(184,144,60,0.1); }
+    .footer-wordmark { font-family: var(--font-serif); font-size: 22px; color: var(--white); margin-bottom: 10px; display: block; }
+    .footer-wordmark em { font-style: italic; color: var(--gold-light); }
+    .footer-tagline { font-family: var(--font-serif); font-style: italic; font-size: 13px; color: rgba(220,230,240,0.3); }
+    .footer-col-title { font-family: var(--font-sans); font-weight: 400; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(184,144,60,0.48); margin-bottom: 18px; }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-link { font-family: var(--font-sans); font-weight: 300; font-size: 12px; color: rgba(255,255,255,0.3); transition: color 0.2s; }
+    .footer-link:hover { color: var(--gold-light); }
+    .footer-bottom { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; }
+    .footer-legal { font-family: var(--font-sans); font-weight: 300; font-size: 10px; line-height: 1.85; color: rgba(255,255,255,0.14); max-width: 560px; }
+    .footer-legal a { color: rgba(255,255,255,0.22); }
+    .footer-legal a:hover { color: var(--gold-light); }
+    .footer-compliance { text-align: right; flex-shrink: 0; }
+    .footer-compliance-line { font-family: var(--font-sans); font-weight: 200; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.12); line-height: 2.1; }
+    .footer-fair-housing { font-family: var(--font-sans); font-weight: 300; font-size: 9px; color: rgba(255,255,255,0.15); margin-top: 10px; display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+    .fh-icon { width: 14px; height: 14px; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 7px; color: rgba(255,255,255,0.18); flex-shrink: 0; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.82s var(--ease-out), transform 0.82s var(--ease-out); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.12s; }
+    .reveal-delay-2 { transition-delay: 0.24s; }
+    .reveal-delay-3 { transition-delay: 0.36s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      nav { padding: 18px 32px; }
+      .nav-center { display: none; }
+      .masthead { padding: 120px 40px 72px; }
+      .about-strip, .latest, .archive, .follow { padding: 60px 40px; }
+      .about-inner { grid-template-columns: 1fr; gap: 40px; }
+      .latest-card { grid-template-columns: 1fr; gap: 36px; }
+      .lc-toc { display: none; }
+      .archive-grid { grid-template-columns: 1fr 1fr; }
+      footer { padding: 60px 40px 40px; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; }
+      .footer-compliance { text-align: left; }
+      .footer-fair-housing { justify-content: flex-start; }
+    }
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .masthead { padding: 100px 24px 60px; }
+      .about-strip, .latest, .archive, .follow { padding: 48px 24px; }
+      .archive-grid { grid-template-columns: 1fr; }
+      footer { padding: 48px 24px 32px; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <a href="https://lorettasercy.com" class="nav-wordmark">
+      <div class="nav-wordmark-top">Move with <em>Clarity.</em></div>
+      <div class="nav-wordmark-sub">Loretta Sercy · eXp Realty</div>
+    </a>
+    <div class="nav-center">
+      <div class="nav-report-label">The Wave Report</div>
+      <ul class="nav-links">
+        <li><a href="#archive">All Issues</a></li>
+        <li><a href="https://lorettasercy.com/#guides">Guides</a></li>
+        <li><a href="https://lorettasercy.com/#markets">Markets</a></li>
+      </ul>
+    </div>
+    <a href="https://lorettasercy.com/#contact" class="nav-cta">Start a Conversation</a>
+  </nav>
+
+  <!-- MASTHEAD -->
+  <section class="masthead">
+    <div class="masthead-inner">
+      <div class="masthead-pub-tag">East Dallas Growth · MoveWithClarity · Published Monthly</div>
+      <div class="masthead-title">The Wave</div>
+      <div class="masthead-title-2">Report.</div>
+      <div class="masthead-rule"></div>
+      <p class="masthead-sub">East Dallas growth, interpreted. What's changing, what it means, and what thoughtful buyers and sellers should understand before it becomes obvious everywhere else.</p>
+      <div class="masthead-meta">Published monthly around the 15th · Issue No. 01 — May 2026</div>
+    </div>
+  </section>
+
+  <!-- ABOUT THE REPORT -->
+  <section class="about-strip">
+    <div class="about-inner">
+      <div>
+        <div class="about-eyebrow reveal">What This Is</div>
+        <h2 class="about-headline reveal">Not a market update.<br>An <em>interpretation.</em></h2>
+        <p class="about-body reveal">The Wave Report is a monthly editorial on East Dallas growth patterns — the corridor of communities running from Royse City and Fate through Caddo Mills, Greenville, Farmersville, and Blue Ridge that is in the middle of a meaningful, complicated shift.</p>
+        <p class="about-body reveal">Most market reports tell you what sold and for how much. This one tells you <strong>what's changing and what it means</strong> — the infrastructure gaps, the acreage fragmentation, the second-order effects that don't show up in a comp sheet but will absolutely show up in your daily life three years from now.</p>
+        <p class="about-body reveal">Published by Loretta Sercy — a realtor who lives in this corridor, works in it every day, and has a vested interest in people understanding it clearly before they commit to it.</p>
+      </div>
+      <div class="about-cards">
+        <div class="about-card reveal">
+          <div class="ac-label">What it is</div>
+          <div class="ac-text">Regional interpretation. Editorial observation. Context that should inform a decision but never replace one.</div>
+        </div>
+        <div class="about-card soft reveal reveal-delay-1">
+          <div class="ac-label soft">What it isn't</div>
+          <div class="ac-text">A data summary. A prediction. A market report. An argument for or against buying anywhere specific.</div>
+        </div>
+        <div class="about-card reveal reveal-delay-2">
+          <div class="ac-label">Who it's for</div>
+          <div class="ac-text">Buyers thinking about moving east. Sellers understanding what their market is becoming. Anyone trying to understand a place before committing to it.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST ISSUE -->
+  <section class="latest">
+    <div class="latest-eyebrow reveal">Latest Issue</div>
+    <div class="latest-card reveal reveal-delay-1">
+      <div class="lc-inner">
+        <div class="lc-issue-tag">Issue No. 01 · May 2026</div>
+        <div class="lc-headline">The Wave</div>
+        <div class="lc-headline-2">May 2026.</div>
+        <p class="lc-desc">Growth changes more than property values. It changes a place's story. This issue covers the active growth corridors, what buyers are missing about second-order effects, a spotlight on Farmersville, and what to watch over the next 6 to 24 months.</p>
+        <a href="https://lorettasercy.com/wave/may-2026" class="lc-read">Read This Issue</a>
+      </div>
+      <div class="lc-toc">
+        <div class="lc-toc-title">In this issue</div>
+        <div class="lc-toc-item"><div class="lc-toc-num">01</div><div class="lc-toc-label">Opening Observation — When growth changes a place's story</div></div>
+        <div class="lc-toc-item"><div class="lc-toc-num">02</div><div class="lc-toc-label">What's Changing — Growth, roads, builders, acreage</div></div>
+        <div class="lc-toc-item"><div class="lc-toc-num">03</div><div class="lc-toc-label">What People Are Missing — Second-order effects</div></div>
+        <div class="lc-toc-item"><div class="lc-toc-num">04</div><div class="lc-toc-label">Town Spotlight — Farmersville</div></div>
+        <div class="lc-toc-item"><div class="lc-toc-num">05</div><div class="lc-toc-label">The Lifestyle Shift — What buyers are seeking and underestimating</div></div>
+        <div class="lc-toc-item"><div class="lc-toc-num">06</div><div class="lc-toc-label">Looking Ahead — 6 to 24 months</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHIVE -->
+  <section class="archive" id="archive">
+    <div class="archive-header">
+      <div class="archive-eyebrow reveal">All Issues</div>
+      <div class="archive-count reveal">1 issue published</div>
+    </div>
+    <div class="archive-grid">
+
+      <!-- Issue 01 — CURRENT -->
+      <a href="https://lorettasercy.com/wave/may-2026" class="archive-card current reveal">
+        <div class="ac-issue-num">Issue No. 01</div>
+        <div class="ac-date">May 2026</div>
+        <div class="ac-subtitle">The Wave</div>
+        <p class="ac-summary">Growth corridors, acreage fragmentation, infrastructure lag, Farmersville spotlight, and what to watch over the next 24 months.</p>
+        <div class="ac-link">Read Issue</div>
+      </a>
+
+      <!-- Issue 02 — UPCOMING -->
+      <div class="archive-card upcoming reveal reveal-delay-1">
+        <div class="ac-issue-num">Issue No. 02</div>
+        <div class="ac-date">June 2026</div>
+        <div class="ac-upcoming-label">Publishing mid-June</div>
+      </div>
+
+      <!-- Issue 03 — UPCOMING -->
+      <div class="archive-card upcoming reveal reveal-delay-2">
+        <div class="ac-issue-num">Issue No. 03</div>
+        <div class="ac-date">July 2026</div>
+        <div class="ac-upcoming-label">Publishing mid-July</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOLLOW / STAY CURRENT -->
+  <section class="follow">
+    <div class="follow-eyebrow reveal">Stay Current</div>
+    <h2 class="follow-headline reveal">New issue every <em>month.</em></h2>
+    <p class="follow-sub reveal">Published around the 15th. One issue, one corridor, one honest interpretation of what's happening east of Dallas — and what it means for the decisions you're making.</p>
+    <div class="follow-options reveal reveal-delay-1">
+      <a href="https://lorettasercy.com/#contact" class="btn-gold">Start a Conversation</a>
+      <a href="https://lorettasercy.com/clarity-blueprint" class="btn-ghost">The Clarity Blueprint</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div>
+        <a href="https://lorettasercy.com" class="footer-wordmark">Move with <em>Clarity.</em></a>
+        <div class="footer-tagline">"Not Pressure."</div>
+      </div>
+      <div>
+        <div class="footer-col-title">The Wave Report</div>
+        <div class="footer-links">
+          <a href="https://lorettasercy.com/wave-report" class="footer-link">Archive Hub</a>
+          <a href="https://lorettasercy.com/wave/may-2026" class="footer-link">May 2026 — Issue No. 01</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Guides</div>
+        <div class="footer-links">
+          <a href="https://lorettasercy.com/clarity-blueprint" class="footer-link">The Clarity Blueprint</a>
+          <a href="https://lorettasercy.com/parents-move-guide" class="footer-link">The Parents' Move Guide</a>
+          <a href="https://lorettasercy.com/why-your-house-didnt-sell" class="footer-link">Why Your House Didn't Sell</a>
+          <a href="https://lorettasercy.com/divorce-housing-clarity-guide" class="footer-link">Divorce &amp; Housing Clarity</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        The Wave Report is an interpretive regional publication by Loretta Sercy, Licensed Realtor® with eXp Realty. All observations are editorial in nature and do not constitute legal, financial, or appraisal advice. Texas is a non-disclosure state — no closed sale prices are referenced. Market observations are based on publicly available information and firsthand local knowledge. Published monthly around the 15th.<br><br>
+        <a href="https://lorettasercy.com">lorettasercy.com</a> &nbsp;|&nbsp; <a href="#">Texas Real Estate Commission Information About Brokerage Services</a>
+      </div>
+      <div class="footer-compliance">
+        <div class="footer-compliance-line">Loretta Sercy · Licensed Realtor®</div>
+        <div class="footer-compliance-line">eXp Realty · TX License #0633703</div>
+        <div class="footer-compliance-line">lorettasercy.com · © 2026 All Rights Reserved</div>
+        <div class="footer-fair-housing">
+          <div class="fh-icon">⊜</div>
+          Equal Housing Opportunity
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.06 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>

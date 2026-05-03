@@ -1,0 +1,303 @@
+{
+    "updatedAt":  "2026-04-08T15:17:57.066Z",
+    "createdAt":  "2026-04-07T17:21:57.867Z",
+    "id":  "VvHYTjheeecJ441F",
+    "name":  "3.2 — MMM Prospect Audit (One-Time)",
+    "description":  null,
+    "active":  false,
+    "isArchived":  false,
+    "nodes":  [
+                  {
+                      "parameters":  {
+
+                                     },
+                      "id":  "a1",
+                      "name":  "Manual Trigger",
+                      "type":  "n8n-nodes-base.manualTrigger",
+                      "typeVersion":  1,
+                      "position":  [
+                                       240,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "operation":  "getAll",
+                                         "limit":  500,
+                                         "filters":  {
+                                                         "labelIds":  [
+                                                                          "SENT"
+                                                                      ],
+                                                         "receivedAfter":  "2026-01-01"
+                                                     }
+                                     },
+                      "id":  "a2",
+                      "name":  "Get Sent Emails",
+                      "type":  "n8n-nodes-base.gmail",
+                      "typeVersion":  2.2,
+                      "position":  [
+                                       464,
+                                       304
+                                   ],
+                      "webhookId":  "411d94c1-ed40-435c-b52c-ad38f0c844c1",
+                      "credentials":  {
+                                          "gmailOAuth2":  {
+                                                              "id":  "68RydHz0N1dUAj9S",
+                                                              "name":  "MMM Trucking"
+                                                          }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const emails = $input.all();\nconst lines = emails.map((e, i) =\u003e {\n  const j = e.json;\n  const to = (j.To || j.to || \u0027\u0027).toString().substring(0, 80);\n  const subj = (j.Subject || j.subject || \u0027\u0027).toString().substring(0, 80);\n  return (i + 1) + \u0027. To: \u0027 + to + \u0027 | Subject: \u0027 + subj;\n}).join(\u0027\\n\u0027);\nreturn [{ json: { emailBlock: lines, count: emails.length } }];"
+                                     },
+                      "id":  "a3",
+                      "name":  "Prep Email List",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       688,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://api.anthropic.com/v1/messages",
+                                         "sendHeaders":  true,
+                                         "headerParameters":  {
+                                                                  "parameters":  [
+                                                                                     {
+                                                                                         "name":  "x-api-key",
+                                                                                         "value":  "{{ANTHROPIC_API_KEY}}"
+                                                                                     },
+                                                                                     {
+                                                                                         "name":  "anthropic-version",
+                                                                                         "value":  "2023-06-01"
+                                                                                     },
+                                                                                     {
+                                                                                         "name":  "content-type",
+                                                                                         "value":  "application/json"
+                                                                                     }
+                                                                                 ]
+                                                              },
+                                         "sendBody":  true,
+                                         "contentType":  "raw",
+                                         "body":  "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 2000,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Loretta Sercy is BD Rep at MMM Trucking (lsercy@mmmtrucks.com). Review her sent emails below and identify ONLY outbound prospect pitches to potential shipper customers.\\n\\nInclude: emails to shippers, produce companies, food companies, growers, any potential customer.\\nExclude: internal MMM emails, carrier or broker emails, admin or automated emails, replies to inbound inquiries.\\n\\nFor each prospect pitch found return a JSON object with:\\n- prospect_email: the recipient email address\\n- company: company name derived from domain or email body\\n- subject: the email subject line\\n\\nRespond ONLY with a valid JSON array. If none found return [].\\n\\nSent emails:\\n{{ $json.emailBlock }}\"\n    }\n  ]\n}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "a4",
+                      "name":  "Classify Prospects",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4,
+                      "position":  [
+                                       912,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const resp = $input.first().json;\nlet prospects = [];\ntry {\n  const text = resp.content[0].text.replace(/```json|```/g, \u0027\u0027).trim();\n  prospects = JSON.parse(text);\n} catch(e) {\n  prospects = [];\n}\nconsole.log(\u0027Prospects identified:\u0027, prospects.length);\nreturn [{ json: { prospects, count: prospects.length } }];"
+                                     },
+                      "id":  "a5",
+                      "name":  "Parse Prospects",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1120,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const prospects = $(\u0027Parse Prospects\u0027).first().json.prospects || [];\nconst trackerRows = $input.all().map(r =\u003e r.json);\n\n// Build lookup sets from tracker\nconst trackerEmails = new Set(\n  trackerRows.map(r =\u003e (r.Email || r.email || r[\u0027Email Address\u0027] || r[\u0027Contact Email\u0027] || \u0027\u0027).toLowerCase().trim()).filter(Boolean)\n);\nconst trackerCompanies = new Set(\n  trackerRows.map(r =\u003e (r.Company || r.company || r[\u0027Company Name\u0027] || r.Shipper || \u0027\u0027).toLowerCase().trim()).filter(Boolean)\n);\n\nconsole.log(\u0027Tracker emails:\u0027, trackerEmails.size, \u0027Tracker companies:\u0027, trackerCompanies.size);\n\nconst alreadyInTracker = [];\nconst newProspects = [];\n\nfor (const p of prospects) {\n  const emailNorm = (p.prospect_email || \u0027\u0027).toLowerCase().trim();\n  const companyNorm = (p.company || \u0027\u0027).toLowerCase().trim();\n  const emailDomain = emailNorm.includes(\u0027@\u0027) ? emailNorm.split(\u0027@\u0027)[1] : \u0027\u0027;\n\n  const emailMatch = emailNorm \u0026\u0026 trackerEmails.has(emailNorm);\n  const domainMatch = emailDomain \u0026\u0026 Array.from(trackerEmails).some(e =\u003e e.includes(emailDomain));\n  const companyMatch = companyNorm \u0026\u0026 companyNorm !== \u0027unknown\u0027 \u0026\u0026 trackerCompanies.has(companyNorm);\n\n  if (emailMatch || domainMatch || companyMatch) {\n    alreadyInTracker.push({ ...p, matched_by: emailMatch ? \u0027email\u0027 : domainMatch ? \u0027domain\u0027 : \u0027company\u0027 });\n  } else {\n    newProspects.push(p);\n  }\n}\n\nconsole.log(\u0027Already tracked:\u0027, alreadyInTracker.length, \u0027New:\u0027, newProspects.length);\nreturn [{ json: { alreadyInTracker, newProspects, totalProspects: prospects.length } }];"
+                                     },
+                      "id":  "a7",
+                      "name":  "Match and Compare",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1584,
+                                       304
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "sendTo":  "lorettasercy@gmail.com",
+                                         "subject":  "={{ \u0027[MMM Audit] \u0027 + $json.newProspects.length + \u0027 new prospects + \u0027 + $json.alreadyInTracker.length + \u0027 already tracked (\u0027 + $json.totalProspects + \u0027 total found)\u0027 }}",
+                                         "message":  "=\u003chtml\u003e\u003cbody style=\u0027font-family:Arial,sans-serif;max-width:720px;margin:0 auto;\u0027\u003e\u003cdiv style=\u0027background:#003087;padding:16px 24px;\u0027\u003e\u003ch2 style=\u0027color:white;margin:0;font-size:18px;\u0027\u003eMMM Trucking — Prospect Audit Report\u003c/h2\u003e\u003cp style=\u0027color:#aac4ff;margin:4px 0 0 0;font-size:13px;\u0027\u003eSent emails scanned Jan 1 2026 onwards — {{ $json.totalProspects }} prospect pitches identified\u003c/p\u003e\u003c/div\u003e\u003cdiv style=\u0027padding:24px;\u0027\u003e\u003ch3 style=\u0027color:#c00;margin:0 0 12px 0;\u0027\u003eNew Prospects — Add to Tracker ({{ $json.newProspects.length }})\u003c/h3\u003e{{ $json.newProspects.length === 0 ? \"\u003cp style=\u0027color:#888;\u0027\u003eNone — all prospects already in tracker.\u003c/p\u003e\" : \u0027\u0027 }}\u003ctable style=\u0027width:100%;border-collapse:collapse;font-size:13px;margin-bottom:24px;\u0027\u003e\u003ctr style=\u0027background:#003087;color:white;\u0027\u003e\u003ctd style=\u0027padding:8px 12px;\u0027\u003eEmail\u003c/td\u003e\u003ctd style=\u0027padding:8px 12px;\u0027\u003eCompany\u003c/td\u003e\u003ctd style=\u0027padding:8px 12px;\u0027\u003eSubject\u003c/td\u003e\u003c/tr\u003e{{ $json.newProspects.map((p,i)=\u003e\u0027\u003ctr style=\"background:\u0027+(i%2===0?\u0027#f9f9f9\u0027:\u0027#fff\u0027)+\u0027\"\u003e\u003ctd style=\"padding:7px 12px;\"\u003e\u0027+p.prospect_email+\u0027\u003c/td\u003e\u003ctd style=\"padding:7px 12px;\"\u003e\u0027+p.company+\u0027\u003c/td\u003e\u003ctd style=\"padding:7px 12px;color:#555;\"\u003e\u0027+p.subject+\u0027\u003c/td\u003e\u003c/tr\u003e\u0027).join(\u0027\u0027) }}\u003c/table\u003e\u003chr style=\u0027border:1px solid #eee;\u0027/\u003e\u003ch3 style=\u0027color:#1a4b8c;margin:16px 0 12px 0;\u0027\u003eAlready in Tracker ({{ $json.alreadyInTracker.length }})\u003c/h3\u003e{{ $json.alreadyInTracker.length === 0 ? \"\u003cp style=\u0027color:#888;\u0027\u003eNone.\u003c/p\u003e\" : \u0027\u0027 }}\u003ctable style=\u0027width:100%;border-collapse:collapse;font-size:13px;\u0027\u003e\u003ctr style=\u0027background:#1a4b8c;color:white;\u0027\u003e\u003ctd style=\u0027padding:8px 12px;\u0027\u003eEmail\u003c/td\u003e\u003ctd style=\u0027padding:8px 12px;\u0027\u003eCompany\u003c/td\u003e\u003ctd style=\u0027padding:8px 12px;\u0027\u003eMatched By\u003c/td\u003e\u003c/tr\u003e{{ $json.alreadyInTracker.map((p,i)=\u003e\u0027\u003ctr style=\"background:\u0027+(i%2===0?\u0027#f4f8ff\u0027:\u0027#fff\u0027)+\u0027\"\u003e\u003ctd style=\"padding:7px 12px;\"\u003e\u0027+p.prospect_email+\u0027\u003c/td\u003e\u003ctd style=\"padding:7px 12px;\"\u003e\u0027+p.company+\u0027\u003c/td\u003e\u003ctd style=\"padding:7px 12px;color:#555;\"\u003e\u0027+p.matched_by+\u0027\u003c/td\u003e\u003c/tr\u003e\u0027).join(\u0027\u0027) }}\u003c/table\u003e\u003c/div\u003e\u003cdiv style=\u0027padding:16px 24px;background:#f0f0f0;font-size:12px;color:#888;text-align:center;\u0027\u003eMMM Trucking AgentOS — Workflow 3.2 — One-Time Prospect Audit\u003c/div\u003e\u003c/body\u003e\u003c/html\u003e",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "a8",
+                      "name":  "Send Audit Report",
+                      "type":  "n8n-nodes-base.gmail",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1792,
+                                       304
+                                   ],
+                      "webhookId":  "119fd320-f6af-4cf8-9982-1f899a02cd4d",
+                      "credentials":  {
+                                          "gmailOAuth2":  {
+                                                              "id":  "68RydHz0N1dUAj9S",
+                                                              "name":  "MMM Trucking"
+                                                          }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "documentId":  {
+                                                            "__rl":  true,
+                                                            "value":  "1OePOK2GaGB2JrXO5QUSrXkzceGQ8V2l4",
+                                                            "mode":  "id"
+                                                        },
+                                         "sheetName":  {
+                                                           "__rl":  true,
+                                                           "value":  "WA Prospect Tracker",
+                                                           "mode":  "name"
+                                                       },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleSheets",
+                      "typeVersion":  4.7,
+                      "position":  [
+                                       1328,
+                                       304
+                                   ],
+                      "id":  "3643665d-3296-447c-a877-9cb534bcad95",
+                      "name":  "Get row(s) in sheet",
+                      "credentials":  {
+                                          "googleSheetsOAuth2Api":  {
+                                                                        "id":  "sG8kOyb5bJb0hjgS",
+                                                                        "name":  "Google Sheets account"
+                                                                    }
+                                      }
+                  }
+              ],
+    "connections":  {
+                        "Manual Trigger":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Get Sent Emails",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "Get Sent Emails":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Prep Email List",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Prep Email List":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Classify Prospects",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Classify Prospects":  {
+                                                   "main":  [
+                                                                [
+                                                                    {
+                                                                        "node":  "Parse Prospects",
+                                                                        "type":  "main",
+                                                                        "index":  0
+                                                                    }
+                                                                ]
+                                                            ]
+                                               },
+                        "Parse Prospects":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Get row(s) in sheet",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Match and Compare":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "Send Audit Report",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "Get row(s) in sheet":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "Match and Compare",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1",
+                     "callerPolicy":  "workflowsFromSameOwner",
+                     "saveManualExecutions":  true,
+                     "availableInMCP":  false,
+                     "binaryMode":  "separate"
+                 },
+    "staticData":  null,
+    "meta":  {
+                 "templateCredsSetupCompleted":  true
+             },
+    "pinData":  {
+
+                },
+    "versionId":  "7d845373-6ccd-4406-a35c-9e50e61639bd",
+    "activeVersionId":  null,
+    "versionCounter":  28,
+    "triggerCount":  0,
+    "shared":  [
+                   {
+                       "updatedAt":  "2026-04-07T17:21:57.871Z",
+                       "createdAt":  "2026-04-07T17:21:57.871Z",
+                       "role":  "workflow:owner",
+                       "workflowId":  "VvHYTjheeecJ441F",
+                       "projectId":  "gg1wD0X6rdHCJvKB",
+                       "project":  {
+                                       "updatedAt":  "2026-03-21T22:27:29.036Z",
+                                       "createdAt":  "2026-03-21T22:24:56.455Z",
+                                       "id":  "gg1wD0X6rdHCJvKB",
+                                       "name":  "Alan Sercy \u003calansercy@gmail.com\u003e",
+                                       "type":  "personal",
+                                       "icon":  null,
+                                       "description":  null,
+                                       "creatorId":  "19773a36-d839-4b09-93d5-6b41434750c0"
+                                   }
+                   }
+               ],
+    "tags":  [
+
+             ],
+    "activeVersion":  null
+}

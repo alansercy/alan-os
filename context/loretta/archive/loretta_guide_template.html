@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+    REPLACE: SEO — update title, description, og:title, og:url
+    for each guide page.
+  ============================================================ -->
+  <title><!-- REPLACE: Guide Title --> | Loretta Sercy · MoveWithClarity</title>
+  <meta name="description" content="<!-- REPLACE: 150-char SEO description -->" />
+  <meta property="og:title" content="<!-- REPLACE: Guide Title --> | MoveWithClarity" />
+  <meta property="og:description" content="<!-- REPLACE: OG description -->" />
+  <meta property="og:url" content="https://lorettasercy.com/<!-- REPLACE: url-slug -->" />
+  <meta property="og:type" content="article" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ══════════════════════════════════════════════════════════
+       DESIGN TOKENS — DO NOT CHANGE THESE
+       These are the locked brand system for all MoveWithClarity pages.
+    ══════════════════════════════════════════════════════════ */
+    :root {
+      --navy:        #1A2B3C;
+      --navy-deep:   #111E2A;
+      --navy-mid:    #243448;
+      --gold:        #B8903C;
+      --gold-light:  #D4AF6A;
+      --gold-pale:   rgba(184,144,60,0.09);
+      --gold-rule:   rgba(184,144,60,0.25);
+      --cream:       #F5F1EB;
+      --cream-warm:  #EDE8E0;
+      --chalk:       #F9F7F4;
+      --bluegray:    #8FA0B0;
+      --bluegray-lt: #C2CDD6;
+      --stone:       #4A5A6A;
+      --ink:         #1A2B3C;
+      --white:       #FFFFFF;
+
+      /* ── REPLACE: Guide Accent Color ──────────────────────────
+         Each guide can use a subtle accent to give it its own feel.
+         Keep it in the same warm/muted family as the core palette.
+
+         Examples from existing guides:
+           Parents Move Guide:  --accent: #9E6B52  (terracotta — warm/familial)
+           Divorce Guide:       --accent: #6B7A8F  (slate blue — calm/grounded)
+           Expired Listing:     --accent: #8B7355  (warm taupe — diagnostic)
+
+         If you don't want a guide accent, just set it to var(--gold).
+      ──────────────────────────────────────────────────────── */
+      --accent:      #9E6B52; /* REPLACE with guide-specific accent */
+      --accent-pale: rgba(158,107,82,0.08);
+
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans:  'Jost', sans-serif;
+      --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--chalk);
+      color: var(--ink);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── READING PROGRESS BAR ── */
+    .reading-progress { position: fixed; top: 0; left: 0; right: 0; z-index: 300; height: 2px; }
+    .reading-progress-bar { height: 100%; background: var(--gold); width: 0%; transition: width 0.1s linear; }
+
+    /* ── NAV — DO NOT CHANGE ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 64px;
+      background: rgba(249,247,244,0.96);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(184,144,60,0.1);
+      transition: padding 0.4s var(--ease-out);
+    }
+    nav.scrolled { padding: 14px 64px; }
+    .nav-wordmark { display: flex; flex-direction: column; gap: 1px; }
+    .nav-wordmark-top { font-family: var(--font-serif); font-size: 17px; font-weight: 500; color: var(--navy); letter-spacing: -0.01em; line-height: 1; }
+    .nav-wordmark-top em { font-style: italic; color: var(--gold); }
+    .nav-wordmark-sub { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--bluegray); }
+    .nav-back { font-family: var(--font-sans); font-weight: 300; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--stone); display: flex; align-items: center; gap: 10px; transition: color 0.2s, gap 0.2s; }
+    .nav-back::before { content: '←'; font-size: 13px; }
+    .nav-back:hover { color: var(--gold); gap: 14px; }
+    .nav-cta { font-family: var(--font-sans); font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--white); background: var(--navy); padding: 12px 28px; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--navy-mid); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 88vh;
+      background: var(--navy-deep);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 140px 64px 100px;
+      position: relative; overflow: hidden;
+    }
+    /* REPLACE: hero radial gradients — adjust colors to match guide accent */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(ellipse 55% 65% at 80% 45%, rgba(158,107,82,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 55% at 10% 85%, rgba(184,144,60,0.04) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; left: 64px; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(184,144,60,0.14) 30%, rgba(184,144,60,0.14) 70%, transparent);
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 760px; }
+    .hero-eyebrow {
+      font-family: var(--font-sans); font-weight: 300; font-size: 10px;
+      letter-spacing: 0.38em; text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      display: flex; align-items: center; gap: 16px; margin-bottom: 40px;
+      opacity: 0; animation: revealUp 0.9s 0.1s var(--ease-out) forwards;
+    }
+    .hero-eyebrow::before { content: ''; width: 28px; height: 1px; background: rgba(255,255,255,0.18); flex-shrink: 0; }
+    .hero-guide-label {
+      font-family: var(--font-sans); font-weight: 300; font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
+      opacity: 0; animation: revealUp 0.9s 0.18s var(--ease-out) forwards;
+    }
+    .hero-headline {
+      font-family: var(--font-serif); font-weight: 400;
+      font-size: clamp(48px, 6.5vw, 96px);
+      line-height: 0.93; letter-spacing: -0.02em;
+      color: var(--white); margin-bottom: 8px;
+      opacity: 0; animation: revealUp 1s 0.26s var(--ease-out) forwards;
+    }
+    .hero-headline-2 {
+      font-family: var(--font-serif); font-style: italic; font-weight: 400;
+      font-size: clamp(48px, 6.5vw, 96px);
+      line-height: 0.93; letter-spacing: -0.02em;
+      color: var(--gold-light); margin-bottom: 8px;
+      opacity: 0; animation: revealUp 1s 0.34s var(--ease-out) forwards;
+    }
+    .hero-headline-3 {
+      font-family: var(--font-serif); font-weight: 400;
+      font-size: clamp(48px, 6.5vw, 96px);
+      line-height: 0.93; letter-spacing: -0.02em;
+      color: var(--white); margin-bottom: 52px;
+      opacity: 0; animation: revealUp 1s 0.42s var(--ease-out) forwards;
+    }
+    .hero-rule { width: 48px; height: 2px; background: rgba(184,144,60,0.32); margin-bottom: 32px; opacity: 0; animation: revealUp 0.8s 0.5s var(--ease-out) forwards; }
+    .hero-sub {
+      font-family: var(--font-sans); font-weight: 300;
+      font-size: clamp(15px, 1.5vw, 18px); line-height: 2;
+      color: rgba(210,220,230,0.62); max-width: 580px; margin-bottom: 48px;
+      opacity: 0; animation: revealUp 0.9s 0.58s var(--ease-out) forwards;
+    }
+    .hero-actions {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      opacity: 0; animation: revealUp 0.9s 0.68s var(--ease-out) forwards;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-primary { font-family: var(--font-sans); font-weight: 400; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; background: var(--gold); color: var(--white); padding: 16px 36px; display: inline-block; transition: background 0.3s; }
+    .btn-primary:hover { background: #9a7530; }
+    .btn-outline { font-family: var(--font-sans); font-weight: 300; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.22); color: rgba(255,255,255,0.7); padding: 16px 36px; display: inline-block; transition: all 0.3s; }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
+    .btn-navy { font-family: var(--font-sans); font-weight: 400; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; background: var(--navy); color: var(--white); padding: 16px 40px; display: inline-block; transition: background 0.3s; }
+    .btn-navy:hover { background: var(--navy-mid); }
+    .btn-gold { font-family: var(--font-sans); font-weight: 400; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; background: var(--gold); color: var(--white); padding: 16px 40px; display: inline-block; transition: background 0.3s; }
+    .btn-gold:hover { background: #9a7530; }
+
+    /* ── UTILITY ── */
+    .eyebrow { font-family: var(--font-sans); font-weight: 300; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 14px; }
+    .eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--gold); flex-shrink: 0; }
+    .eyebrow--light { color: rgba(255,255,255,0.32); }
+    .eyebrow--light::before { background: rgba(255,255,255,0.18); }
+
+    /* ── OPENING — centered quote/intro ── */
+    .opening {
+      background: var(--cream);
+      padding: 100px 64px;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .opening-text {
+      font-family: var(--font-serif); font-style: italic;
+      font-size: clamp(19px, 2.2vw, 28px);
+      color: var(--navy); line-height: 1.75;
+      max-width: 720px; margin-bottom: 28px;
+    }
+    .opening-sub {
+      font-family: var(--font-sans); font-weight: 300;
+      font-size: 15px; line-height: 2; color: var(--stone); max-width: 580px;
+    }
+    .opening-rule { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--gold-light), transparent); margin: 44px auto; }
+
+    /* ── GUIDE SECTIONS ── */
+    .guide-section { padding: 100px 64px; }
+    .guide-section.chalk { background: var(--chalk); }
+    .guide-section.cream { background: var(--cream); }
+    .guide-section.dark  { background: var(--navy); }
+    .guide-section.deep  { background: var(--navy-deep); }
+    .guide-section.warm  { background: #F2EDE4; }
+
+    /* Two-column narrative layout */
+    .narrative-inner {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 72px; align-items: start; max-width: 1100px;
+    }
+    .narrative-inner.full { grid-template-columns: 1fr; max-width: 740px; }
+    .narrative-inner.wide { grid-template-columns: 1fr; max-width: 1100px; }
+
+    .section-num {
+      font-family: var(--font-serif); font-style: italic;
+      font-size: 80px; color: rgba(184,144,60,0.07);
+      line-height: 1; margin-bottom: -10px; font-weight: 400;
+    }
+    .section-num.light { color: rgba(255,255,255,0.04); }
+
+    .section-headline {
+      font-family: var(--font-serif); font-weight: 400;
+      font-size: clamp(26px, 2.8vw, 40px);
+      color: var(--navy); line-height: 1.1;
+      letter-spacing: -0.01em; margin-top: 8px; margin-bottom: 32px;
+    }
+    .section-headline em { font-style: italic; color: var(--gold); }
+    .section-headline.light { color: var(--white); }
+    .section-headline.light em { color: var(--gold-light); }
+
+    .section-body {
+      font-family: var(--font-sans); font-weight: 300;
+      font-size: 16px; line-height: 2.05; color: var(--stone); margin-bottom: 22px;
+    }
+    .section-body strong { font-weight: 400; color: var(--navy); }
+    .section-body.light { color: rgba(210,220,230,0.68); }
+    .section-body.light strong { color: rgba(255,255,255,0.9); }
+
+    /* ── PULL QUOTE ── */
+    .pull-quote {
+      font-family: var(--font-serif); font-style: italic;
+      font-size: clamp(17px, 1.7vw, 22px);
+      color: var(--navy); line-height: 1.7;
+      border-left: 2px solid rgba(184,144,60,0.32);
+      padding: 4px 0 4px 26px;
+      margin-top: 36px; margin-bottom: 8px;
+    }
+    .pull-quote.light { color: rgba(255,255,255,0.7); border-left-color: rgba(184,144,60,0.45); }
+    .pull-quote.accent { color: var(--accent); border-left-color: rgba(158,107,82,0.35); }
+
+    /* ── ASIDE CARDS (right column in narrative layout) ── */
+    .aside-stack { display: flex; flex-direction: column; gap: 2px; padding-top: 28px; }
+    .aside-card { background: var(--white); padding: 26px 28px; border-left: 2px solid var(--gold); }
+    .aside-card.soft { border-left-color: var(--bluegray-lt); background: var(--chalk); }
+    .aside-card.accent-card { border-left-color: var(--accent); background: #F8F3EE; }
+    .aside-card.dark-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-left: 2px solid rgba(184,144,60,0.35); }
+    .ac-label { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 7px; }
+    .ac-label.soft { color: var(--bluegray); }
+    .ac-label.accent-label { color: var(--accent); }
+    .ac-label.light { color: var(--gold-light); }
+    .ac-text { font-family: var(--font-serif); font-style: italic; font-size: 15px; color: var(--navy); line-height: 1.45; }
+    .ac-text.light { color: rgba(255,255,255,0.75); }
+
+    /* ── SIGNAL LIST (bullet-style items) ── */
+    .signal-list { display: flex; flex-direction: column; gap: 0; margin-top: 20px; }
+    .signal-item { display: flex; gap: 20px; align-items: flex-start; padding: 20px 0; border-bottom: 1px solid var(--cream-warm); }
+    .signal-item.dark-border { border-bottom-color: rgba(255,255,255,0.05); }
+    .signal-item:last-child { border-bottom: none; }
+    .si-dot { width: 5px; height: 5px; background: var(--gold); border-radius: 50%; flex-shrink: 0; margin-top: 10px; }
+    .si-dot.accent { background: var(--accent); }
+    .si-text { font-family: var(--font-sans); font-weight: 300; font-size: 15px; line-height: 1.85; color: var(--stone); }
+    .si-text strong { font-weight: 400; color: var(--navy); }
+    .si-text.light { color: rgba(210,220,230,0.65); }
+    .si-text.light strong { color: rgba(255,255,255,0.88); }
+
+    /* ── FRAMEWORK / BONUS SECTION (dark background) ── */
+    .framework { background: var(--navy-deep); padding: 100px 64px; }
+    .framework-header { max-width: 620px; margin-bottom: 64px; }
+    .framework-title { font-family: var(--font-serif); font-weight: 400; font-size: clamp(28px, 3vw, 46px); color: var(--white); line-height: 1.05; letter-spacing: -0.01em; margin-top: 18px; margin-bottom: 16px; }
+    .framework-title em { font-style: italic; color: var(--gold-light); }
+    .framework-sub { font-family: var(--font-sans); font-weight: 300; font-size: 15px; line-height: 1.9; color: rgba(210,220,230,0.58); max-width: 500px; }
+    .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 48px; }
+    .fw-card { background: rgba(255,255,255,0.04); border-top: 2px solid rgba(184,144,60,0.22); padding: 36px 30px; transition: background 0.3s, border-top-color 0.3s; }
+    .fw-card:hover { background: rgba(255,255,255,0.07); border-top-color: var(--gold); }
+    .fw-step { font-family: var(--font-sans); font-weight: 300; font-size: 8px; letter-spacing: 0.32em; text-transform: uppercase; color: rgba(184,144,60,0.5); margin-bottom: 14px; }
+    .fw-title { font-family: var(--font-serif); font-size: 22px; font-weight: 400; color: var(--white); line-height: 1.15; margin-bottom: 14px; }
+    .fw-title em { font-style: italic; color: var(--gold-light); }
+    .fw-body { font-family: var(--font-sans); font-weight: 300; font-size: 13px; line-height: 1.9; color: rgba(210,220,230,0.58); margin-bottom: 18px; }
+    .fw-prompts { display: flex; flex-direction: column; gap: 8px; }
+    .fw-prompt { font-family: var(--font-sans); font-weight: 300; font-size: 12px; line-height: 1.65; color: rgba(210,220,230,0.38); padding-left: 14px; border-left: 1px solid rgba(184,144,60,0.16); }
+
+    /* ── CLOSING CTA ── */
+    .guide-cta { background: var(--cream); padding: 100px 64px; text-align: center; }
+    .gc-headline { font-family: var(--font-serif); font-weight: 400; font-size: clamp(26px, 2.8vw, 42px); color: var(--navy); line-height: 1.1; letter-spacing: -0.01em; margin-top: 20px; margin-bottom: 20px; }
+    .gc-headline em { font-style: italic; color: var(--gold); }
+    .gc-body { font-family: var(--font-sans); font-weight: 300; font-size: 15px; line-height: 2; color: var(--stone); max-width: 520px; margin: 0 auto 40px; }
+    .gc-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── FOOTER — DO NOT CHANGE ── */
+    footer { background: var(--navy-deep); padding: 60px 64px 40px; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(184,144,60,0.1); }
+    .footer-wordmark { font-family: var(--font-serif); font-size: 22px; color: var(--white); margin-bottom: 10px; display: block; }
+    .footer-wordmark em { font-style: italic; color: var(--gold-light); }
+    .footer-tagline { font-family: var(--font-serif); font-style: italic; font-size: 13px; color: rgba(220,230,240,0.32); }
+    .footer-col-title { font-family: var(--font-sans); font-weight: 400; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(184,144,60,0.48); margin-bottom: 18px; }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-link { font-family: var(--font-sans); font-weight: 300; font-size: 12px; color: rgba(255,255,255,0.32); transition: color 0.2s; }
+    .footer-link:hover { color: var(--gold-light); }
+    .footer-bottom { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; }
+    .footer-legal { font-family: var(--font-sans); font-weight: 300; font-size: 10px; line-height: 1.85; color: rgba(255,255,255,0.15); max-width: 560px; }
+    .footer-legal a { color: rgba(255,255,255,0.24); }
+    .footer-legal a:hover { color: var(--gold-light); }
+    .footer-compliance { text-align: right; flex-shrink: 0; }
+    .footer-compliance-line { font-family: var(--font-sans); font-weight: 200; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.13); line-height: 2.1; }
+    .footer-fair-housing { font-family: var(--font-sans); font-weight: 300; font-size: 9px; color: rgba(255,255,255,0.16); margin-top: 10px; display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+    .fh-icon { width: 14px; height: 14px; border: 1px solid rgba(255,255,255,0.13); display: flex; align-items: center; justify-content: center; font-size: 7px; color: rgba(255,255,255,0.2); flex-shrink: 0; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.85s var(--ease-out), transform 0.85s var(--ease-out); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.14s; }
+    .reveal-delay-2 { transition-delay: 0.28s; }
+    .reveal-delay-3 { transition-delay: 0.42s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      nav { padding: 18px 32px; }
+      .hero { padding: 120px 40px 80px; }
+      .opening, .guide-section, .framework, .guide-cta { padding: 72px 40px; }
+      .narrative-inner { grid-template-columns: 1fr; gap: 44px; }
+      .framework-grid { grid-template-columns: 1fr; }
+      footer { padding: 60px 40px 40px; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; }
+      .footer-compliance { text-align: left; }
+      .footer-fair-housing { justify-content: flex-start; }
+    }
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .nav-back { display: none; }
+      .hero { padding: 100px 24px 64px; }
+      .opening, .guide-section, .framework, .guide-cta { padding: 60px 24px; }
+      footer { padding: 48px 24px 32px; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Reading progress bar — leave as-is -->
+  <div class="reading-progress"><div class="reading-progress-bar" id="progress"></div></div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       NAV — DO NOT CHANGE nav-wordmark or nav-back
+       REPLACE: nav-cta text and #anchor to match your guide's
+       primary CTA (e.g., "Start a Conversation", "Request a Review")
+  ══════════════════════════════════════════════════════════ -->
+  <nav id="nav">
+    <a href="https://lorettasercy.com" class="nav-wordmark">
+      <div class="nav-wordmark-top">Move with <em>Clarity.</em></div>
+      <div class="nav-wordmark-sub">Loretta Sercy · eXp Realty</div>
+    </a>
+    <a href="https://lorettasercy.com" class="nav-back">Back to site</a>
+    <a href="#contact" class="nav-cta"><!-- REPLACE: CTA text --></a>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════════
+       HERO
+       REPLACE everything marked REPLACE below.
+       The headline splits across 3 lines for visual rhythm —
+       Line 1 & 3 are white, Line 2 is italic gold.
+       Example: "Why Your House" / "Didn't" / "Sell."
+  ══════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow"><!-- REPLACE: "Life Transition Resource · MoveWithClarity Guide Series" --></div>
+      <div class="hero-guide-label"><!-- REPLACE: "Guide 02 · Seller Strategy" --></div>
+      <div class="hero-headline"><!-- REPLACE: Headline line 1 --></div>
+      <div class="hero-headline-2"><!-- REPLACE: Headline line 2 (italic gold) --></div>
+      <div class="hero-headline-3"><!-- REPLACE: Headline line 3 --></div>
+      <div class="hero-rule"></div>
+      <p class="hero-sub"><!-- REPLACE: 1–2 sentence guide description. Who this is for and what it does for them. --></p>
+      <div class="hero-actions">
+        <a href="#section-01" class="btn-primary">Read the Guide</a>
+        <a href="#contact" class="btn-outline"><!-- REPLACE: Secondary CTA --></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       OPENING — centered quote + framing paragraph
+       REPLACE the quote and sub-text.
+       This should be the emotional/human truth of the guide —
+       the thing that makes the reader feel seen before the
+       content begins.
+  ══════════════════════════════════════════════════════════ -->
+  <section class="opening">
+    <div class="opening-rule reveal"></div>
+    <p class="opening-text reveal">"<!-- REPLACE: Opening quote — the emotional truth of the guide. First-person or universal. 1–2 sentences max. -->"</p>
+    <div class="opening-rule reveal"></div>
+    <p class="opening-sub reveal"><!-- REPLACE: 2–3 sentences bridging from the quote to the guide content. Validate the reader's experience. --></p>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       GUIDE SECTIONS — repeat this block for each section (01–09)
+       Background alternates: chalk → cream → chalk → cream, etc.
+       Dark sections (dark/deep) work well for framework/bonus sections.
+
+       SECTION ANATOMY:
+       - section-num: the big italic number (decorative)
+       - eyebrow: short label for the section
+       - section-headline: the section title (can use <em> for italic gold)
+       - section-body: narrative paragraphs (as many as needed)
+       - pull-quote: key insight, set apart visually
+       - signal-list: bulleted items with dot indicators
+       - aside-stack (right column): callout cards, supporting quotes
+
+       The right column (aside-stack) is optional — use it when you
+       have supporting material that doesn't fit in the main flow.
+       If you don't need it, use class="narrative-inner full" to go full-width.
+  ══════════════════════════════════════════════════════════ -->
+
+  <!-- SECTION 01 -->
+  <section class="guide-section chalk" id="section-01">
+    <div class="narrative-inner">
+
+      <!-- LEFT: Main narrative content -->
+      <div>
+        <div class="section-num reveal">01</div>
+        <div class="eyebrow reveal"><!-- REPLACE: Section eyebrow (short label) --></div>
+        <h2 class="section-headline reveal"><!-- REPLACE: Section headline.<br>Can use <em>italic gold</em> for emphasis. --></h2>
+
+        <p class="section-body reveal"><!-- REPLACE: Opening paragraph. --></p>
+        <p class="section-body reveal"><!-- REPLACE: Second paragraph. --></p>
+        <p class="section-body reveal"><!-- REPLACE: Third paragraph. Use <strong>for key phrases</strong>. --></p>
+
+        <!-- Optional pull quote — remove if not needed -->
+        <div class="pull-quote accent reveal">
+          "<!-- REPLACE: A key insight or truth from this section. 1–2 sentences. -->"
+        </div>
+
+        <!-- Optional signal list — remove if not needed -->
+        <div class="signal-list reveal" style="margin-top:32px">
+          <div class="signal-item">
+            <div class="si-dot accent"></div>
+            <div class="si-text"><strong><!-- Label --></strong> — <!-- REPLACE: description --></div>
+          </div>
+          <div class="signal-item">
+            <div class="si-dot accent"></div>
+            <div class="si-text"><strong><!-- Label --></strong> — <!-- REPLACE: description --></div>
+          </div>
+          <div class="signal-item">
+            <div class="si-dot accent"></div>
+            <div class="si-text"><strong><!-- Label --></strong> — <!-- REPLACE: description --></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Aside cards — remove this div if not needed (and change narrative-inner to .full) -->
+      <div class="aside-stack">
+        <div class="aside-card">
+          <div class="ac-label"><!-- REPLACE: card label --></div>
+          <div class="ac-text"><!-- REPLACE: supporting insight or quote --></div>
+        </div>
+        <div class="aside-card soft">
+          <div class="ac-label soft"><!-- REPLACE: card label --></div>
+          <div class="ac-text"><!-- REPLACE: supporting insight --></div>
+        </div>
+        <div class="aside-card accent-card">
+          <div class="ac-label accent-label"><!-- REPLACE: card label --></div>
+          <div class="ac-text"><!-- REPLACE: key truth --></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 02 — cream background, full-width narrative -->
+  <section class="guide-section cream" id="section-02">
+    <div class="narrative-inner full">
+      <div class="section-num reveal">02</div>
+      <div class="eyebrow reveal"><!-- REPLACE: eyebrow --></div>
+      <h2 class="section-headline reveal"><!-- REPLACE: headline --></h2>
+      <p class="section-body reveal"><!-- REPLACE: paragraph --></p>
+      <p class="section-body reveal"><!-- REPLACE: paragraph --></p>
+      <div class="pull-quote reveal">"<!-- REPLACE: pull quote -->"</div>
+    </div>
+  </section>
+
+  <!-- SECTION 03 — chalk, two-column -->
+  <section class="guide-section chalk" id="section-03">
+    <div class="narrative-inner">
+      <div>
+        <div class="section-num reveal">03</div>
+        <div class="eyebrow reveal"><!-- REPLACE --></div>
+        <h2 class="section-headline reveal"><!-- REPLACE --></h2>
+        <p class="section-body reveal"><!-- REPLACE --></p>
+        <p class="section-body reveal"><!-- REPLACE --></p>
+      </div>
+      <div class="aside-stack">
+        <div class="aside-card">
+          <div class="ac-label"><!-- label --></div>
+          <div class="ac-text"><!-- insight --></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 04 — cream, full-width -->
+  <section class="guide-section cream" id="section-04">
+    <div class="narrative-inner full">
+      <div class="section-num reveal">04</div>
+      <div class="eyebrow reveal"><!-- REPLACE --></div>
+      <h2 class="section-headline reveal"><!-- REPLACE --></h2>
+      <p class="section-body reveal"><!-- REPLACE --></p>
+      <p class="section-body reveal"><!-- REPLACE --></p>
+    </div>
+  </section>
+
+  <!-- SECTION 05 — chalk -->
+  <section class="guide-section chalk" id="section-05">
+    <div class="narrative-inner">
+      <div>
+        <div class="section-num reveal">05</div>
+        <div class="eyebrow reveal"><!-- REPLACE --></div>
+        <h2 class="section-headline reveal"><!-- REPLACE --></h2>
+        <p class="section-body reveal"><!-- REPLACE --></p>
+      </div>
+      <div class="aside-stack">
+        <div class="aside-card soft">
+          <div class="ac-label soft"><!-- label --></div>
+          <div class="ac-text"><!-- insight --></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTIONS 06–09: duplicate the patterns above as needed -->
+  <!-- Use .guide-section.dark for mid-guide dark moments if the content calls for it -->
+
+  <!-- ══════════════════════════════════════════════════════════
+       BONUS FRAMEWORK — dark background
+       This is the structured takeaway at the end of the guide —
+       Loretta's named framework (e.g., "Relisting Clarity Framework",
+       "Divorce Decision Clarity Framework").
+
+       REPLACE: framework title, sub-text, and fw-card content.
+       Each fw-card is one step/element of the framework.
+       Use 4–6 cards in a 2-column grid.
+  ══════════════════════════════════════════════════════════ -->
+  <section class="framework" id="framework">
+    <div class="framework-header">
+      <div class="eyebrow eyebrow--light reveal"><!-- REPLACE: "Bonus Resource" --></div>
+      <h2 class="framework-title reveal">The <!-- REPLACE: Framework Name --><br><em><!-- REPLACE: Subtitle --></em></h2>
+      <p class="framework-sub reveal"><!-- REPLACE: 1–2 sentences on what this framework helps the reader do. --></p>
+    </div>
+
+    <div class="framework-grid">
+      <!-- Repeat fw-card for each step — 4–6 total -->
+      <div class="fw-card reveal">
+        <div class="fw-step">Step 01</div>
+        <div class="fw-title"><!-- REPLACE: Step title --></div>
+        <div class="fw-body"><!-- REPLACE: What to do / think about in this step --></div>
+        <div class="fw-prompts">
+          <div class="fw-prompt"><!-- REPLACE: Guiding question 1 --></div>
+          <div class="fw-prompt"><!-- REPLACE: Guiding question 2 --></div>
+        </div>
+      </div>
+      <div class="fw-card reveal reveal-delay-1">
+        <div class="fw-step">Step 02</div>
+        <div class="fw-title"><!-- REPLACE --></div>
+        <div class="fw-body"><!-- REPLACE --></div>
+        <div class="fw-prompts">
+          <div class="fw-prompt"><!-- REPLACE --></div>
+          <div class="fw-prompt"><!-- REPLACE --></div>
+        </div>
+      </div>
+      <div class="fw-card reveal reveal-delay-2">
+        <div class="fw-step">Step 03</div>
+        <div class="fw-title"><!-- REPLACE --></div>
+        <div class="fw-body"><!-- REPLACE --></div>
+      </div>
+      <div class="fw-card reveal reveal-delay-3">
+        <div class="fw-step">Step 04</div>
+        <div class="fw-title"><!-- REPLACE --></div>
+        <div class="fw-body"><!-- REPLACE --></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CLOSING CTA
+       REPLACE: headline, body copy, and button links/text.
+       Tone: warm, zero pressure. The offer is a conversation,
+       not a listing agreement.
+  ══════════════════════════════════════════════════════════ -->
+  <section class="guide-cta" id="contact">
+    <div class="eyebrow reveal" style="justify-content:center"><!-- REPLACE: "When You're Ready" --></div>
+    <h2 class="gc-headline reveal"><!-- REPLACE: Closing headline<br>with <em>italic emphasis</em> --></h2>
+    <p class="gc-body reveal"><!-- REPLACE: 2–3 sentences. Warm, no pressure. What Loretta offers and how to reach her. --></p>
+    <div class="gc-actions reveal">
+      <a href="tel:+17203346799" class="btn-gold">+1 (720) 334-6799</a>
+      <a href="mailto:loretta.sercy@exprealty.com" class="btn-navy">Send an Email</a>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       FOOTER — DO NOT CHANGE compliance block
+       REPLACE: "Other Guides" links as new pages go live.
+  ══════════════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <a href="https://lorettasercy.com" class="footer-wordmark">Move with <em>Clarity.</em></a>
+        <div class="footer-tagline">"Not Pressure."</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Other Guides</div>
+        <div class="footer-links">
+          <a href="https://lorettasercy.com/clarity-blueprint" class="footer-link">The Clarity Blueprint</a>
+          <a href="https://lorettasercy.com/parents-move-guide" class="footer-link">The Parents' Move Guide</a>
+          <a href="https://lorettasercy.com/why-your-house-didnt-sell" class="footer-link">Why Your House Didn't Sell</a>
+          <a href="https://lorettasercy.com/divorce-housing-clarity-guide" class="footer-link">Divorce &amp; Housing Clarity</a>
+          <!-- REPLACE: Add new guide links as they go live -->
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-links">
+          <a href="tel:+17203346799" class="footer-link">+1 (720) 334-6799</a>
+          <a href="mailto:loretta.sercy@exprealty.com" class="footer-link">loretta.sercy@exprealty.com</a>
+          <a href="https://lorettasercy.com/clarity-blueprint" class="footer-link">Request a Clarity Blueprint</a>
+          <a href="https://lorettasercy.com" class="footer-link">lorettasercy.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <!-- REPLACE: Legal disclaimer — update to match guide topic (real estate, not medical/legal) -->
+      <div class="footer-legal">
+        This guide is provided for educational and informational purposes only. It does not constitute legal, financial, or real estate advice. All real estate decisions involve individual circumstances — consult qualified professionals as appropriate. Texas is a non-disclosure state — all real estate pricing references use list price and days on market only.<br><br>
+        <a href="#">Terms of Service &amp; Privacy Policy</a> &nbsp;|&nbsp; <a href="#">Texas Real Estate Commission Information About Brokerage Services</a>
+      </div>
+      <div class="footer-compliance">
+        <div class="footer-compliance-line">Loretta Sercy · Licensed Realtor®</div>
+        <div class="footer-compliance-line">eXp Realty · TX License #0633703</div>
+        <div class="footer-compliance-line">lorettasercy.com · © 2026 All Rights Reserved</div>
+        <div class="footer-fair-housing">
+          <div class="fh-icon">⊜</div>
+          Equal Housing Opportunity
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // DO NOT CHANGE — handles nav scroll, reading progress, reveal animations, smooth scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+      const doc = document.documentElement;
+      const pct = (window.scrollY / (doc.scrollHeight - doc.clientHeight)) * 100;
+      document.getElementById('progress').style.width = pct + '%';
+    });
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.06 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
