@@ -1,14 +1,22 @@
 # Loretta Site — Current State
+Last updated: 2026-05-03 (Session H)
 
 ## Hosting
-- **Live host:** SiteGround GrowBig WordPress (shared with Veritas on same SiteGround account)
+- **Live host:** SiteGround GrowBig WordPress — **WordPress 6.9.4 installed** (shared with Veritas on same SiteGround account)
 - **Domain:** lorettasercy.com
 - **Brand:** MoveWithClarity — "Move with Clarity. Not Pressure."
+- **Staging:** staging2.lorettasercy.com (environment name: loretta-build) — created Session H
 
 ## DNS Status
-- Currently pointed at Lofty (IDX platform)
-- Cutover to SiteGround happens at W1 session close
-- Do not touch DNS until W1 is confirmed ready
+- **A records added:** lorettasercy.com + staging2.lorettasercy.com → `8.230.105.83`
+- **Nameservers:** still at Lofty/Cloudflare — propagating as of 2026-05-03
+- Do not treat DNS as live until staging2.lorettasercy.com/wp-admin is accessible
+- Lofty IDX DNS cutover still deferred to L2
+
+## W1 Session Status
+- **W1 not started** — blocked on staging2.lorettasercy.com/wp-admin access (DNS propagation)
+- **Brand audit complete (Session H)** — tokens reconciled, naming decisions locked (see BRAND.md)
+- Once staging wp-admin is accessible: proceed with W1 WordPress shell build
 
 ## W1 Session Scope
 Build WordPress shell only:
