@@ -1,3 +1,5 @@
+> STATUS: COMPLETE — all 4 OAuth/Drive steps done 4/30/2026, token cached at credentials/gdocs_host_token.json, post_closeout_to_drive.py running silently as of 5/2/2026.
+
 # Closeout Sync — Spec
 # Goal: auto-POST CLOSEOUT.md to Google Doc at session end
 

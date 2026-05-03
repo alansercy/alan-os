@@ -259,6 +259,20 @@ my-skill/
 
 ---
 
+## 12. DO NOT REVISIT — Explicitly Closed Items
+
+These items are complete. Do not surface them as open threads, re-implement, or flag as blockers.
+
+- **VIE Steps 1–4** (endpoints, URL enrichment, nlm_feed_builder integration, AI Stack dashboard tab) — DONE 4/30/2026
+- **OAuth / Drive setup** (`post_closeout_to_drive.py`, token at `credentials/gdocs_host_token.json`, `VERITAS_SESSION_LOG_DOC_ID` in `.lux/.env`) — DONE 4/30/2026, running silently
+- **HP Hood** — Relationship closed, commission deal done 5/1/2026. Do not resurface.
+- **Loretta brand kit / DESIGN.md** — Complete, package emailed 5/2/2026. Do not rebuild.
+- **Workflow 4.1 import** — DONE, live in n8n as ID `zl9peS1ZGNISLibZ`. Do not re-import.
+- **task-013 through task-020** — All closed. See `memory-bank/closed_items.md`.
+- **`post_closeout_to_drive.py`** — COMPLETE, do not respecify.
+
+---
+
 ## MEMORY BANK PROTOCOL
 - Before starting any task: read memory-bank/session-log.md
 - After completing any task: append a dated summary to memory-bank/session-log.md
