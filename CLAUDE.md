@@ -1,282 +1,169 @@
-# Claude Code Context — alan-os
-
-This file is read automatically by Claude Code at session start. It carries the durable context for working in this repo so manual context pasting is no longer required.
-
----
-
-## 1. Session Protocol
-
-### Mandatory Session Stages
-
-Every session follows three explicit stages. Never skip from Discovery directly to Execution.
-
-1. **DISCOVERY** — read `CLAUDE.md`, `PROJECTS.md`, `memory-bank/session-log.md`, `memory-bank/closed_items.md`. Report current state. Identify blockers. Stop and present findings.
-2. **PLANNING** — decompose work into discrete phases. Present the plan to Alan. Get explicit approval before proceeding.
-3. **EXECUTION** — one phase at a time. Confirm completion before starting the next phase.
-
-See `SESSION_PROTOCOL.md` for the full canonical protocol. Always:
-
-- **Memory bank reads precede all skill invocations.**
-- Read `PROJECTS.md` first.
-- Read `SESSION_NOTES.md` if it exists (most recent breadcrumb).
-- Report current state before building anything.
-- Write `SESSION_NOTES.md` on session close (use `templates/session_close.md`).
-- **Never delete files without a confirmed copy elsewhere.**
-- **Ask before any action that touches credentials or `C:\Users\aserc\.lux\`.**
-
-### Session-close checklist (mandatory before declaring session over)
-
-The dashboard treats `~/.lux/Data/tasks.json` and `~/.lux/Data/projects.json` as
-the single source of truth — the digest now reads from these files (lux-os
-commit `0d14134`), and the dashboard Tasks tab now writes back via the
-in-tab task form (POST `/tasks`). Closing a session without updating these
-files leaves both surfaces stale.
-
-Every session before closing must:
-
-1. **Mark completed tasks `done` in `tasks.json`** — anything actually finished
-   this session. Either via the dashboard's Complete button (PATCH `/tasks/{id}`
-   sets `status="done"` + stamps `completed_at`) or by direct JSON edit if the
-   server isn't running. Do not let "done in conversation" leave open rows
-   behind.
-2. **Add any new tasks surfaced during the session** to `tasks.json` — via the
-   dashboard's New Task form (preferred) or direct edit. Capture the work
-   before context is lost. New `id` is `task-{N:03d}` where `N = len(tasks)+1`.
-3. **Update affected `projects.json` status fields** — `status` (`green` /
-   `yellow` / `red` / `idle`) and `status_note` should reflect reality at
-   close. The digest renders these directly into the morning email.
-4. **Confirm `push_handoff.py` fired** — at `C:\Users\aserc\.lux\workflows\`.
-   Pushes the handoff doc to Drive (asset `1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ`
-   per `PROJECTS.md` Drive Asset Registry). Without this, claude.ai and Claude
-   Code sessions cannot resume from the same breadcrumb.
-5. **LinkedIn post candidate** — did anything ship today worth a 3-sentence
-   post? If yes, draft it and append to the Veritas Build Log tab on the
-   Loretta Content Calendar (sheet `1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM`).
-   Run: `python scripts/build_log.py append --repo <repo> --head <hash>
-   --shipped "<1-2 sentences>" --post-candidate Y --draft "<3-sentence post>"
-   --status draft`. If nothing post-worthy shipped, skip — do not append a no-op
-   row. Pattern 7 from `memory-bank/VIE_PATTERN_ACTION_LIST.md` — the build log
-   IS the LinkedIn content calendar; zero extra effort beyond the draft itself.
-
-If `:8000` (alan_os_server) is up, the dashboard `Tasks` tab is the fastest
-path for #1 and #2. If it's down, read/write `tasks.json` directly with the
-same shape backend `POST /tasks` produces.
+# CLAUDE.md — Alan OS Master State
+**Last updated:** 2026-05-03
+**Updated by:** Session G
 
 ---
 
-## 2. Prompt Prefix Library
+## HOW TO USE THIS FILE
 
-Standard prefixes that prime the right thinking mode before any task. Paste the relevant prefix at the start of a prompt.
+This is the first file every session reads. It answers three questions before touching anything:
+1. What is built and confirmed working?
+2. What is open and who owns it?
+3. What must never be touched?
 
-**OODA** — for ambiguous or fast-moving situations:
-```
-OODA: Observe current state → Orient to constraints → Decide on one action → Act. Report each stage briefly before executing.
-```
-
-**SCAFFOLD** — for any new build or feature:
-```
-SCAFFOLD: Before writing code — (1) state the problem in one sentence, (2) list assumptions, (3) present the approach, (4) get approval. Then build.
-```
-
-**AUDIT** — for reviewing existing work:
-```
-AUDIT: Read before touching. Report what exists, what's broken, what's missing. No changes until audit is presented and approved.
-```
-
-**COMPRESS** — for approaching context limits:
-```
-COMPRESS: Summarize completed work in 5 bullets. List remaining tasks. Identify the single next action. Then /compact.
-```
-
-**GRILL** — for pre-spec discovery (Socratic mode):
-```
-GRILL: Don't build yet. Ask one clarifying question at a time. Surface assumptions, unknowns, and constraints. Stop when the problem is fully understood. Then present a one-sentence definition of what to build.
-```
+At session close, update the MASTER STATE section before committing. No exceptions.
+Session protocol: read this file → execute directive → update this file → commit → push.
 
 ---
 
-## 3. Skill Packs
+## OPERATOR CONTEXT
 
-Skills are grouped by Veritas use case in `docs/skill_packs/`. Load the relevant pack file when starting work in that domain rather than scanning all 100+ available skills. Packs apply *progressive disclosure* — scan the pack summary first, load a specific member skill by name only when the task reaches that domain.
+Alan Sercy — 33-year revenue executive, founder Veritas AI Partners (CentPenny LLC DBA).
+Active W2/1099 job search targeting CRO/EVP BD at PE-backed or AI-driven companies (remote only).
+Runway: ~5 months. MMM Trucking generating income.
 
-- **`stack_pack`** — VIE evaluation, AI infrastructure, architecture decisions, systematic debug
-- **`content_pack`** — Loretta content engine + Veritas marketing copy + BD outreach (BD uses content_pack with a different lens; the originally-proposed `bd_pack` was a strict subset and was dropped)
-- **`ops_pack`** — daily ops loop (triage / digest / handoff / task) + scheduling + harness config
+Environments:
+- Host: C:\Users\aserc\ — Alan OS, personal automation, MMM, parents, inbox triage
+- VM: SecureAI-W11 — Veritas productized code, n8n workflows
+- All repos: C:\Veritas\repos\
 
-GSD skills (`gsd-*`) and n8n skills (`n8n-*`) stay implicitly grouped by prefix and are not packed — load them by name when needed.
-
-Pattern 5 from `memory-bank/VIE_PATTERN_ACTION_LIST.md`. Pack files are pointer-lists, not relocators — member skills live at `~/.claude/skills/<name>/` unchanged.
-
----
-
-## 4. Folder Contracts
-
-Each directory has an explicit owner and purpose. Never write files outside their contract.
-
-| Path | Purpose | Owner |
-|---|---|---|
-| `memory-bank/` | Session state, logs, decisions, closed items | Alan OS |
-| `docs/` | Human-readable specs, inventories, guides | Alan OS |
-| `scripts/` | Standalone Python utilities | Alan OS |
-| `~/.claude/skills/` | Slash command SKILL.md files | Claude Code |
-| `C:\Veritas\assets\` | All brand and creative assets | Host |
-| `C:\Veritas\repos\` | All repos — never write outside repos here | Host |
-
-Before creating any new file, confirm its target path matches a folder contract. If no contract fits, stop and ask.
+Key accounts: asercy@msn.com · alansercy@gmail.com · lorettasercy@gmail.com · loretta.keysandcommunity@gmail.com · lsercy@mmmtrucks.com
 
 ---
 
-## 5. Technical Rules (non-negotiable, never deviate)
+## MASTER STATE
 
-These have been earned the hard way. Never deviate without explicit confirmation.
+### INFRASTRUCTURE
 
-### n8n HTTP Request to Anthropic API
-- HTTP Request node `typeVersion 4.2`
-- Header: `x-api-key` (not `Authorization`)
-- Header: `anthropic-version: 2023-06-01`
-- `contentType: raw`
-- Body: `={{ $json.apiBody }}`
-- **Never use the built-in Anthropic node.** It breaks on edge cases.
+| Component | Status | Location | Notes |
+|-----------|--------|----------|-------|
+| alan_os_server.py | RUNNING | ~/.lux/workflows/alan_os_server.py | FastAPI on localhost:8000 |
+| Dashboard | LIVE | localhost:8000/dashboard → ~/.lux/Dashboard/index.html | Active dashboard |
+| Quick Links panel | LIVE | Dashboard nav "Quick Links" | 7 Drive assets, clickable cards |
+| Drive sync | RUNNING | scripts/post_closeout_to_drive.py | Silent, token cached 4/30 |
+| Task Scheduler | SET | AlanOS_Server task in Windows Scheduler | S4U XML at ~/.lux/workflows/AlanOS_Server_S4U.xml |
+| lux_launcher.py | WORKING | ~/.lux/workflows/lux_launcher.py | Kills/restarts Outlook, sequences triage |
+| Triage — MSN | WORKING | triage.py | |
+| Triage — Gmail | WORKING | triage_gmail.py | |
+| Triage — Loretta | WORKING | triage_loretta_v2.py | Inbox cleaned to 23 legit emails |
+| Triage — Keys | BACKBURNER | | Low volume, deprioritized |
+| Triage — MMM | BACKBURNER | | Low volume, deprioritized |
+| review_new_senders.py | COM ERROR | | Loretta Gmail still syncing — fix: Outlook kill/restart block |
+| n8n Workflow 4.1 | DEPLOYED | ID: zl9peS1ZGNISLibZ | API key rotation needed for live test |
+| GCP service account | LIVE | project: lux-host-493415 | lux-automation@lux-host-493415.iam.gserviceaccount.com |
+| NotebookLM loop | ACTIVE | 4 notebooks under alansercy@gmail.com | AI Fundamentals · Automation · Job Search · Real Estate AI |
+| claude_usage_dashboard.py | DORMANT | | Needs Anthropic admin API key — not set, dormant by design |
 
-### Google Sheets nodes
-- `documentId` and `sheetName` always use the `__rl` resource locator wrapper. No raw IDs.
+### REPO STATE
 
-### n8n API PUT requests (workflow updates)
-- Strip these fields before PUT: `active`, `createdAt`, `updatedAt`, `versionId`, `tags`, `id`. Sending any of them causes silent failure.
+| Repo | HEAD | Branch | Location |
+|------|------|--------|----------|
+| alan-os | d9d059a | main | C:\Veritas\repos\alan-os |
+| loretta-os | — | main | C:\Veritas\repos\loretta-os |
+| apexbot | — | — | C:\Veritas\repos\apexbot |
+| memory-bank | — | — | C:\Veritas\repos\memory-bank |
 
-### Email sanitization for Sheets / triage
-- Strip `/[\x00-\x1F\x7F-\xFF<>"\\]/g`
-- Join lines with `||` not `\n`
+### KEY ENV VALUES
 
-### Gmail field names
-- Capitalized: `From`, `Subject`. Lowercase variants miss matches.
+| Key | Value/Suffix | File |
+|-----|-------------|------|
+| ANTHROPIC_API_KEY | suffix WwAA | ~/.lux/.env |
+| N8N_API_KEY | suffix J2g | ~/.lux/.env |
+| VERITAS_SESSION_LOG_DOC_ID | 1oGKgcM6vlHS6i6kFUPx1LVBn3PW9ghUk02nR0Dcqm38 | ~/.lux/.env |
+| GCP service account | — | ~/.lux/credentials/service_account.json |
+| Google OAuth token | — | ~/.lux/credentials/gdocs_host_token.json |
 
-### n8n endpoint
-- Public URL: `https://n8n.lorettasercy.com`
-- The host machine cannot reach the VM's `localhost:5678`. Use the public URL or work in the n8n web UI.
+### DRIVE ASSET REGISTRY
 
-### Deploy fallback (when API rejects)
-- n8n web UI → browser console (Ctrl+Shift+J) → allow pasting → run script. This is the fallback when the n8n REST API rejects an operation.
-
----
-
-## 6. Gotchas (negative-example log)
-
-Lessons earned through session failures and Alan-corrections. Distinct from §2 ("non-negotiable rules") — these are the *stories* behind the rules and the gotchas that don't reduce cleanly to a one-liner. Seed-and-grow list; append on every new lesson.
-
-1. **n8n PUT — strip metadata fields before sending.** Sending `active`, `createdAt`, `updatedAt`, `versionId`, `tags`, or `id` to `PUT /api/v1/workflows/{id}` causes the API to *silently* accept the request with HTTP 200 but reject the actual update. The workflow appears unchanged. Always strip these six fields before PUT. (See §5 for the canonical rule.)
-
-2. **n8n Anthropic — never use the built-in node.** The HTTP Request node at `typeVersion 4.2` with `x-api-key` header, `anthropic-version: 2023-06-01`, `contentType: raw`, body `={{ $json.apiBody }}` is the only path that survives edge cases (long prompts, tool use, prompt caching). The built-in Anthropic node breaks on multi-turn or large bodies and gives no useful error. (See §5.)
-
-3. **Google Sheets — `__rl` resource locator wrapper is mandatory.** Both `documentId` and `sheetName` parameters require the resource locator object (`{__rl: true, value, mode: "list", cachedResultName, cachedResultUrl}`), not raw strings. Raw IDs validate but fail at runtime with cryptic "resource not found" errors. (See §5.)
-
-4. **MMM Prospect Tracker — header row is row 3, not row 1.** Banner content occupies rows 1–2. Sheet has 6 tabs; the `(n8n)` tab (19 cols, no Email-1/2/3 sent dates) is the integration target — separate from the human `WA Prospect Tracker` tab so writes don't trample manual edits. The `#` column (col B) is the de-facto lead key since there's no native `Lead ID` column — fragile if rows get inserted mid-table.
-
-5. **Windows bash + curl POST — use heredoc + `--data-binary @file.json`.** Standard `curl -d '{...}'` quoting is mangled by Windows bash even with single quotes, returning HTTP 422. Pattern that works: `cat > /tmp/req.json <<'EOF' ... EOF` then `curl --data-binary @/tmp/req.json`. Applies to any non-trivial JSON POST from this shell.
-
-6. **Headless-Chrome `--dump-dom` on Windows — convert tempfile paths via `cygpath -w`.** Bash `/tmp/...` paths confuse Chrome on Windows; `cygpath -w /tmp/foo.html` returns a Windows-form path Chrome accepts. Required pattern any time you want DOM-after-JS verification from a CLI.
-
-7. **Desktop OAuth flow — `flow.run_local_server(port=0)` is the clean pattern.** For Google Workspace API access from local scripts: `InstalledAppFlow.from_client_secrets_file(...).run_local_server(port=0)` opens one browser pop, no manual code paste, persists refresh token via `to_json()`. Future runs reload silently via `from_authorized_user_file`. Used for `post_closeout_to_drive.py` against the Veritas Session Log Doc. Same pattern works for Sheets, Drive, Calendar with adjusted scopes.
-
-8. **Verify existing code actually does what you think before recommending "extend, don't build new."** Build-or-extend (P7 in `PRINCIPLES_REVIEW_v1.md`) is only honest if the "extend" recommendation rests on verified code behavior, not assumed behavior. VIE session 2026-05-01: I recommended extending `shorts_researcher.py` for transcript work; Alan's verification challenge forced a re-read which proved the file is metadata-only (regex on YouTube page HTML, no yt-dlp, no transcripts anywhere in codebase). Corrected recommendation: build the new transcript layer, integrate via existing `/ai_stack`. Rule: when proposing extend-not-build, cite line numbers and confirm the function does what you're claiming it does — don't infer from filename or one-line summary.
-
-9. **Subagents — spawn for isolation, not convenience; one level deep.** Spawn when the task is independent of conversation context, long enough to bloat context, or needs parallelism. Don't spawn for quick lookups or tasks that need session history — subagents start cold with no memory of the current conversation. Never spawn a subagent that itself spawns further subagents (one-level constraint): nested spawns compound cost, break audit trails, and make failure diagnosis impossible.
-
----
-
-## 7. Context Window Discipline
-
-- Stay under **100K tokens**. Warn Alan if approaching the limit.
-- Use `/clear` when context is heavy — files are saved to disk, not memory.
-- **Never hold full file contents in memory** when a path reference works. Cite file paths instead of pasting.
+| Asset | Doc ID |
+|-------|--------|
+| Handoff Doc | 1MOvSzYF7iV0tEICRJfforTIojYigryi6MOFDpako5xQ |
+| Lux Command Center | 1hFOBfaKxBs1ZsP9hBfOXb17JZylScxkVRPpA6c0YWDc |
+| Job Search Brief | 1PyDF_KKLmfE9uk5cDsHogKUzb55RNQWbwbJfxg7jwAQ |
+| MMM Prospect Tracker | 1RolDt3XhkV0ZkPgBdywBCCBR2R1v042V5fuZXoYplzI |
+| NLM Inbox Feed folder | 1PIP2g8wVrtDON8FQ56PIsTTmxrrtJEMN |
+| Loretta Content Calendar | 1D7krpNO3CmuZBWfy_bN3c26FUvnv2y3JJ2gQGwRgyXM |
+| Veritas AI Research Feed | 1WD2Sr2HgSdMffSYv9bWIpPZOoef4_LDH27yQBiuuM6M |
+| Veritas Session Log | 1oGKgcM6vlHS6i6kFUPx1LVBn3PW9ghUk02nR0Dcqm38 |
 
 ---
 
-## 8. Active Projects (top 5)
+## VERITAS PRODUCT MAP
 
-Pulled from `PROJECTS.md` Session Queue + TIER 1. Read `PROJECTS.md` for full context.
+| Product | Vertical | Proof of Concept | Status |
+|---------|----------|-----------------|--------|
+| AgentOS | Real estate agents + SMB revenue | Loretta eXp operation | Live POC, no waitlist page |
+| TradeOS | Skilled trades: HVAC, electrical, plumbing, painting, lawn care | SanMiguel Painting Co | First live client deployed |
+| SalesOS | Field sales, BD, outbound pipeline | Alan OS + MMM Trucking | Architecture specced, not built |
+| PersonalOS | Executives, family stewards | Alan OS | Live POC, no waitlist page |
+| FinanceOS | PROTECTED | — | DO NOT TOUCH |
 
-1. **Workflow 2.3 finish** — After Twilio account exists: store credential, fill `__SET_*__` placeholders in `AukTldfaY4oWcu1Q`, activate.
-2. **ApexBot Session 3** — `events.yaml` SVS/KE flags, template capture (gather/march/close-popup), scheduler wiring for 4 alts.
-3. **Loretta L1** — Wire Buffer auto-post (Telegram intake C is live); then `/relist-guide` page next session.
-4. **VIE end-to-end run** — Fire pipeline against a real AI-research email; confirm `/ai_stack` endpoint + dashboard tab surface the enriched record.
-5. **Job Search** — Fill resume placeholders (LinkedIn URL, Rocktop numbers, Citi years/title); rewrite cover letter.
-
----
-
-## 9. Current System State
-
-**Repos:** all under `C:\Veritas\repos\` (see Project Identity).
-
-**Local infrastructure:** `C:\Users\aserc\.lux\` — dashboard, triage, Norman Guard, secrets. **Do NOT move.**
-
-**n8n credentials needing reauth:** none — `sG8kOyb5bJb0hjgS`, `xkF1H9p5Q52UPPoi`, `gbwzaRu0ONWfhuUr` all confirmed green in n8n UI on 2026-04-29.
-
-**Active / live workflows (n8n IDs):**
-- **3.1** `r1pkTZ94DuuWrTtA` — MMM Gmail Triage
-- **3.2** `VvHYTjheeecJ441F` — MMM Prospect Audit
-- **2.1**, **2.2** — Loretta content (OAuth blocked)
-- **2.4** `tX09Uxf9LdjVLmvl` — Loretta video repurposing (deployed + active 2026-04-29)
-
-**Alan OS Dashboard:** `localhost:8000/dashboard` — server at `C:\Users\aserc\.lux\workflows\alan_os_server.py`.
+Waitlist rule: 10 signups before any product build.
+Public surface: None yet. LinkedIn live 5/3/2026. No waitlist pages, no Veritas website.
+SanMiguel live URL: https://ephemeral-cajeta-5fd460.netlify.app
+Brand: Navy #0B1E3D / Gold #C6A96A
+Tagline formal: "Simplifying Matters. Setting the Standard."
+Tagline signature: "Simplifying Matters. Where Table Stakes End."
 
 ---
 
-## 10. Skill File Convention (folder-as-skill)
+## OPEN ITEMS
 
-When authoring Claude Code skills (system-level, at `C:\Users\aserc\.claude\skills\`), prefer **folder structure** over single-file:
-
-```
-my-skill/
-  SKILL.md           # the canonical instructions Claude reads
-  scripts/           # any scripts the skill references
-  examples/          # worked examples / negative examples
-  templates/         # boilerplate the skill instantiates
-```
-
-**Why:** progressive disclosure (Claude reads `SKILL.md` first, pulls in `scripts/` or `examples/` only when relevant), single canonical store per skill (no scattered assets), explicit asset coupling (everything the skill needs lives in one folder).
-
-**Scope note:** This repo (`alan-os`) does not host Claude Code skills — those live in `~/.claude/skills/`. Convention documented here so any future skill creation (this repo or a global skill referencing repo assets) follows the pattern. Existing single-file skills referencing external assets should be migrated to folder structure when next touched.
-
-**Source:** STACK_DESIGN.md §2 ADOPT verdict on `youtube.com/shorts/3E59wf8RA8Y` (AI Honeycove, 2026-05-01).
+| # | Item | Blocker | Owner |
+|---|------|---------|-------|
+| 1 | Job Search Brief 1PyDF update | LinkedIn live — ready | Claude Code |
+| 2 | n8n API key rotation | Manual — rotate in n8n UI | Alan |
+| 3 | WF4.1 writeback spot-check | MMM Prospect Tracker WA tab row 2 check Notes | Alan |
+| 4 | Netlify site rename | Optional cosmetic | Alan |
+| 5 | Gmail OAuth redirect_uri_mismatch | Google Cloud Console fix | Alan |
+| 6 | Veritas waitlist pages | Need domain decision first | Planning |
+| 7 | Veritas website | No domain yet | Planning |
+| 8 | VERITAS_BRAND_KIT.md | Not written yet | This chat |
+| 9 | SalesOS architecture build | After waitlist rule met | Queued |
+| 10 | Ruflo content post | LinkedIn live — ready to write | This chat |
 
 ---
 
-## 11. Project Identity
+## REQUIRED CONTEXT FILES
 
-**alan-os** is the orchestration repo for the Veritas AI Partners stack — the operating system Alan Sercy uses to run client work, personal infrastructure, and family projects. It holds the master `PROJECTS.md` status board, `CONTEXT.json` machine-readable state, the ORCH-1/ORCH-2 Python orchestrators, the n8n workflow JSON exports, and the session protocol SOP.
-
-**Veritas AI Partners** (CentPenny LLC) is Alan's revenue infrastructure for SMB and PE-backed clients. Product stack: AgentOS, PersonalOS, TradeOS, SalesAgentOS, FinanceOS (backburner), Digital Presence.
-
-**Canonical repo locations** (all under `C:\Veritas\repos\`):
-- `C:\Veritas\repos\alan-os` — this repo: orchestrator + workflows + status board
-- `C:\Veritas\repos\loretta-os` — Loretta MoveWithClarity n8n workflows
-- `C:\Veritas\repos\apexbot` — ApexBot Evony automation (Python)
-
-`C:\Users\aserc\.lux\` is **not** a repo — it stays where it is. It holds the dashboard server, triage scripts, secrets (`.env`), and the Norman Inbox Guard. Never move it.
-
-**Canonical assets** live under `C:\Veritas\assets\` (veritas, loretta, mmm, lovie-and-lollie, apexbot, personal). Archive is at `C:\Veritas\archive\`.
+Read these before any session that touches the relevant area:
+- docs/veritas-company-narrative.md — Veritas positioning, products, brand
+- SESSION_NOTES.md — current session state
+- CLOSEOUT.md — session closeout template
+- docs/closeout_sync_spec.md — Drive sync spec (STATUS: COMPLETE)
+- PROJECTS.md — active project registry
 
 ---
 
-## 12. DO NOT REVISIT — Explicitly Closed Items
+## SESSION CLOSE PROTOCOL
 
-These items are complete. Do not surface them as open threads, re-implement, or flag as blockers.
-
-- **VIE Steps 1–4** (endpoints, URL enrichment, nlm_feed_builder integration, AI Stack dashboard tab) — DONE 4/30/2026
-- **OAuth / Drive setup** (`post_closeout_to_drive.py`, token at `credentials/gdocs_host_token.json`, `VERITAS_SESSION_LOG_DOC_ID` in `.lux/.env`) — DONE 4/30/2026, running silently
-- **HP Hood** — Relationship closed, commission deal done 5/1/2026. Do not resurface.
-- **Loretta brand kit / DESIGN.md** — Complete, package emailed 5/2/2026. Do not rebuild.
-- **Workflow 4.1 import** — DONE, live in n8n as ID `zl9peS1ZGNISLibZ`. Do not re-import.
-- **task-013 through task-020** — All closed. See `memory-bank/closed_items.md`.
-- **`post_closeout_to_drive.py`** — COMPLETE, do not respecify.
+Before every commit, Claude Code must:
+1. Mark completed tasks done in tasks.json
+2. Update MASTER STATE section in this file with current status
+3. Update SESSION_NOTES.md
+4. Run python scripts/post_closeout_to_drive.py
+5. Confirm working tree clean
+6. Commit and push
 
 ---
 
-## MEMORY BANK PROTOCOL
-- Before starting any task: read memory-bank/session-log.md
-- After completing any task: append a dated summary to memory-bank/session-log.md
-- Format: ## [DATE] [TASK NAME]\n- What was done\n- What worked\n- Blockers\n- Next step
+## DO NOT REVISIT
 
-## Required context
-- docs/veritas-company-narrative.md — load every session for company vision, product portfolio, and exit thesis
+| Item | Closed | Notes |
+|------|--------|-------|
+| VIE Steps 1-4 + OAuth/Drive | 4/30/2026 | Token cached, script running silently |
+| HP Hood | Closed | Do not resurface |
+| Loretta brand kit / DESIGN.md | Done | Do not rebuild |
+| Workflow 4.1 import | Done | ID zl9peS1ZGNISLibZ |
+| tasks 013-020 | Closed | All done |
+| post_closeout_to_drive.py | Complete | Runs silently |
+| 8081 mystery | Resolved | claude_usage_dashboard.py dormant by design |
+| lux-os as separate repo | Resolved | Does not exist — all work in alan-os |
+
+---
+
+## STANDING REMINDERS
+
+- Trash: Thursday 8pm (Friday pickup)
+- Recycle: Every other Tuesday 8pm (Wednesday 4pm pickup)
+- Bulk pickup: First Friday of month (put out Thursday night)
