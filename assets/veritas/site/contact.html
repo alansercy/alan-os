@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Veritas AI Partners</title>
+<meta name="description" content="Book a discovery call with Veritas AI Partners. 30 minutes. No pitch. Just diagnosis. We come prepared.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0B1E3D;
+  --navy-mid:#1A3A5C;
+  --navy-deep:#060F1E;
+  --gold:#C6A96A;
+  --gold-dark:#9A7A3A;
+  --linen:#F0EDE6;
+  --linen-bg:#F5F3EF;
+  --steel:#8A9BB5;
+  --ember:#E85C2A;
+  --text:#1A1A18;
+  --text-mid:#5F5E5A;
+  --text-light:#888780;
+  --border:#D3D1C7;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--linen-bg);color:var(--text);overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,30,61,0.97);backdrop-filter:blur(8px);padding:0 2.5rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(198,169,106,0.2);}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--linen);letter-spacing:0.06em;text-decoration:none;}
+.nav-brand span{color:var(--gold);}
+.nav-links{display:flex;gap:2rem;align-items:center;}
+.nav-links a{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--steel);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);}
+.nav-cta{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);background:var(--gold);border:none;border-radius:6px;padding:9px 20px;cursor:pointer;text-decoration:none;transition:background 0.2s;display:inline-block;}
+.nav-cta:hover{background:#D4B878;}
+.nav-mobile{display:none;background:none;border:0.5px solid rgba(138,155,181,0.3);border-radius:6px;padding:7px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--steel);}
+.nav-drawer{display:none;position:fixed;top:64px;left:0;right:0;background:var(--navy);padding:1.5rem 2.5rem;border-bottom:0.5px solid rgba(198,169,106,0.15);flex-direction:column;gap:0;}
+.nav-drawer.open{display:flex;}
+.nav-drawer a{font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--steel);text-decoration:none;padding:12px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);}
+.nav-drawer a.nav-cta-m{color:var(--navy);background:var(--gold);text-align:center;border-radius:6px;padding:12px;margin-top:8px;border:none;font-weight:500;}
+
+/* PAGE HERO */
+.page-hero{padding:10rem 2.5rem 5rem;background:var(--navy);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;top:-20%;right:-5%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(198,169,106,0.05) 0%,transparent 70%);pointer-events:none;}
+.page-hero-inner{max-width:960px;margin:0 auto;position:relative;z-index:1;}
+.page-eyebrow{font-size:10px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.7s 0.2s forwards;}
+.page-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,6.5vw,78px);font-weight:300;color:var(--linen);line-height:1.08;margin-bottom:1rem;opacity:0;animation:fadeUp 0.7s 0.35s forwards;}
+.page-headline em{font-style:italic;color:var(--gold);}
+.page-sub{font-size:16px;color:var(--steel);line-height:1.8;max-width:600px;opacity:0;animation:fadeUp 0.7s 0.5s forwards;}
+
+/* CONTACT LAYOUT */
+.contact-section{padding:6rem 2.5rem;}
+.contact-inner{max-width:960px;margin:0 auto;}
+.contact-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:5rem;align-items:start;}
+
+/* CONTACT INFO */
+.contact-info{}
+.info-block{margin-bottom:2.5rem;}
+.info-label{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;font-weight:500;color:var(--text-light);margin-bottom:10px;}
+.info-value{font-size:15px;color:var(--text-mid);line-height:1.8;}
+.info-value a{color:var(--gold);text-decoration:none;}
+.info-value a:hover{text-decoration:underline;}
+
+.what-to-expect{background:var(--navy);border-radius:12px;padding:2rem;margin-top:2.5rem;}
+.wte-label{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:1.25rem;}
+.wte-list{list-style:none;}
+.wte-list li{font-size:13px;color:var(--steel);line-height:1.7;padding:8px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);display:flex;gap:10px;}
+.wte-list li:last-child{border-bottom:none;}
+.wte-num{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--gold);line-height:1;flex-shrink:0;width:20px;}
+
+/* FORM */
+.contact-form-wrap{background:#fff;border-radius:16px;padding:2.5rem;border:0.5px solid var(--border);}
+.form-headline{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--navy);margin-bottom:6px;}
+.form-sub{font-size:13px;color:var(--text-mid);margin-bottom:2rem;line-height:1.6;}
+
+.form-group{margin-bottom:1.25rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+label{display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;color:var(--text-light);margin-bottom:6px;}
+input,select,textarea{width:100%;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--linen-bg);border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888780' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer;}
+textarea{resize:vertical;min-height:120px;line-height:1.6;}
+::placeholder{color:var(--text-light);}
+
+.form-submit{width:100%;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:0.06em;color:var(--navy);background:var(--gold);border:none;border-radius:8px;padding:16px;cursor:pointer;transition:background 0.2s;margin-top:0.5rem;}
+.form-submit:hover{background:#D4B878;}
+
+.form-note{font-size:11px;color:var(--text-light);text-align:center;margin-top:1rem;line-height:1.6;}
+.form-note a{color:var(--gold);text-decoration:none;}
+
+/* SUCCESS STATE */
+.form-success{display:none;text-align:center;padding:3rem 2rem;}
+.form-success-icon{font-family:'Cormorant Garamond',serif;font-size:48px;color:var(--gold);margin-bottom:1rem;}
+.form-success-headline{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--navy);margin-bottom:0.75rem;}
+.form-success-sub{font-size:14px;color:var(--text-mid);line-height:1.7;}
+
+/* BOTTOM NOTE */
+.bottom-note{background:var(--linen-bg);padding:4rem 2.5rem;text-align:center;border-top:0.5px solid var(--border);}
+.bottom-note-inner{max-width:680px;margin:0 auto;}
+.bottom-quote{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;font-style:italic;color:var(--text-mid);line-height:1.6;margin-bottom:1rem;}
+.bottom-attr{font-size:12px;color:var(--text-light);letter-spacing:0.08em;}
+
+/* FOOTER */
+footer{background:var(--navy-deep);padding:3rem 2.5rem;border-top:0.5px solid rgba(198,169,106,0.15);}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem;}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--linen);letter-spacing:0.06em;}
+.footer-brand span{color:var(--gold);}
+.footer-tagline{font-size:11px;color:rgba(138,155,181,0.6);letter-spacing:0.06em;margin-top:4px;}
+.footer-links{display:flex;gap:2rem;}
+.footer-links a{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(138,155,181,0.5);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--gold);}
+.footer-copy{font-size:11px;color:rgba(138,155,181,0.3);margin-top:2rem;padding-top:1.5rem;border-top:0.5px solid rgba(255,255,255,0.05);text-align:center;max-width:960px;margin-left:auto;margin-right:auto;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.65s ease,transform 0.65s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links,.nav-cta{display:none;}
+  .nav-mobile{display:block;}
+  .contact-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .footer-links{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-brand">VERITAS<span>.</span></a>
+  <div class="nav-links">
+    <a href="products.html">Products</a>
+    <a href="about.html">About</a>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="contact.html" class="active">Contact</a>
+  </div>
+  <a href="contact.html" class="nav-cta">Book a call</a>
+  <button class="nav-mobile" id="nav-toggle">Menu</button>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="products.html">Products</a>
+  <a href="about.html">About</a>
+  <a href="case-studies.html">Case Studies</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="nav-cta-m">Book a call</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-eyebrow">Contact &nbsp;·&nbsp; Veritas AI Partners</div>
+    <div class="page-headline">Let's <em>talk.</em></div>
+    <div class="page-sub">Discovery calls are 30 minutes. No pitch deck. No pressure. We come prepared — you leave with a clear picture of what a Veritas engagement could do for your business.</div>
+  </div>
+</div>
+
+<!-- CONTACT SECTION -->
+<section class="contact-section">
+  <div class="contact-inner">
+    <div class="contact-grid">
+
+      <!-- INFO COLUMN -->
+      <div class="reveal">
+        <div class="info-block">
+          <div class="info-label">Email</div>
+          <div class="info-value"><a href="mailto:hello@veritasaipartners.com">hello@veritasaipartners.com</a></div>
+        </div>
+        <div class="info-block">
+          <div class="info-label">Based in</div>
+          <div class="info-value">North Texas &nbsp;·&nbsp; Serving operators nationally</div>
+        </div>
+        <div class="info-block">
+          <div class="info-label">Response time</div>
+          <div class="info-value">Within one business day. Usually same day.</div>
+        </div>
+        <div class="what-to-expect">
+          <div class="wte-label">What to expect on a discovery call</div>
+          <ul class="wte-list">
+            <li><span class="wte-num">1</span><span>We ask about your operation — what's working, what's breaking, where revenue is leaking.</span></li>
+            <li><span class="wte-num">2</span><span>We tell you honestly whether a Veritas OS fits and which one makes sense first.</span></li>
+            <li><span class="wte-num">3</span><span>If it's a fit, we outline what deployment looks like: scope, timeline, and what you'll have running in 30 days.</span></li>
+            <li><span class="wte-num">4</span><span>No obligation. No follow-up pitch sequence. Either it makes sense to work together, or it doesn't.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- FORM COLUMN -->
+      <div class="contact-form-wrap reveal">
+        <div class="form-headline">Start the conversation.</div>
+        <div class="form-sub">Tell us about your business and what you're trying to solve. We'll be in touch within one business day to schedule a call.</div>
+
+        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="contact-form">
+          <input type="hidden" name="form-name" value="contact">
+          <input type="hidden" name="bot-field" style="display:none;">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Your name</label>
+              <input type="text" id="name" name="name" placeholder="Alan Sercy" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email address</label>
+              <input type="email" id="email" name="email" placeholder="hello@yourbusiness.com" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="company">Company / Business</label>
+              <input type="text" id="company" name="company" placeholder="Your company name">
+            </div>
+            <div class="form-group">
+              <label for="product">I'm interested in</label>
+              <select id="product" name="product">
+                <option value="" disabled selected>Select an option</option>
+                <option value="agentos">AgentOS — Real Estate AI OS</option>
+                <option value="tradeos">TradeOS — Trades &amp; Logistics AI OS</option>
+                <option value="salesos">SalesOS — BD &amp; Outbound AI OS</option>
+                <option value="personalos">PersonalOS — Executive Life OS</option>
+                <option value="fractional">Fractional Executive Engagement</option>
+                <option value="digital-presence">Digital Presence (Website)</option>
+                <option value="other">Other / Not sure yet</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Tell us about your situation</label>
+            <textarea id="message" name="message" placeholder="What are you trying to solve? What's working, what's breaking, what does success look like? The more specific, the better — we come to the call prepared."></textarea>
+          </div>
+
+          <button type="submit" class="form-submit">Send message — I'll respond within one business day</button>
+          <div class="form-note">No pitch decks. No automated sequences. A real response from a real operator.<br>Questions? Email <a href="mailto:hello@veritasaipartners.com">hello@veritasaipartners.com</a> directly.</div>
+        </form>
+
+        <div class="form-success" id="form-success">
+          <div class="form-success-icon">✓</div>
+          <div class="form-success-headline">Message received.</div>
+          <div class="form-success-sub">We'll be in touch within one business day to schedule a call. In the meantime, feel free to review our <a href="case-studies.html" style="color:var(--gold);">case studies</a> or <a href="products.html" style="color:var(--gold);">product pages</a>.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM QUOTE -->
+<div class="bottom-note">
+  <div class="bottom-note-inner">
+    <div class="bottom-quote">"The discovery call is not a sales call. It is a diagnostic. We come to understand your operation, not to pitch you on ours."</div>
+    <div class="bottom-attr">— Alan Sercy, Founder, Veritas AI Partners</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">VERITAS<span>.</span> AI Partners</div>
+      <div class="footer-tagline">Simplifying Matters. Setting the Standard.</div>
+    </div>
+    <div class="footer-links">
+      <a href="products.html">Products</a>
+      <a href="about.html">About</a>
+      <a href="case-studies.html">Case Studies</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+  <div class="footer-copy">© 2026 Veritas AI Partners · CentPenny LLC · All rights reserved &nbsp;·&nbsp; Powered by Veritas AI Partners</div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);} });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  document.getElementById('nav-toggle').addEventListener('click', function(){
+    document.getElementById('nav-drawer').classList.toggle('open');
+  });
+
+  /* Pre-fill product selection from URL param */
+  const params = new URLSearchParams(window.location.search);
+  const productParam = params.get('product');
+  if(productParam){
+    const sel = document.getElementById('product');
+    if(sel) for(let i=0; i<sel.options.length; i++){
+      if(sel.options[i].value === productParam){ sel.selectedIndex = i; break; }
+    }
+  }
+
+  /* Form submission — show success state */
+  const form = document.getElementById('contact-form');
+  form.addEventListener('submit', function(e){
+    const requiredFields = form.querySelectorAll('[required]');
+    let valid = true;
+    requiredFields.forEach(f => { if(!f.value.trim()) valid = false; });
+    if(valid){
+      setTimeout(() => {
+        form.style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      }, 400);
+    }
+  });
+</script>
+</body>
+</html>

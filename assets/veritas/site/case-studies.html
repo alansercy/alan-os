@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Studies — Veritas AI Partners</title>
+<meta name="description" content="Proof before pitch. Veritas AI Partners case studies — real deployments on live client businesses, with documented results.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0B1E3D;
+  --navy-mid:#1A3A5C;
+  --navy-deep:#060F1E;
+  --gold:#C6A96A;
+  --gold-dark:#9A7A3A;
+  --linen:#F0EDE6;
+  --linen-bg:#F5F3EF;
+  --steel:#8A9BB5;
+  --ember:#E85C2A;
+  --text:#1A1A18;
+  --text-mid:#5F5E5A;
+  --text-light:#888780;
+  --border:#D3D1C7;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--linen-bg);color:var(--text);overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,30,61,0.97);backdrop-filter:blur(8px);padding:0 2.5rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(198,169,106,0.2);}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--linen);letter-spacing:0.06em;text-decoration:none;}
+.nav-brand span{color:var(--gold);}
+.nav-links{display:flex;gap:2rem;align-items:center;}
+.nav-links a{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--steel);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);}
+.nav-cta{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);background:var(--gold);border:none;border-radius:6px;padding:9px 20px;cursor:pointer;text-decoration:none;transition:background 0.2s;display:inline-block;}
+.nav-cta:hover{background:#D4B878;}
+.nav-mobile{display:none;background:none;border:0.5px solid rgba(138,155,181,0.3);border-radius:6px;padding:7px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--steel);}
+.nav-drawer{display:none;position:fixed;top:64px;left:0;right:0;background:var(--navy);padding:1.5rem 2.5rem;border-bottom:0.5px solid rgba(198,169,106,0.15);flex-direction:column;gap:0;}
+.nav-drawer.open{display:flex;}
+.nav-drawer a{font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--steel);text-decoration:none;padding:12px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);}
+.nav-drawer a.nav-cta-m{color:var(--navy);background:var(--gold);text-align:center;border-radius:6px;padding:12px;margin-top:8px;border:none;font-weight:500;}
+
+/* PAGE HERO */
+.page-hero{padding:10rem 2.5rem 5rem;background:var(--navy);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;top:-20%;right:-5%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(198,169,106,0.05) 0%,transparent 70%);pointer-events:none;}
+.page-hero-inner{max-width:960px;margin:0 auto;position:relative;z-index:1;}
+.page-eyebrow{font-size:10px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.7s 0.2s forwards;}
+.page-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,6.5vw,78px);font-weight:300;color:var(--linen);line-height:1.08;margin-bottom:1rem;opacity:0;animation:fadeUp 0.7s 0.35s forwards;}
+.page-headline em{font-style:italic;color:var(--gold);}
+.page-sub{font-size:16px;color:var(--steel);line-height:1.8;max-width:600px;opacity:0;animation:fadeUp 0.7s 0.5s forwards;}
+
+/* CASE STUDY HEADER */
+.cs-header{background:#fff;padding:5rem 2.5rem 0;}
+.cs-header-inner{max-width:960px;margin:0 auto;}
+.cs-meta{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;}
+.cs-number{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:300;color:rgba(232,92,42,0.1);line-height:1;flex-shrink:0;}
+.cs-meta-text{}
+.cs-tag{display:inline-block;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;font-weight:500;padding:4px 12px;border-radius:4px;background:#FDF0EB;color:var(--ember);margin-bottom:8px;}
+.cs-company{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,56px);font-weight:300;color:var(--text);line-height:1.1;margin-bottom:6px;}
+.cs-descriptor{font-size:13px;color:var(--text-light);letter-spacing:0.06em;}
+
+/* CS STATS BAR */
+.cs-stats{background:#fff;padding:2rem 2.5rem;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
+.cs-stats-inner{max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;}
+.cs-stat-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ember);line-height:1;margin-bottom:4px;}
+.cs-stat-label{font-size:11px;color:var(--text-light);letter-spacing:0.06em;line-height:1.4;}
+
+/* CS BODY */
+.cs-body{background:#fff;padding:4rem 2.5rem 6rem;}
+.cs-body-inner{max-width:960px;margin:0 auto;}
+.cs-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:5rem;align-items:start;}
+.cs-sidebar{}
+.cs-sidebar-block{margin-bottom:2.5rem;}
+.cs-sidebar-label{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-light);margin-bottom:1rem;font-weight:500;}
+.cs-sidebar-item{font-size:13px;color:var(--text-mid);line-height:1.7;}
+.cs-sidebar-item strong{color:var(--text);font-weight:500;}
+.cs-sidebar-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ember);text-decoration:none;border:0.5px solid rgba(232,92,42,0.25);border-radius:6px;padding:8px 14px;transition:all 0.2s;margin-top:8px;}
+.cs-sidebar-link:hover{background:#FDF0EB;border-color:var(--ember);}
+.cs-main{}
+.cs-section{margin-bottom:3rem;}
+.cs-section-label{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;font-weight:500;margin-bottom:1rem;}
+.cs-section-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,3vw,36px);font-weight:300;line-height:1.2;margin-bottom:1rem;}
+.cs-section-headline em{font-style:italic;}
+.cs-text p{font-size:15px;color:var(--text-mid);line-height:1.9;margin-bottom:1.25rem;}
+.cs-text p:last-child{margin-bottom:0;}
+.cs-text strong{color:var(--text);font-weight:500;}
+.cs-result-list{list-style:none;margin-top:1.5rem;}
+.cs-result-list li{display:flex;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);align-items:flex-start;font-size:14px;color:var(--text-mid);line-height:1.6;}
+.cs-result-list li:last-child{border-bottom:none;}
+.result-check{color:var(--ember);font-size:16px;flex-shrink:0;margin-top:1px;}
+
+/* DIVIDER */
+.section-sep{background:#fff;padding:0 2.5rem;}
+.section-sep hr{max-width:960px;margin:0 auto;border:none;border-top:0.5px solid var(--border);}
+
+/* PENDING SECTION */
+.pending-section{background:var(--linen-bg);padding:5rem 2.5rem;}
+.pending-inner{max-width:960px;margin:0 auto;}
+.pending-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.5rem;}
+.pending-card{background:#fff;border:0.5px solid var(--border);border-radius:12px;padding:2rem;opacity:0.7;}
+.pending-tag{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:1rem;}
+.pending-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text);margin-bottom:6px;}
+.pending-desc{font-size:12px;color:var(--text-mid);line-height:1.65;}
+.pending-status{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-top:1rem;}
+
+/* CTA */
+.cta-section{background:var(--navy);padding:7rem 2.5rem;text-align:center;}
+.cta-inner{max-width:680px;margin:0 auto;}
+.cta-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,5vw,56px);font-weight:300;color:var(--linen);line-height:1.15;margin-bottom:1.25rem;}
+.cta-headline em{font-style:italic;color:var(--gold);}
+.cta-sub{font-size:15px;color:var(--steel);line-height:1.8;margin-bottom:2.5rem;}
+.cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--navy);background:var(--gold);border:none;border-radius:8px;padding:15px 36px;cursor:pointer;text-decoration:none;transition:background 0.2s;display:inline-block;letter-spacing:0.04em;}
+.btn-primary:hover{background:#D4B878;}
+.btn-ghost{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;color:var(--steel);background:none;border:0.5px solid rgba(138,155,181,0.4);border-radius:8px;padding:15px 32px;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-block;}
+.btn-ghost:hover{color:var(--linen);border-color:rgba(240,237,230,0.4);}
+
+/* FOOTER */
+footer{background:var(--navy-deep);padding:3rem 2.5rem;border-top:0.5px solid rgba(198,169,106,0.15);}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem;}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--linen);letter-spacing:0.06em;}
+.footer-brand span{color:var(--gold);}
+.footer-tagline{font-size:11px;color:rgba(138,155,181,0.6);letter-spacing:0.06em;margin-top:4px;}
+.footer-links{display:flex;gap:2rem;}
+.footer-links a{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(138,155,181,0.5);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--gold);}
+.footer-copy{font-size:11px;color:rgba(138,155,181,0.3);margin-top:2rem;padding-top:1.5rem;border-top:0.5px solid rgba(255,255,255,0.05);text-align:center;max-width:960px;margin-left:auto;margin-right:auto;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.65s ease,transform 0.65s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links,.nav-cta{display:none;}
+  .nav-mobile{display:block;}
+  .cs-stats-inner{grid-template-columns:repeat(2,1fr);}
+  .cs-layout{grid-template-columns:1fr;}
+  .pending-grid{grid-template-columns:1fr;}
+  .footer-links{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-brand">VERITAS<span>.</span></a>
+  <div class="nav-links">
+    <a href="products.html">Products</a>
+    <a href="about.html">About</a>
+    <a href="case-studies.html" class="active">Case Studies</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="contact.html" class="nav-cta">Book a call</a>
+  <button class="nav-mobile" id="nav-toggle">Menu</button>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="products.html">Products</a>
+  <a href="about.html">About</a>
+  <a href="case-studies.html">Case Studies</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="nav-cta-m">Book a call</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-eyebrow">Case Studies &nbsp;·&nbsp; Veritas AI Partners</div>
+    <div class="page-headline">Proof before <em>pitch.</em></div>
+    <div class="page-sub">No Veritas OS is offered to a second client before it is running for the first. Every case study here is a live deployment — not a demo, not a proof of concept. A working system on a real business.</div>
+  </div>
+</div>
+
+<!-- CS 01: SAN MIGUEL PAINTING CO -->
+<div class="cs-header">
+  <div class="cs-header-inner">
+    <div class="cs-meta reveal">
+      <div class="cs-number">01</div>
+      <div class="cs-meta-text">
+        <div class="cs-tag">TradeOS · Case Study 01 · Digital Presence</div>
+        <div class="cs-company">San Miguel Painting Co.</div>
+        <div class="cs-descriptor">Commercial &amp; residential painting · North Texas · Owner-operated</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cs-stats reveal">
+  <div class="cs-stats-inner">
+    <div>
+      <div class="cs-stat-num">0→Live</div>
+      <div class="cs-stat-label">Digital presence built from zero</div>
+    </div>
+    <div>
+      <div class="cs-stat-num">Automated</div>
+      <div class="cs-stat-label">Lead capture and intake pipeline</div>
+    </div>
+    <div>
+      <div class="cs-stat-num">&lt;30</div>
+      <div class="cs-stat-label">Days from kick-off to live site</div>
+    </div>
+    <div>
+      <div class="cs-stat-num">24/7</div>
+      <div class="cs-stat-label">Leads capture without owner involvement</div>
+    </div>
+  </div>
+</div>
+
+<div class="cs-body">
+  <div class="cs-body-inner">
+    <div class="cs-layout">
+      <div class="cs-sidebar reveal">
+        <div class="cs-sidebar-block">
+          <div class="cs-sidebar-label">Client</div>
+          <div class="cs-sidebar-item"><strong>San Miguel Painting Co.</strong><br>North Texas<br>Commercial &amp; residential painting</div>
+        </div>
+        <div class="cs-sidebar-block">
+          <div class="cs-sidebar-label">OS deployed</div>
+          <div class="cs-sidebar-item"><strong>TradeOS</strong><br>Digital Presence service line</div>
+        </div>
+        <div class="cs-sidebar-block">
+          <div class="cs-sidebar-label">Status</div>
+          <div class="cs-sidebar-item" style="color:var(--ember);font-weight:500;">Live</div>
+          <a href="https://ephemeral-cajeta-5fd460.netlify.app" target="_blank" rel="noopener" class="cs-sidebar-link">View live site →</a>
+        </div>
+        <div class="cs-sidebar-block">
+          <div class="cs-sidebar-label">Timeline</div>
+          <div class="cs-sidebar-item">Under 30 days from kick-off to live deployment</div>
+        </div>
+        <div class="cs-sidebar-block">
+          <div class="cs-sidebar-label">Services delivered</div>
+          <div class="cs-sidebar-item">
+            Branded website design &amp; build<br>
+            Automated lead capture form<br>
+            CRM intake pipeline<br>
+            Mobile-responsive deployment<br>
+            Netlify hosting configuration
+          </div>
+        </div>
+      </div>
+      <div class="cs-main">
+        <div class="cs-section reveal">
+          <div class="cs-section-label" style="color:var(--ember);">The challenge</div>
+          <div class="cs-section-headline" style="color:var(--text);">Invisible online.<br><em>Relying entirely on word of mouth.</em></div>
+          <div class="cs-text">
+            <p>San Miguel Painting Co. was doing quality work — commercial and residential jobs across North Texas — but operating entirely through referrals and personal networks. No website. No digital presence. No way for a prospect to find them, verify them, or contact them outside of a direct introduction.</p>
+            <p>The owner was the sales team. Every new job came in through a phone call or a personal connection. When the phone didn't ring, the pipeline was empty. When a prospect searched online — which they all do, even after a referral — there was nothing there to confirm the business was real, professional, or worth calling back.</p>
+            <p><strong>The result: leads that could have been easy wins were dying in the gap between referral and first contact.</strong> A painting company that should have been converting at a high rate was losing business to competitors with nothing more than a basic website and a Google profile.</p>
+          </div>
+        </div>
+
+        <div class="cs-section reveal">
+          <div class="cs-section-label" style="color:var(--ember);">The solution</div>
+          <div class="cs-section-headline" style="color:var(--text);">A professional digital presence that <em>works while he works.</em></div>
+          <div class="cs-text">
+            <p>Veritas AI Partners deployed the TradeOS Digital Presence service line: a branded, professional website with automated lead capture built from the ground up in under 30 days.</p>
+            <p>The build started with brand positioning — who San Miguel serves, what sets their work apart, and what a commercial or residential client needs to see before they pick up the phone. The site was then built to answer those questions instantly: <strong>professional photography-ready layout, clear service descriptions, testimonial structure, and a frictionless estimate request form that feeds directly into a lead intake pipeline.</strong></p>
+            <p>The intake system captures name, contact, project type, location, and scope — routing each submission as a structured lead record the owner can act on immediately, from any device, without needing to manage email manually.</p>
+            <p>The site was deployed on Netlify with a custom domain configuration, mobile-optimized for the way North Texas contractors and property managers actually browse, and built to load fast on any connection.</p>
+          </div>
+        </div>
+
+        <div class="cs-section reveal">
+          <div class="cs-section-label" style="color:var(--ember);">The results</div>
+          <div class="cs-section-headline" style="color:var(--text);">Professional. Automated. <em>Running.</em></div>
+          <ul class="cs-result-list">
+            <li><span class="result-check">✓</span><div>Professional branded website live — no longer invisible to prospects searching online after a referral</div></li>
+            <li><span class="result-check">✓</span><div>Automated lead capture active — every estimate request captured as a structured record, no manual inbox management required</div></li>
+            <li><span class="result-check">✓</span><div>Owner can respond to new leads from his phone in the field — the front office runs without him being at a desk</div></li>
+            <li><span class="result-check">✓</span><div>Pipeline visibility where there was none — the owner now knows exactly who has contacted him and what they asked for</div></li>
+            <li><span class="result-check">✓</span><div>Deployed in under 30 days from first conversation to live URL — no lengthy agency engagement, no unnecessary complexity</div></li>
+            <li><span class="result-check">✓</span><div>Foundation in place for TradeOS full OS deployment — inbox triage, prospect audit, and hot-lead alerts can layer on top of the existing infrastructure</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PENDING CASE STUDIES -->
+<section class="pending-section">
+  <div class="pending-inner">
+    <div class="section-eyebrow reveal" style="font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);">Coming soon</div>
+    <div class="section-headline reveal" style="font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);font-weight:300;color:var(--text);line-height:1.2;margin-bottom:1rem;">More case studies <em style="font-style:italic;color:var(--gold-dark);">in progress.</em></div>
+    <div class="section-sub reveal" style="font-size:15px;color:var(--text-mid);line-height:1.8;max-width:580px;">Every active Veritas deployment becomes a case study once results are documented. AgentOS and TradeOS engagements currently in progress.</div>
+    <div class="pending-grid">
+      <div class="pending-card reveal">
+        <div class="pending-tag" style="background:#E8EFF7;color:#1A5C9A;">AgentOS</div>
+        <div class="pending-name">MoveWithClarity</div>
+        <div class="pending-desc">Loretta Sercy · eXp Realty · North Texas. Full AgentOS deployment — inbox, content engine, lead routing, video repurposing. Inbox reduced 88%.</div>
+        <div class="pending-status">Documenting results</div>
+      </div>
+      <div class="pending-card reveal">
+        <div class="pending-tag" style="background:#FDF0EB;color:#E85C2A;">TradeOS</div>
+        <div class="pending-name">MMM Trucking</div>
+        <div class="pending-desc">Owner-operated trucking company · North Texas. TradeOS full OS deployment — inbox triage, prospect audit, hot-lead alerts. $3K/mo retainer active.</div>
+        <div class="pending-status">Documenting results</div>
+      </div>
+      <div class="pending-card reveal">
+        <div class="pending-tag" style="background:#F5F0E8;color:#8A6A30;">Your business</div>
+        <div class="pending-name">Case Study 04</div>
+        <div class="pending-desc">The next case study belongs to the next client. Discovery call is 30 minutes. Most deployments are live within 30 days.</div>
+        <div class="pending-status">Your name here</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="section-eyebrow reveal" style="color:var(--gold);font-size:10px;letter-spacing:0.24em;text-transform:uppercase;text-align:center;margin-bottom:1.25rem;">Ready to be the next proof?</div>
+    <div class="cta-headline reveal">Your results are <em>waiting.</em></div>
+    <div class="cta-sub reveal">Every case study started with a 30-minute discovery call. We come prepared. You leave with clarity on what's possible and what deployment looks like for your specific operation.</div>
+    <div class="cta-actions reveal">
+      <a href="contact.html" class="btn-primary">Book a discovery call</a>
+      <a href="products.html" class="btn-ghost">See our products</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">VERITAS<span>.</span> AI Partners</div>
+      <div class="footer-tagline">Simplifying Matters. Setting the Standard.</div>
+    </div>
+    <div class="footer-links">
+      <a href="products.html">Products</a>
+      <a href="about.html">About</a>
+      <a href="case-studies.html">Case Studies</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+  <div class="footer-copy">© 2026 Veritas AI Partners · CentPenny LLC · All rights reserved &nbsp;·&nbsp; Powered by Veritas AI Partners</div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);} });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  document.getElementById('nav-toggle').addEventListener('click', function(){
+    document.getElementById('nav-drawer').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

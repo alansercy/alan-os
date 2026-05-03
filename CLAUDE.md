@@ -99,7 +99,9 @@ Key accounts: asercy@msn.com · alansercy@gmail.com · lorettasercy@gmail.com ·
 | FinanceOS | PROTECTED | — | DO NOT TOUCH |
 
 Waitlist rule: 10 signups before any product build.
-Public surface: None yet. LinkedIn live 5/3/2026. No waitlist pages, no Veritas website.
+Public surface: LIVE — 5-page static site deployed to Netlify 2026-05-03.
+Netlify URL: https://fantastic-sprinkles-dbcd4e.netlify.app (rename + custom domain veritasaipartners.com pending)
+Site package: assets/veritas/site/ (index, about, products, case-studies, contact)
 SanMiguel live URL: https://ephemeral-cajeta-5fd460.netlify.app
 Brand: Navy #0B1E3D / Gold #C6A96A
 Tagline formal: "Simplifying Matters. Setting the Standard."
@@ -117,7 +119,7 @@ Tagline signature: "Simplifying Matters. Where Table Stakes End."
 | 4 | Netlify site rename | Optional cosmetic | Alan |
 | 5 | Gmail OAuth redirect_uri_mismatch | Google Cloud Console fix | Alan |
 | 6 | Veritas waitlist pages | Need domain decision first | Planning |
-| 7 | Veritas website | No domain yet | Planning |
+| 7 | Veritas website custom domain | Site live at Netlify URL — need to point veritasaipartners.com | Alan |
 | 8 | VERITAS_BRAND_KIT.md | Not written yet | This chat |
 | 9 | SalesOS architecture build | After waitlist rule met | Queued |
 | 10 | Ruflo content post | LinkedIn live — ready to write | This chat |

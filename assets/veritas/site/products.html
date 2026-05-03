@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products — Veritas AI Partners</title>
+<meta name="description" content="AgentOS, TradeOS, SalesOS, and PersonalOS — four AI operating systems for serious operators. Built on live clients, deployed nationally.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0B1E3D;
+  --navy-mid:#1A3A5C;
+  --navy-deep:#060F1E;
+  --gold:#C6A96A;
+  --gold-dark:#9A7A3A;
+  --linen:#F0EDE6;
+  --linen-bg:#F5F3EF;
+  --steel:#8A9BB5;
+  --ember:#E85C2A;
+  --text:#1A1A18;
+  --text-mid:#5F5E5A;
+  --text-light:#888780;
+  --border:#D3D1C7;
+  /* product accents */
+  --agent-blue:#1A5C9A;
+  --agent-blue-bg:#E8EFF7;
+  --trade-ember:#E85C2A;
+  --trade-ember-bg:#FDF0EB;
+  --sales-green:#2E7D4F;
+  --sales-green-bg:#E8F5EE;
+  --personal-gold:#C6A96A;
+  --personal-gold-bg:#F5F0E8;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--linen-bg);color:var(--text);overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,30,61,0.97);backdrop-filter:blur(8px);padding:0 2.5rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(198,169,106,0.2);}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--linen);letter-spacing:0.06em;text-decoration:none;}
+.nav-brand span{color:var(--gold);}
+.nav-links{display:flex;gap:2rem;align-items:center;}
+.nav-links a{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--steel);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);}
+.nav-cta{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);background:var(--gold);border:none;border-radius:6px;padding:9px 20px;cursor:pointer;text-decoration:none;transition:background 0.2s;display:inline-block;}
+.nav-cta:hover{background:#D4B878;}
+.nav-mobile{display:none;background:none;border:0.5px solid rgba(138,155,181,0.3);border-radius:6px;padding:7px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--steel);}
+.nav-drawer{display:none;position:fixed;top:64px;left:0;right:0;background:var(--navy);padding:1.5rem 2.5rem;border-bottom:0.5px solid rgba(198,169,106,0.15);flex-direction:column;gap:0;}
+.nav-drawer.open{display:flex;}
+.nav-drawer a{font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--steel);text-decoration:none;padding:12px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);}
+.nav-drawer a.nav-cta-m{color:var(--navy);background:var(--gold);text-align:center;border-radius:6px;padding:12px;margin-top:8px;border:none;font-weight:500;}
+
+/* PAGE HERO */
+.page-hero{padding:10rem 2.5rem 5rem;background:var(--navy);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;top:-20%;right:-5%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(198,169,106,0.05) 0%,transparent 70%);pointer-events:none;}
+.page-hero-inner{max-width:960px;margin:0 auto;position:relative;z-index:1;}
+.page-eyebrow{font-size:10px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.7s 0.2s forwards;}
+.page-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,6.5vw,78px);font-weight:300;color:var(--linen);line-height:1.08;margin-bottom:1rem;opacity:0;animation:fadeUp 0.7s 0.35s forwards;}
+.page-headline em{font-style:italic;color:var(--gold);}
+.page-sub{font-size:16px;color:var(--steel);line-height:1.8;max-width:600px;opacity:0;animation:fadeUp 0.7s 0.5s forwards;}
+
+/* PRODUCT NAV PILLS */
+.product-nav{background:var(--navy-mid);padding:1.25rem 2.5rem;border-top:0.5px solid rgba(198,169,106,0.1);border-bottom:0.5px solid rgba(198,169,106,0.1);position:sticky;top:64px;z-index:50;}
+.product-nav-inner{max-width:960px;margin:0 auto;display:flex;gap:1rem;flex-wrap:wrap;}
+.pnav-pill{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;padding:7px 16px;border-radius:20px;border:0.5px solid rgba(198,169,106,0.2);color:var(--steel);text-decoration:none;transition:all 0.2s;}
+.pnav-pill:hover{border-color:var(--gold);color:var(--gold);}
+
+/* SECTIONS */
+section{padding:6rem 2.5rem;}
+.section-inner{max-width:960px;margin:0 auto;}
+.section-eyebrow{font-size:10px;letter-spacing:0.24em;text-transform:uppercase;margin-bottom:1rem;}
+.section-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4.5vw,56px);font-weight:300;line-height:1.12;margin-bottom:1.25rem;}
+.section-headline em{font-style:italic;}
+.section-sub{font-size:15px;line-height:1.8;max-width:620px;}
+
+/* PRODUCT SECTION */
+.product-section{padding:7rem 2.5rem;}
+.product-section.bg-white{background:#fff;}
+.product-section.bg-linen{background:var(--linen-bg);}
+.product-section.bg-navy{background:var(--navy);}
+.product-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:5rem;align-items:start;margin-top:3.5rem;}
+.product-lede{}
+.product-tag{display:inline-block;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;font-weight:500;padding:5px 12px;border-radius:6px;margin-bottom:1rem;}
+.product-name{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,6vw,68px);font-weight:300;line-height:1.05;margin-bottom:1rem;}
+.product-tagline{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;font-style:italic;line-height:1.5;margin-bottom:1.5rem;}
+.product-desc{font-size:15px;line-height:1.85;margin-bottom:2rem;}
+.product-status{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:6px 14px;border-radius:20px;}
+.status-dot{width:7px;height:7px;border-radius:50%;}
+
+.product-detail{}
+.detail-block{margin-bottom:2rem;}
+.detail-label{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;font-weight:500;color:var(--text-light);margin-bottom:1rem;}
+.feature-list{list-style:none;}
+.feature-list li{font-size:13px;line-height:1.7;padding:8px 0;border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-start;}
+.feature-list li:last-child{border-bottom:none;}
+.feature-arrow{font-size:13px;flex-shrink:0;margin-top:1px;}
+.feature-text{color:var(--text-mid);}
+.feature-text strong{color:var(--text);font-weight:500;}
+
+/* PRICING CARDS */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem;}
+.price-card{border-radius:10px;padding:1.5rem;border:0.5px solid var(--border);background:#fff;position:relative;}
+.price-card.featured{border-color:var(--gold);background:var(--linen-bg);}
+.price-badge{position:absolute;top:-10px;left:16px;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;padding:3px 10px;border-radius:4px;background:var(--gold);color:var(--navy);}
+.price-tier{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-light);margin-bottom:6px;}
+.price-amount{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--text);line-height:1;margin-bottom:4px;}
+.price-range{font-size:11px;color:var(--text-light);margin-bottom:12px;}
+.price-item{font-size:12px;color:var(--text-mid);line-height:1.9;display:block;}
+.price-arrow{color:var(--gold);margin-right:5px;}
+
+.product-cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:2.5rem;}
+.btn-product{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;border:none;border-radius:8px;padding:14px 30px;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-block;letter-spacing:0.04em;}
+.btn-ghost-sm{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:400;background:none;border:0.5px solid var(--border);border-radius:8px;padding:13px 24px;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-block;color:var(--text-mid);}
+.btn-ghost-sm:hover{border-color:var(--gold);color:var(--text);}
+
+/* DIVIDER */
+.section-divider{max-width:960px;margin:0 auto;border:none;border-top:0.5px solid var(--border);}
+
+/* CTA */
+.cta-section{background:var(--navy);padding:7rem 2.5rem;text-align:center;}
+.cta-inner{max-width:680px;margin:0 auto;}
+.cta-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,5vw,56px);font-weight:300;color:var(--linen);line-height:1.15;margin-bottom:1.25rem;}
+.cta-headline em{font-style:italic;color:var(--gold);}
+.cta-sub{font-size:15px;color:var(--steel);line-height:1.8;margin-bottom:2.5rem;}
+.cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--navy);background:var(--gold);border:none;border-radius:8px;padding:15px 36px;cursor:pointer;text-decoration:none;transition:background 0.2s;display:inline-block;letter-spacing:0.04em;}
+.btn-primary:hover{background:#D4B878;}
+.btn-ghost{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;color:var(--steel);background:none;border:0.5px solid rgba(138,155,181,0.4);border-radius:8px;padding:15px 32px;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-block;}
+.btn-ghost:hover{color:var(--linen);border-color:rgba(240,237,230,0.4);}
+
+/* FOOTER */
+footer{background:var(--navy-deep);padding:3rem 2.5rem;border-top:0.5px solid rgba(198,169,106,0.15);}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem;}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--linen);letter-spacing:0.06em;}
+.footer-brand span{color:var(--gold);}
+.footer-tagline{font-size:11px;color:rgba(138,155,181,0.6);letter-spacing:0.06em;margin-top:4px;}
+.footer-links{display:flex;gap:2rem;}
+.footer-links a{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(138,155,181,0.5);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--gold);}
+.footer-copy{font-size:11px;color:rgba(138,155,181,0.3);margin-top:2rem;padding-top:1.5rem;border-top:0.5px solid rgba(255,255,255,0.05);text-align:center;max-width:960px;margin-left:auto;margin-right:auto;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.65s ease,transform 0.65s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links,.nav-cta{display:none;}
+  .nav-mobile{display:block;}
+  .product-layout{grid-template-columns:1fr;gap:2.5rem;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .footer-links{display:none;}
+}
+@media(max-width:480px){
+  .product-section{padding:5rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-brand">VERITAS<span>.</span></a>
+  <div class="nav-links">
+    <a href="products.html" class="active">Products</a>
+    <a href="about.html">About</a>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="contact.html" class="nav-cta">Book a call</a>
+  <button class="nav-mobile" id="nav-toggle">Menu</button>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="products.html">Products</a>
+  <a href="about.html">About</a>
+  <a href="case-studies.html">Case Studies</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="nav-cta-m">Book a call</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-eyebrow">Products &nbsp;·&nbsp; Veritas AI Partners</div>
+    <div class="page-headline">Four operating systems.<br><em>One standard.</em></div>
+    <div class="page-sub">Every OS solves the same shape of problem — turning fragmented manual operations into continuously-running AI infrastructure. Each one is deployed on a live client before it's offered to the next.</div>
+  </div>
+</div>
+
+<!-- PRODUCT NAV -->
+<div class="product-nav">
+  <div class="product-nav-inner">
+    <a class="pnav-pill" href="#agentos" style="border-color:rgba(26,92,154,0.4);color:#6A9CC6;">AgentOS</a>
+    <a class="pnav-pill" href="#tradeos" style="border-color:rgba(232,92,42,0.4);color:#E8946A;">TradeOS</a>
+    <a class="pnav-pill" href="#salesos" style="border-color:rgba(46,125,79,0.4);color:#6ABE8A;">SalesOS</a>
+    <a class="pnav-pill" href="#personalos" style="border-color:rgba(198,169,106,0.4);color:var(--gold);">PersonalOS</a>
+  </div>
+</div>
+
+<!-- ===== AGENTOS ===== -->
+<section class="product-section bg-white" id="agentos">
+  <div class="section-inner">
+    <div class="product-layout">
+      <div class="product-lede reveal">
+        <div class="product-tag" style="background:var(--agent-blue-bg);color:var(--agent-blue);">Real Estate AI OS</div>
+        <div class="product-name" style="color:var(--navy);">Agent<em style="font-style:italic;color:var(--agent-blue);">OS</em></div>
+        <div class="product-tagline" style="color:var(--text-mid);">The AI operating system for real estate agents and brokerages.</div>
+        <div class="product-desc" style="color:var(--text-mid);">AgentOS automates the revenue-critical operations that consume agent time without producing commissions — inbox triage, content generation, lead routing, follow-up sequences, and listing brief creation. Built and proven on a live eXp Realty practice: inbox reduced from 27,500 to 3,400 emails. Content engine running. Workflows active.</div>
+        <div class="product-status" style="background:var(--agent-blue-bg);color:var(--agent-blue);">
+          <div class="status-dot" style="background:var(--agent-blue);"></div>Live — deployed on production client
+        </div>
+        <div class="product-cta-row">
+          <a href="contact.html?product=agentos" class="btn-product" style="background:var(--agent-blue);color:#fff;">Join the waitlist</a>
+          <a href="contact.html" class="btn-ghost-sm">Book a call</a>
+        </div>
+      </div>
+      <div class="product-detail reveal">
+        <div class="detail-block">
+          <div class="detail-label">What it does</div>
+          <ul class="feature-list">
+            <li><span class="feature-arrow" style="color:var(--agent-blue);">→</span><span class="feature-text"><strong>Inbox triage</strong> — AI-filtered daily digest, priority flagging, junk elimination</span></li>
+            <li><span class="feature-arrow" style="color:var(--agent-blue);">→</span><span class="feature-text"><strong>Content engine</strong> — weekly brief, YouTube descriptions, video repurposing, social posts</span></li>
+            <li><span class="feature-arrow" style="color:var(--agent-blue);">→</span><span class="feature-text"><strong>Lead routing</strong> — intake automation, tag-and-route logic, CRM handoff</span></li>
+            <li><span class="feature-arrow" style="color:var(--agent-blue);">→</span><span class="feature-text"><strong>Follow-up sequences</strong> — automated nurture, calendar triggers, no-show recovery</span></li>
+            <li><span class="feature-arrow" style="color:var(--agent-blue);">→</span><span class="feature-text"><strong>Listing brief generation</strong> — AI-drafted property briefs from intake form in minutes</span></li>
+            <li><span class="feature-arrow" style="color:var(--agent-blue);">→</span><span class="feature-text"><strong>Telegram / SMS intake</strong> — capture client requests from any channel into one system</span></li>
+          </ul>
+        </div>
+        <div class="detail-block">
+          <div class="detail-label">Pricing tiers</div>
+          <div class="pricing-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="price-card">
+              <div class="price-tier">Bronze</div>
+              <div class="price-amount">$497–$997</div>
+              <div class="price-range">per month · DIY setup</div>
+              <span class="price-item"><span class="price-arrow">→</span>Kit, onboarding docs, templates</span>
+              <span class="price-item"><span class="price-arrow">→</span>Self-configuration support</span>
+            </div>
+            <div class="price-card featured">
+              <div class="price-badge">Most popular</div>
+              <div class="price-tier">Gold</div>
+              <div class="price-amount">$1K–$2.5K</div>
+              <div class="price-range">setup + monthly · done-with-you</div>
+              <span class="price-item"><span class="price-arrow">→</span>30-day onboarding</span>
+              <span class="price-item"><span class="price-arrow">→</span>Custom configuration</span>
+              <span class="price-item"><span class="price-arrow">→</span>Ongoing support</span>
+            </div>
+          </div>
+          <div class="pricing-grid" style="grid-template-columns:1fr 1fr;margin-top:1rem;">
+            <div class="price-card">
+              <div class="price-tier">Platinum</div>
+              <div class="price-amount">$2.5K–$5K</div>
+              <div class="price-range">buildout + retainer · done-for-you</div>
+              <span class="price-item"><span class="price-arrow">→</span>Full buildout</span>
+              <span class="price-item"><span class="price-arrow">→</span>Ongoing management</span>
+            </div>
+            <div class="price-card">
+              <div class="price-tier">eXp Discount</div>
+              <div class="price-amount">50% off</div>
+              <div class="price-range">Bronze tier · eXp agents</div>
+              <span class="price-item"><span class="price-arrow">→</span>Recruiting incentive</span>
+              <span class="price-item"><span class="price-arrow">→</span>Join under Loretta Sercy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ===== TRADEOS ===== -->
+<section class="product-section bg-linen" id="tradeos">
+  <div class="section-inner">
+    <div class="product-layout">
+      <div class="product-lede reveal">
+        <div class="product-tag" style="background:var(--trade-ember-bg);color:var(--trade-ember);">Trades &amp; Logistics AI OS</div>
+        <div class="product-name" style="color:var(--navy);">Trade<em style="font-style:italic;color:var(--trade-ember);">OS</em></div>
+        <div class="product-tagline" style="color:var(--text-mid);">Your pipeline runs while you work the field.</div>
+        <div class="product-desc" style="color:var(--text-mid);">TradeOS is AI revenue operations for trades SMBs and logistics operators — HVAC, plumbing, painting, trucking, collections. You're in the field running the work. TradeOS runs the front office: triaging your inbox, auditing your prospect pipeline, alerting you on hot leads, and generating SOPs on close. First deployment: MMM Trucking. $3K/mo retainer. Active.</div>
+        <div class="product-status" style="background:var(--trade-ember-bg);color:var(--trade-ember);">
+          <div class="status-dot" style="background:var(--trade-ember);"></div>Live — deployed on production client
+        </div>
+        <div class="product-cta-row">
+          <a href="contact.html?product=tradeos" class="btn-product" style="background:var(--trade-ember);color:#fff;">Join the waitlist</a>
+          <a href="case-studies.html" class="btn-ghost-sm">See case study</a>
+        </div>
+      </div>
+      <div class="product-detail reveal">
+        <div class="detail-block">
+          <div class="detail-label">What it does</div>
+          <ul class="feature-list">
+            <li><span class="feature-arrow" style="color:var(--trade-ember);">→</span><span class="feature-text"><strong>Gmail / inbox triage</strong> — daily AI digest, priority routing, junk elimination across team inboxes</span></li>
+            <li><span class="feature-arrow" style="color:var(--trade-ember);">→</span><span class="feature-text"><strong>Prospect audit</strong> — automatic scoring and surfacing of warm and stale leads from your pipeline</span></li>
+            <li><span class="feature-arrow" style="color:var(--trade-ember);">→</span><span class="feature-text"><strong>Hot lead SMS alerts</strong> — instant text when a high-value prospect engages or triggers a priority signal</span></li>
+            <li><span class="feature-arrow" style="color:var(--trade-ember);">→</span><span class="feature-text"><strong>SOP generation on close</strong> — AI-drafted standard operating procedures from job notes, ready to delegate</span></li>
+            <li><span class="feature-arrow" style="color:var(--trade-ember);">→</span><span class="feature-text"><strong>Quote follow-up automation</strong> — timed follow-up sequences for open bids that never get revisited</span></li>
+            <li><span class="feature-arrow" style="color:var(--trade-ember);">→</span><span class="feature-text"><strong>Digital presence buildout</strong> — branded website with automated lead capture and intake pipeline</span></li>
+          </ul>
+        </div>
+        <div class="detail-block">
+          <div class="detail-label">Who it's for</div>
+          <ul class="feature-list">
+            <li><span class="feature-arrow" style="color:var(--trade-ember);">→</span><span class="feature-text">Owner-operator trade businesses: HVAC, plumbing, painting, landscaping, electrical</span></li>
+            <li><span class="feature-arrow" style="color:var(--trade-ember);">→</span><span class="feature-text">Trucking, logistics, and freight operator-owners at $1M–$25M revenue</span></li>
+            <li><span class="feature-arrow" style="color:var(--trade-ember);">→</span><span class="feature-text">Debt collection and financial services firms needing pipeline automation</span></li>
+            <li><span class="feature-arrow" style="color:var(--trade-ember);">→</span><span class="feature-text">Any operator who is too busy working to properly manage their own sales pipeline</span></li>
+          </ul>
+        </div>
+        <div class="detail-block">
+          <div class="detail-label">Pricing</div>
+          <div class="pricing-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="price-card">
+              <div class="price-tier">Starter</div>
+              <div class="price-amount">$1,500</div>
+              <div class="price-range">per month · core workflows</div>
+              <span class="price-item"><span class="price-arrow">→</span>Inbox triage + prospect audit</span>
+              <span class="price-item"><span class="price-arrow">→</span>Hot lead SMS alerts</span>
+            </div>
+            <div class="price-card featured">
+              <div class="price-badge">Recommended</div>
+              <div class="price-tier">Full OS</div>
+              <div class="price-amount">$3,000</div>
+              <div class="price-range">per month · complete buildout</div>
+              <span class="price-item"><span class="price-arrow">→</span>All workflows active</span>
+              <span class="price-item"><span class="price-arrow">→</span>Digital presence included</span>
+              <span class="price-item"><span class="price-arrow">→</span>SOP generation + support</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ===== SALESOS ===== -->
+<section class="product-section bg-white" id="salesos">
+  <div class="section-inner">
+    <div class="product-layout">
+      <div class="product-lede reveal">
+        <div class="product-tag" style="background:var(--sales-green-bg);color:var(--sales-green);">BD &amp; Outbound AI OS</div>
+        <div class="product-name" style="color:var(--navy);">Sales<em style="font-style:italic;color:var(--sales-green);">OS</em></div>
+        <div class="product-tagline" style="color:var(--text-mid);">Outbound that runs on intelligence, not volume.</div>
+        <div class="product-desc" style="color:var(--text-mid);">SalesOS is AI-powered business development infrastructure for fractional executives, B2B founders, and SMB owners who need a systematic outbound motion — without adding headcount. Lead intake, AI enrichment, stage tracking, competitor intel, and automated follow-up cadences. The same system that runs Veritas AI Partners' own pipeline.</div>
+        <div class="product-status" style="background:var(--sales-green-bg);color:var(--sales-green);">
+          <div class="status-dot" style="background:var(--sales-green);"></div>V1 live — waitlist open
+        </div>
+        <div class="product-cta-row">
+          <a href="contact.html?product=salesos" class="btn-product" style="background:var(--sales-green);color:#fff;">Join the waitlist</a>
+          <a href="contact.html" class="btn-ghost-sm">Book a call</a>
+        </div>
+      </div>
+      <div class="product-detail reveal">
+        <div class="detail-block">
+          <div class="detail-label">What it does</div>
+          <ul class="feature-list">
+            <li><span class="feature-arrow" style="color:var(--sales-green);">→</span><span class="feature-text"><strong>Lead intake + enrichment</strong> — AI scores and enriches each lead with company context, signals, and fit tags</span></li>
+            <li><span class="feature-arrow" style="color:var(--sales-green);">→</span><span class="feature-text"><strong>Pipeline stage tracking</strong> — structured progression from cold to close, visible at a glance</span></li>
+            <li><span class="feature-arrow" style="color:var(--sales-green);">→</span><span class="feature-text"><strong>Competitor intelligence</strong> — ongoing monitoring of competitive movement in your target accounts</span></li>
+            <li><span class="feature-arrow" style="color:var(--sales-green);">→</span><span class="feature-text"><strong>Automated outreach cadences</strong> — follow-up sequences timed to engagement signals, not arbitrary schedules</span></li>
+            <li><span class="feature-arrow" style="color:var(--sales-green);">→</span><span class="feature-text"><strong>Multi-pipeline management</strong> — track BD across multiple verticals or business units from one dashboard</span></li>
+            <li><span class="feature-arrow" style="color:var(--sales-green);">→</span><span class="feature-text"><strong>Daily intelligence digest</strong> — morning summary of pipeline movement, new signals, and priority actions</span></li>
+          </ul>
+        </div>
+        <div class="detail-block">
+          <div class="detail-label">Who it's for</div>
+          <ul class="feature-list">
+            <li><span class="feature-arrow" style="color:var(--sales-green);">→</span><span class="feature-text">Fractional executives managing their own pipeline and client development</span></li>
+            <li><span class="feature-arrow" style="color:var(--sales-green);">→</span><span class="feature-text">B2B founders who need systematic outbound without hiring a sales team</span></li>
+            <li><span class="feature-arrow" style="color:var(--sales-green);">→</span><span class="feature-text">SMB owners who have a strong service but an ad-hoc approach to new business</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ===== PERSONALOS ===== -->
+<section class="product-section bg-linen" id="personalos">
+  <div class="section-inner">
+    <div class="product-layout">
+      <div class="product-lede reveal">
+        <div class="product-tag" style="background:var(--personal-gold-bg);color:var(--gold-dark);">Executive Life OS · Beta</div>
+        <div class="product-name" style="color:var(--navy);">Personal<em style="font-style:italic;color:var(--gold);">OS</em></div>
+        <div class="product-tagline" style="color:var(--text-mid);">Your life runs like a business. We build the operating system for it.</div>
+        <div class="product-desc" style="color:var(--text-mid);">PersonalOS gives executives, family stewards, and busy professionals an AI-organized personal infrastructure — inbox triage across multiple accounts, document vault, family communication system, financial snapshot, and emergency protocol. Built for the person who runs organizations with precision but whose personal life still operates on memory and paper.</div>
+        <div class="product-status" style="background:var(--personal-gold-bg);color:var(--gold-dark);">
+          <div class="status-dot" style="background:var(--gold);"></div>Beta — limited spots available
+        </div>
+        <div class="product-cta-row">
+          <a href="contact.html?product=personalos" class="btn-product" style="background:var(--gold);color:var(--navy);">Join the beta</a>
+          <a href="contact.html" class="btn-ghost-sm">Book a call</a>
+        </div>
+      </div>
+      <div class="product-detail reveal">
+        <div class="detail-block">
+          <div class="detail-label">The 7 deliverables</div>
+          <ul class="feature-list">
+            <li><span class="feature-arrow" style="color:var(--gold);">→</span><span class="feature-text"><strong>Inbox triage system</strong> — 2–3 accounts sorted, filtered, prioritized. Nothing important missed.</span></li>
+            <li><span class="feature-arrow" style="color:var(--gold);">→</span><span class="feature-text"><strong>Life dashboard</strong> — one view of every open item: insurance, estate, contractors, calendar</span></li>
+            <li><span class="feature-arrow" style="color:var(--gold);">→</span><span class="feature-text"><strong>Document vault</strong> — estate docs, insurance policies, financials — labeled, organized, findable</span></li>
+            <li><span class="feature-arrow" style="color:var(--gold);">→</span><span class="feature-text"><strong>Family communication system</strong> — shared visibility across spouse, kids, aging parents</span></li>
+            <li><span class="feature-arrow" style="color:var(--gold);">→</span><span class="feature-text"><strong>Financial snapshot</strong> — bills, claims, invoices, subscriptions — one view of what's open</span></li>
+            <li><span class="feature-arrow" style="color:var(--gold);">→</span><span class="feature-text"><strong>Emergency protocol</strong> — if something happens, your family knows where everything is</span></li>
+            <li><span class="feature-arrow" style="color:var(--gold);">→</span><span class="feature-text"><strong>Weekly review system</strong> — 15-minute Friday cadence. Everything current. Nothing falling through.</span></li>
+          </ul>
+        </div>
+        <div class="detail-block">
+          <div class="detail-label">Beta pricing</div>
+          <div class="pricing-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="price-card featured">
+              <div class="price-badge">Beta rate</div>
+              <div class="price-tier">Done-with-you</div>
+              <div class="price-amount">$199</div>
+              <div class="price-range">one time · beta rate</div>
+              <span class="price-item"><span class="price-arrow">→</span>Intake + build + tune sessions</span>
+              <span class="price-item"><span class="price-arrow">→</span>All 7 deliverables</span>
+              <span class="price-item"><span class="price-arrow">→</span>2 weeks async support</span>
+            </div>
+            <div class="price-card">
+              <div class="price-tier">Monthly check-in</div>
+              <div class="price-amount">$49</div>
+              <div class="price-range">per month · optional add-on</div>
+              <span class="price-item"><span class="price-arrow">→</span>Monthly 30-min tune-up</span>
+              <span class="price-item"><span class="price-arrow">→</span>System updates as life changes</span>
+              <span class="price-item"><span class="price-arrow">→</span>Cancel anytime</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="section-eyebrow reveal" style="color:var(--gold);text-align:center;font-size:10px;letter-spacing:0.24em;text-transform:uppercase;margin-bottom:1.25rem;">Not sure which OS fits?</div>
+    <div class="cta-headline reveal">30 minutes tells us <em>everything.</em></div>
+    <div class="cta-sub reveal">Book a discovery call and we'll map your operation, identify the highest-leverage system to build first, and give you a clear picture of what deployment looks like. No pitch. Just diagnosis.</div>
+    <div class="cta-actions reveal">
+      <a href="contact.html" class="btn-primary">Book a discovery call</a>
+      <a href="case-studies.html" class="btn-ghost">See case studies</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">VERITAS<span>.</span> AI Partners</div>
+      <div class="footer-tagline">Simplifying Matters. Setting the Standard.</div>
+    </div>
+    <div class="footer-links">
+      <a href="products.html">Products</a>
+      <a href="about.html">About</a>
+      <a href="case-studies.html">Case Studies</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+  <div class="footer-copy">© 2026 Veritas AI Partners · CentPenny LLC · All rights reserved &nbsp;·&nbsp; Powered by Veritas AI Partners</div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);} });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  document.getElementById('nav-toggle').addEventListener('click', function(){
+    document.getElementById('nav-drawer').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

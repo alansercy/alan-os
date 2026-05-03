@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Veritas AI Partners</title>
+<meta name="description" content="Alan Sercy is a 33-year revenue operator and the founder of Veritas AI Partners. The Profit Producer who builds AI systems for serious operators.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0B1E3D;
+  --navy-mid:#1A3A5C;
+  --navy-deep:#060F1E;
+  --gold:#C6A96A;
+  --gold-dark:#9A7A3A;
+  --linen:#F0EDE6;
+  --linen-bg:#F5F3EF;
+  --steel:#8A9BB5;
+  --ember:#E85C2A;
+  --text:#1A1A18;
+  --text-mid:#5F5E5A;
+  --text-light:#888780;
+  --border:#D3D1C7;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--linen-bg);color:var(--text);overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,30,61,0.97);backdrop-filter:blur(8px);padding:0 2.5rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(198,169,106,0.2);}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--linen);letter-spacing:0.06em;text-decoration:none;}
+.nav-brand span{color:var(--gold);}
+.nav-links{display:flex;gap:2rem;align-items:center;}
+.nav-links a{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--steel);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);}
+.nav-cta{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);background:var(--gold);border:none;border-radius:6px;padding:9px 20px;cursor:pointer;text-decoration:none;transition:background 0.2s;display:inline-block;}
+.nav-cta:hover{background:#D4B878;}
+.nav-mobile{display:none;background:none;border:0.5px solid rgba(138,155,181,0.3);border-radius:6px;padding:7px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--steel);}
+.nav-drawer{display:none;position:fixed;top:64px;left:0;right:0;background:var(--navy);padding:1.5rem 2.5rem;border-bottom:0.5px solid rgba(198,169,106,0.15);flex-direction:column;gap:0;}
+.nav-drawer.open{display:flex;}
+.nav-drawer a{font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--steel);text-decoration:none;padding:12px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);}
+.nav-drawer a.nav-cta-m{color:var(--navy);background:var(--gold);text-align:center;border-radius:6px;padding:12px;margin-top:8px;border:none;font-weight:500;}
+
+/* PAGE HERO */
+.page-hero{padding:10rem 2.5rem 5rem;background:var(--navy);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;top:-20%;right:-5%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(198,169,106,0.05) 0%,transparent 70%);pointer-events:none;}
+.page-hero-inner{max-width:960px;margin:0 auto;position:relative;z-index:1;}
+.page-eyebrow{font-size:10px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.7s 0.2s forwards;}
+.page-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,6.5vw,78px);font-weight:300;color:var(--linen);line-height:1.08;margin-bottom:1rem;opacity:0;animation:fadeUp 0.7s 0.35s forwards;}
+.page-headline em{font-style:italic;color:var(--gold);}
+.page-sub{font-size:16px;color:var(--steel);line-height:1.8;max-width:600px;opacity:0;animation:fadeUp 0.7s 0.5s forwards;}
+
+/* PROOF BAR */
+.proof-bar{background:var(--navy-mid);padding:1.75rem 2.5rem;border-top:0.5px solid rgba(198,169,106,0.15);border-bottom:0.5px solid rgba(198,169,106,0.15);}
+.proof-inner{max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center;}
+.proof-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--gold);line-height:1;margin-bottom:4px;}
+.proof-label{font-size:11px;color:var(--steel);letter-spacing:0.06em;line-height:1.4;}
+
+/* SECTIONS */
+section{padding:6rem 2.5rem;}
+.section-inner{max-width:960px;margin:0 auto;}
+.section-eyebrow{font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;}
+.section-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,50px);font-weight:300;color:var(--text);line-height:1.15;margin-bottom:1.25rem;}
+.section-headline em{font-style:italic;color:var(--gold-dark);}
+.section-sub{font-size:15px;color:var(--text-mid);line-height:1.8;max-width:600px;}
+
+/* BUTTONS */
+.btn-primary{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--navy);background:var(--gold);border:none;border-radius:8px;padding:15px 36px;cursor:pointer;text-decoration:none;transition:background 0.2s;display:inline-block;letter-spacing:0.04em;}
+.btn-primary:hover{background:#D4B878;}
+.btn-ghost{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;color:var(--steel);background:none;border:0.5px solid rgba(138,155,181,0.4);border-radius:8px;padding:15px 32px;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-block;letter-spacing:0.04em;}
+.btn-ghost:hover{color:var(--linen);border-color:rgba(240,237,230,0.4);}
+
+/* BIO SECTION */
+.bio-bg{background:#fff;}
+.bio-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:5rem;align-items:start;margin-top:3.5rem;}
+.bio-label-col{}
+.bio-label-block{position:sticky;top:5rem;}
+.bio-name{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:var(--navy);line-height:1.1;margin-bottom:8px;}
+.bio-title{font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;}
+.bio-tag{display:inline-block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;padding:5px 12px;border-radius:6px;background:#F5F0E8;color:var(--gold-dark);margin-bottom:2rem;}
+.bio-contact{font-size:12px;color:var(--text-mid);line-height:2;}
+.bio-contact a{color:var(--gold);text-decoration:none;}
+.bio-text p{font-size:15px;color:var(--text-mid);line-height:1.9;margin-bottom:1.5rem;}
+.bio-text p:last-child{margin-bottom:0;}
+.bio-text strong{color:var(--text);font-weight:500;}
+
+/* PROFIT PRODUCER */
+.pp-bg{background:var(--navy);}
+.pp-inner{max-width:960px;margin:0 auto;}
+.pp-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,62px);font-weight:300;color:var(--linen);line-height:1.12;margin-bottom:2rem;}
+.pp-headline em{font-style:italic;color:var(--gold);}
+.pp-quote{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;font-style:italic;color:var(--linen);line-height:1.65;border-left:2px solid var(--gold);padding-left:2rem;margin-bottom:2.5rem;max-width:720px;}
+.pp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem;}
+.pp-card{padding:1.75rem;border:0.5px solid rgba(198,169,106,0.2);border-radius:12px;background:rgba(26,58,92,0.4);}
+.pp-card-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:rgba(198,169,106,0.3);line-height:1;margin-bottom:10px;}
+.pp-card-title{font-size:14px;font-weight:500;color:var(--linen);margin-bottom:6px;}
+.pp-card-desc{font-size:12px;color:var(--steel);line-height:1.65;}
+
+/* CAREER */
+.career-bg{background:var(--linen-bg);}
+.career-list{margin-top:3rem;}
+.career-item{display:grid;grid-template-columns:160px 1fr;gap:2rem;padding:2rem 0;border-bottom:0.5px solid var(--border);align-items:start;}
+.career-item:last-child{border-bottom:none;}
+.career-year{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:400;color:var(--gold);letter-spacing:0.06em;padding-top:3px;}
+.career-role{font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.career-org{font-size:12px;color:var(--gold-dark);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;}
+.career-desc{font-size:13px;color:var(--text-mid);line-height:1.7;}
+
+/* VERITAS ORIGIN */
+.origin-bg{background:#fff;}
+.origin-inner{max-width:760px;margin:0 auto;}
+.origin-text p{font-size:15px;color:var(--text-mid);line-height:1.9;margin-bottom:1.5rem;}
+.origin-text p:last-child{margin-bottom:0;}
+.origin-text strong{color:var(--text);font-weight:500;}
+
+/* FRACTIONAL */
+.frac-bg{background:var(--linen-bg);}
+.frac-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem;}
+.frac-card{background:#fff;border:0.5px solid var(--border);border-radius:12px;padding:2rem;position:relative;overflow:hidden;}
+.frac-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--gold);}
+.frac-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:8px;}
+.frac-desc{font-size:13px;color:var(--text-mid);line-height:1.7;}
+
+/* CTA */
+.cta-section{background:var(--navy);padding:7rem 2.5rem;text-align:center;}
+.cta-inner{max-width:680px;margin:0 auto;}
+.cta-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,5vw,56px);font-weight:300;color:var(--linen);line-height:1.15;margin-bottom:1.25rem;}
+.cta-headline em{font-style:italic;color:var(--gold);}
+.cta-sub{font-size:15px;color:var(--steel);line-height:1.8;margin-bottom:2.5rem;}
+.cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+/* FOOTER */
+footer{background:var(--navy-deep);padding:3rem 2.5rem;border-top:0.5px solid rgba(198,169,106,0.15);}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem;}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--linen);letter-spacing:0.06em;}
+.footer-brand span{color:var(--gold);}
+.footer-tagline{font-size:11px;color:rgba(138,155,181,0.6);letter-spacing:0.06em;margin-top:4px;}
+.footer-links{display:flex;gap:2rem;}
+.footer-links a{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(138,155,181,0.5);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--gold);}
+.footer-copy{font-size:11px;color:rgba(138,155,181,0.3);margin-top:2rem;padding-top:1.5rem;border-top:0.5px solid rgba(255,255,255,0.05);text-align:center;max-width:960px;margin-left:auto;margin-right:auto;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.65s ease,transform 0.65s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links,.nav-cta{display:none;}
+  .nav-mobile{display:block;}
+  .proof-inner{grid-template-columns:repeat(2,1fr);}
+  .bio-grid{grid-template-columns:1fr;}
+  .bio-label-block{position:static;}
+  .pp-grid,.frac-grid{grid-template-columns:1fr;}
+  .career-item{grid-template-columns:1fr;}
+  .career-year{padding-bottom:0;}
+  .footer-links{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-brand">VERITAS<span>.</span></a>
+  <div class="nav-links">
+    <a href="products.html">Products</a>
+    <a href="about.html" class="active">About</a>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="contact.html" class="nav-cta">Book a call</a>
+  <button class="nav-mobile" id="nav-toggle">Menu</button>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a href="products.html">Products</a>
+  <a href="about.html">About</a>
+  <a href="case-studies.html">Case Studies</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="nav-cta-m">Book a call</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-eyebrow">About &nbsp;·&nbsp; Veritas AI Partners</div>
+    <div class="page-headline">The <em>Profit Producer.</em></div>
+    <div class="page-sub">33 years building revenue systems that change what's possible for operators, SMBs, and institutions. Not theory. Not templates. Documented results at scale.</div>
+  </div>
+</div>
+
+<!-- PROOF BAR -->
+<div class="proof-bar">
+  <div class="proof-inner">
+    <div class="reveal">
+      <div class="proof-num">$9B+</div>
+      <div class="proof-label">Whole loan mortgage product secured</div>
+    </div>
+    <div class="reveal">
+      <div class="proof-num">$27M</div>
+      <div class="proof-label">Strategic partnership unit built from zero</div>
+    </div>
+    <div class="reveal">
+      <div class="proof-num">$4M→+</div>
+      <div class="proof-label">Annual loss turned to profitable</div>
+    </div>
+    <div class="reveal">
+      <div class="proof-num">$21M</div>
+      <div class="proof-label">Student loan servicing unit built and led</div>
+    </div>
+  </div>
+</div>
+
+<!-- BIO -->
+<section class="bio-bg">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">The operator</div>
+    <div class="bio-grid">
+      <div class="bio-label-col reveal">
+        <div class="bio-label-block">
+          <div class="bio-name">Alan Sercy</div>
+          <div class="bio-title">Founder, Veritas AI Partners</div>
+          <div class="bio-tag">33-Year Revenue Operator</div>
+          <div class="bio-contact">
+            Fractional CRO / COO / AI Transformation<br>
+            <a href="mailto:hello@veritasaipartners.com">hello@veritasaipartners.com</a>
+          </div>
+        </div>
+      </div>
+      <div class="bio-text reveal">
+        <p>Alan Sercy is a revenue operator with 33 years of building, scaling, and turning around commercial operations across financial services, mortgage, debt recovery, and AI-native businesses. He doesn't consult from the sidelines — he builds the system, stands behind it, and delivers results that show up on a P&amp;L.</p>
+        <p>His career started in collections, where he learned the most fundamental truth in business: <strong>revenue is not a given. It is a system.</strong> That single insight has driven everything since — a $9B whole-loan mortgage product, a $27M strategic partnership unit, a struggling entity turned profitable, and now a portfolio of AI operating systems deployed on live client businesses.</p>
+        <p>Today Alan leads Veritas AI Partners and operates as a fractional CRO, COO, and AI transformation executive for PE-backed companies, growth-stage operators, and businesses navigating meaningful operational transitions. He brings something most fractional executives cannot: a fully built AI operating stack that deploys on day one and makes teams measurably more productive immediately.</p>
+        <p>The Veritas stack is not a pitch — it is the system Alan built for his own clients, proven in production, and now available to serious operators at every stage.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROFIT PRODUCER -->
+<section class="pp-bg">
+  <div class="pp-inner">
+    <div class="section-eyebrow reveal" style="color:var(--gold);">The Profit Producer philosophy</div>
+    <div class="pp-headline reveal">Revenue is not a department.<br><em>It's a system.</em></div>
+    <div class="pp-quote reveal">"A Profit Producer doesn't wait for the market to cooperate. They build the machine that finds the money, follows it relentlessly, and captures it before it walks out the door. That's not a strategy. That's an operating philosophy."</div>
+    <div class="pp-grid">
+      <div class="pp-card reveal">
+        <div class="pp-card-num">01</div>
+        <div class="pp-card-title">Find the lost revenue first</div>
+        <div class="pp-card-desc">Every business has revenue it's leaving behind — in follow-up that never happened, in leads that fell through the cracks, in receivables no one chased. Find it before building anything new.</div>
+      </div>
+      <div class="pp-card reveal">
+        <div class="pp-card-num">02</div>
+        <div class="pp-card-title">Systematize before you scale</div>
+        <div class="pp-card-desc">Scaling a broken process just breaks it faster and more expensively. Fix the system first. Make it repeatable. Then build volume through it.</div>
+      </div>
+      <div class="pp-card reveal">
+        <div class="pp-card-num">03</div>
+        <div class="pp-card-title">Operators build. Vendors sell.</div>
+        <div class="pp-card-desc">There's a category difference between someone who has run the operation and someone who has only consulted on it. Results look different. Accountability looks different.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAREER -->
+<section class="career-bg">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Track record</div>
+    <div class="section-headline reveal">33 years of <em>documented results.</em></div>
+    <div class="career-list">
+      <div class="career-item reveal">
+        <div class="career-year">2024–Present</div>
+        <div>
+          <div class="career-role">Founder &amp; Managing Partner</div>
+          <div class="career-org">Veritas AI Partners · CentPenny LLC</div>
+          <div class="career-desc">Built and deployed AI operating systems for real estate, trucking, and executive clients. AgentOS, TradeOS, SalesOS, and PersonalOS live on production clients. MMM Trucking retainer active. AgentOS deployed on Loretta Sercy / eXp Realty.</div>
+        </div>
+      </div>
+      <div class="career-item reveal">
+        <div class="career-year">2023–2024</div>
+        <div>
+          <div class="career-role">Chief Revenue Officer</div>
+          <div class="career-org">Rocktop Technologies</div>
+          <div class="career-desc">Revenue operations leadership for AI-native financial technology platform. Built outbound infrastructure, sales process, and pipeline intelligence from ground up.</div>
+        </div>
+      </div>
+      <div class="career-item reveal">
+        <div class="career-year">Prior</div>
+        <div>
+          <div class="career-role">Interim President — Student Loan Servicing Unit</div>
+          <div class="career-org">Transworld Systems (TSI)</div>
+          <div class="career-desc">Built and led a $21M student loan servicing division. Designed the operational model, hired the team, established the compliance framework, and delivered profitability within target timeline.</div>
+        </div>
+      </div>
+      <div class="career-item reveal">
+        <div class="career-year">Prior</div>
+        <div>
+          <div class="career-role">Turnaround Executive</div>
+          <div class="career-org">ClearSpring</div>
+          <div class="career-desc">Converted a $4M annual operating loss into profitability. Rebuilt revenue infrastructure, restructured the team, and stabilized the business to support ongoing operations.</div>
+        </div>
+      </div>
+      <div class="career-item reveal">
+        <div class="career-year">Prior</div>
+        <div>
+          <div class="career-role">Strategic Partnerships — $27M Division</div>
+          <div class="career-org">Financial Services</div>
+          <div class="career-desc">Built a $27M strategic partnership unit from zero. Achieved 12% growth during global economic volatility by building the right commercial infrastructure before the market recovered.</div>
+        </div>
+      </div>
+      <div class="career-item reveal">
+        <div class="career-year">Prior</div>
+        <div>
+          <div class="career-role">$9B Whole Loan Mortgage Product</div>
+          <div class="career-org">Mortgage / Financial Services</div>
+          <div class="career-desc">Architected and secured $9B+ in whole-loan mortgage product during one of the most challenging periods in mortgage market history. A result that required operator instinct, not just financial modeling.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERITAS ORIGIN -->
+<section class="origin-bg">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Why Veritas exists</div>
+    <div class="section-headline reveal">The proof <em>predates the pitch.</em></div>
+    <div class="origin-inner origin-text reveal">
+      <p>Veritas AI Partners was not built on a theory about what AI could do for operators. It was built on a running system built for a real client — Loretta Sercy, a Realtor with eXp Realty operating in North Texas — where AI workflows now manage her inbox, generate her content, route her leads, and run her follow-up sequences while she focuses on clients.</p>
+      <p>The second deployment was MMM Trucking, where an AI triage and prospect audit system now runs daily, surfacing hot leads and flagging open opportunities the team would otherwise miss in the volume of daily communications.</p>
+      <p><strong>No Veritas OS is sold to the second client before it is running for the first.</strong> That is not a marketing position. It is a delivery standard.</p>
+      <p>This is what Simplifying Matters actually means: not simplifying the pitch, but simplifying the operation — removing the friction, the manual work, and the noise that keeps operators from spending their time on what actually moves the number.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FRACTIONAL OFFER -->
+<section class="frac-bg">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Fractional executive engagements</div>
+    <div class="section-headline reveal">Senior-level thinking, <em>day one.</em></div>
+    <div class="section-sub reveal">Alan engages as fractional CRO, COO, or AI Transformation lead for PE-backed companies, growth-stage operators, and businesses navigating meaningful transitions. Every engagement includes the Veritas AI stack — deployed and running from the first week.</div>
+    <div class="frac-grid">
+      <div class="frac-card reveal">
+        <div class="frac-title">Fractional CRO</div>
+        <div class="frac-desc">Revenue architecture, pipeline design, sales process, and go-to-market strategy. Built for businesses that need a seasoned revenue leader without the full-time cost or timeline.</div>
+      </div>
+      <div class="frac-card reveal">
+        <div class="frac-title">Fractional COO</div>
+        <div class="frac-desc">Operational infrastructure, team design, process systematization, and performance management. For operators who know what needs to be built but need someone who has built it before.</div>
+      </div>
+      <div class="frac-card reveal">
+        <div class="frac-title">AI Transformation Lead</div>
+        <div class="frac-desc">End-to-end AI deployment across revenue operations, sales, finance, and back-office. Not a roadmap — a running system. Most clients see measurable output within 30 days.</div>
+      </div>
+      <div class="frac-card reveal">
+        <div class="frac-title">Target verticals</div>
+        <div class="frac-desc">Mortgage, financial services, debt collection, SaaS, PE-backed growth companies, and AI-native startups. Deep expertise in regulated industries where compliance and revenue must coexist.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="section-eyebrow reveal" style="color:var(--gold);text-align:center;margin-bottom:1.25rem;">Ready to work with a Profit Producer?</div>
+    <div class="cta-headline reveal">30 minutes. No pitch.<br><em>Just clarity.</em></div>
+    <div class="cta-sub reveal">Discovery calls are diagnostic, not promotional. We map your operation, identify the revenue gaps, and tell you exactly what a Veritas engagement could do for your business. No obligation.</div>
+    <div class="cta-actions reveal">
+      <a href="contact.html" class="btn-primary">Book a discovery call</a>
+      <a href="products.html" class="btn-ghost" style="color:var(--steel);border-color:rgba(138,155,181,0.3);">See our products</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">VERITAS<span>.</span> AI Partners</div>
+      <div class="footer-tagline">Simplifying Matters. Setting the Standard.</div>
+    </div>
+    <div class="footer-links">
+      <a href="products.html">Products</a>
+      <a href="about.html">About</a>
+      <a href="case-studies.html">Case Studies</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+  <div class="footer-copy">© 2026 Veritas AI Partners · CentPenny LLC · All rights reserved &nbsp;·&nbsp; Powered by Veritas AI Partners</div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);} });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  document.getElementById('nav-toggle').addEventListener('click', function(){
+    document.getElementById('nav-drawer').classList.toggle('open');
+  });
+</script>
+</body>
+</html>
