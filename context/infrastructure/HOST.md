@@ -42,7 +42,8 @@ NOT in GitHub — credentials and runtime artifacts only.
 - **alan_os_server.py** — FastAPI @ localhost:8000
 - **Dashboard** — localhost:8000/dashboard (React, Phase 3 complete)
 - **Quick Links panel** — 7 Drive assets, clickable cards
-- **Task Scheduler:** `AlanOS_Server` task — auto-start at logon. XML at `~/.lux/workflows/AlanOS_Server_S4U.xml`
+- **claude_usage_dashboard.py** — Lux Command Center @ localhost:8081 (Claude usage + cost tracking)
+- **Task Scheduler:** `AlanOS_Server` task — auto-start at logon. XML at `~/.lux/workflows/AlanOS_Server_S4U.xml`. Runs `start_alan_os.bat` which starts both servers.
 
 ### Launcher — ALWAYS use this
 - **lux_launcher.py** — `C:\Users\aserc\.lux\workflows\lux_launcher.py`
@@ -90,6 +91,7 @@ NOT in GitHub — credentials and runtime artifacts only.
 | Key | Value/Suffix | File |
 |-----|-------------|------|
 | ANTHROPIC_API_KEY | suffix WwAA | ~/.lux/.env |
+| ANTHROPIC_ADMIN_API_KEY | suffix HEQAA — 401ing, may need rotation | ~/.lux/.env |
 | N8N_API_KEY | suffix J2g | ~/.lux/.env |
 | VERITAS_SESSION_LOG_DOC_ID | 1oGKgcM6vlHS6i6kFUPx1LVBn3PW9ghUk02nR0Dcqm38 | ~/.lux/.env |
 | GCP service account | — | ~/.lux/credentials/service_account.json |
