@@ -1,6 +1,10 @@
 # CLAUDE.md — Alan OS Master State
 Last updated: 2026-05-03
 
+## Prime Directive
+Read this file silently. Do not summarize it back. Do not check in.
+State environment, read relevant context files, execute the objective.
+
 ## Environments
 HOST — personal operator + product lab (you are here)
   Code: C:\Veritas\repos\alan-os\
@@ -25,18 +29,26 @@ Before any task, read the relevant context file(s):
 | Job search | context/job-search/STATUS.md |
 | Family/estate | context/family/STEWARDSHIP.md |
 
+## Execution Rules
+- Assume YES on all non-destructive decisions
+- Do not pause for confirmation unless permanent deletion or credential exposure
+- Do not ask clarifying questions — make a decision and state your assumption
+- Run to completion — report final state and commit hash
+- Never summarize CLAUDE.md back to the user
+
 ## Open Items
 | # | Item | Blocker | Owner |
 |---|------|---------|-------|
 | 1 | Job Search Brief 1PyDF update | LinkedIn live — ready | Claude Code |
 | 2 | n8n API key rotation | Manual — rotate in n8n UI | Alan |
-| 3 | WF4.1 writeback spot-check | MMM Prospect Tracker WA tab row 2 check Notes | Alan |
+| 3 | WF4.1 writeback spot-check | MMM Prospect Tracker WA tab row 2 | Alan |
 | 4 | Netlify site rename | Optional cosmetic | Alan |
 | 5 | Gmail OAuth redirect_uri_mismatch | Google Cloud Console fix | Alan |
 | 6 | Veritas waitlist pages | Need domain decision first | Planning |
-| 7 | Veritas website custom domain | Site live at Netlify URL — need to point veritasaipartners.com | Alan |
+| 7 | Veritas website custom domain | Point veritasaipartners.com to Netlify | Alan |
 | 8 | SalesOS architecture build | After waitlist rule met | Queued |
-| 9 | Ruflo content post | LinkedIn live — ready to write | Claude Code |
+| 9 | Ruflo eval | Test branch ruflo-eval — in progress | Claude Code |
+| 10 | Ruflo content post | LinkedIn — ready to write | Claude Code |
 
 ## Session Protocol
 Open: state environment (Host or VM)
